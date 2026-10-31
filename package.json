@@ -7,7 +7,14 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "serve": "npx serve out"
+    "serve": "npx serve out",
+    "backend:dev": "npm run dev --prefix backend",
+    "backend:build": "npm run build --prefix backend",
+    "backend:start": "npm run start --prefix backend",
+    "backend:test": "npm run test:verify --prefix backend",
+    "backend:generate": "npm run prisma:generate --prefix backend",
+    "backend:migrate": "npm run prisma:migrate --prefix backend",
+    "backend:push": "npm run prisma:push --prefix backend"
   },
   "dependencies": {
     "@hookform/resolvers": "^3.9.1",
@@ -42,4 +49,3 @@
     "typescript": "^5.6.3"
   }
 }
-
