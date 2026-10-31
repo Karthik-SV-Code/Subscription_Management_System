@@ -5,6 +5,8 @@ import { validateRequest } from "../middleware/validate";
 import {
   generateInvoicesSchema,
   updateInvoiceStatusSchema,
+  recordPaymentSchema,
+  applyDiscountSchema,
   invoiceQuerySchema,
 } from "../services/invoice.service";
 
@@ -50,6 +52,30 @@ router.patch(
   authenticateJwt,
   validateRequest({ body: updateInvoiceStatusSchema }),
   InvoiceController.updateStatus
+);
+
+/**
+ * @route POST /api/v1/invoices/:id/discount
+ * @desc Apply a fixed amount or percentage discount to an invoice
+ * @access Private (Authenticated users only)
+ */
+router.post(
+  "/:id/discount",
+  authenticateJwt,
+  validateRequest({ body: applyDiscountSchema }),
+  InvoiceController.applyDiscount
+);
+
+/**
+ * @route POST /api/v1/invoices/:id/payments
+ * @desc Record a payment (partial or full settlement) against an invoice
+ * @access Private (Authenticated users only)
+ */
+router.post(
+  "/:id/payments",
+  authenticateJwt,
+  validateRequest({ body: recordPaymentSchema }),
+  InvoiceController.recordPayment
 );
 
 export default router;

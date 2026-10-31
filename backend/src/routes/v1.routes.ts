@@ -5,6 +5,7 @@ import productRoutes from "./product.routes";
 import planRoutes from "./plan.routes";
 import subscriptionRoutes from "./subscription.routes";
 import invoiceRoutes from "./invoice.routes";
+import dashboardRoutes from "../modules/dashboard/dashboard.routes";
 import { authenticateJwt, authorize } from "../middleware/auth";
 import { sendSuccess } from "../utils/response";
 import { AuthenticatedRequest } from "../types";
@@ -65,6 +66,13 @@ router.get("/", (_req: Request, res: Response) => {
           getById: "GET /api/v1/invoices/:id",
           generate: "POST /api/v1/invoices/generate (Protected - Recurring invoice engine with duplicate prevention)",
           updateStatus: "PATCH /api/v1/invoices/:id/status (Protected - Supports DRAFT, UNPAID, PARTIALLY_PAID, PAID, OVERDUE)",
+          applyDiscount: "POST /api/v1/invoices/:id/discount (Protected - Apply amount or percentage discount)",
+          recordPayment: "POST /api/v1/invoices/:id/payments (Protected - Record partial or full payment)",
+        },
+        dashboard: {
+          stats: "GET /api/v1/dashboard/stats (KPI metrics: totalCustomers, activeSubscriptions, MRR, revenue, outstanding)",
+          revenue: "GET /api/v1/dashboard/revenue?months=6 (6-month historical revenue breakdown)",
+          recentActivity: "GET /api/v1/dashboard/recent-activity?limit=10 (Latest chronologically sorted feed)",
         },
         roles: {
           adminOverview: "GET /api/v1/admin/overview (Requires ADMIN role)",
@@ -83,6 +91,7 @@ router.use("/products", productRoutes);
 router.use("/plans", planRoutes);
 router.use("/subscriptions", subscriptionRoutes);
 router.use("/invoices", invoiceRoutes);
+router.use("/dashboard", dashboardRoutes);
 
 // Role-based authorization demonstration routes
 router.get(

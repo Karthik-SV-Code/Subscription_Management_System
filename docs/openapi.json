@@ -1,0 +1,211 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "SubscriptIQ REST API",
+    "version": "1.0.0",
+    "description": "Enterprise Subscription & Recurring Revenue Management Platform built for Brightloop Software.",
+    "contact": {
+      "name": "Brightloop Software Engineering",
+      "email": "engineering@brightloop.com"
+    }
+  },
+  "servers": [
+    {
+      "url": "http://localhost:8000/api/v1",
+      "description": "Local Development Server"
+    }
+  ],
+  "components": {
+    "securitySchemes": {
+      "bearerAuth": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "JWT",
+        "description": "Enter the JWT token obtained from POST /api/v1/auth/login"
+      }
+    },
+    "schemas": {
+      "StandardResponse": {
+        "type": "object",
+        "properties": {
+          "success": { "type": "boolean" },
+          "message": { "type": "string" },
+          "data": { "type": "object" }
+        }
+      },
+      "ErrorResponse": {
+        "type": "object",
+        "properties": {
+          "success": { "type": "boolean", "example": false },
+          "message": { "type": "string" },
+          "errors": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "field": { "type": "string" },
+                "message": { "type": "string" }
+              }
+            }
+          }
+        }
+      },
+      "Customer": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "string", "format": "uuid" },
+          "name": { "type": "string" },
+          "email": { "type": "string", "format": "email" },
+          "companyName": { "type": "string", "nullable": true },
+          "status": { "type": "string", "enum": ["active", "inactive", "lead", "churned"] },
+          "currency": { "type": "string", "default": "USD" },
+          "mrr": { "type": "number" },
+          "createdAt": { "type": "string", "format": "date-time" }
+        }
+      },
+      "DashboardStats": {
+        "type": "object",
+        "properties": {
+          "totalCustomers": { "type": "integer" },
+          "activeSubscriptions": { "type": "integer" },
+          "totalSubscriptions": { "type": "integer" },
+          "monthlyRecurringRevenue": { "type": "number" },
+          "totalRevenueCollected": { "type": "number" },
+          "outstandingAmount": { "type": "number" },
+          "paidInvoices": { "type": "integer" },
+          "unpaidInvoices": { "type": "integer" }
+        }
+      }
+    }
+  },
+  "paths": {
+    "/health": {
+      "get": {
+        "summary": "System Health Check",
+        "responses": {
+          "200": { "description": "System is healthy and database is connected" }
+        }
+      }
+    },
+    "/auth/register": {
+      "post": {
+        "summary": "Register new account",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["email", "password", "firstName", "lastName"],
+                "properties": {
+                  "email": { "type": "string", "format": "email" },
+                  "password": { "type": "string" },
+                  "firstName": { "type": "string" },
+                  "lastName": { "type": "string" },
+                  "role": { "type": "string", "enum": ["ADMIN", "STAFF"], "default": "STAFF" }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": { "description": "Account created and JWT token returned" }
+        }
+      }
+    },
+    "/auth/login": {
+      "post": {
+        "summary": "User login",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["email", "password"],
+                "properties": {
+                  "email": { "type": "string", "format": "email" },
+                  "password": { "type": "string" }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": { "description": "User logged in and JWT token issued" }
+        }
+      }
+    },
+    "/auth/me": {
+      "get": {
+        "summary": "Get current logged-in user profile",
+        "security": [{ "bearerAuth": [] }],
+        "responses": {
+          "200": { "description": "Current user profile" },
+          "401": { "description": "Unauthorized" }
+        }
+      }
+    },
+    "/customers": {
+      "get": {
+        "summary": "List customers",
+        "parameters": [
+          { "name": "page", "in": "query", "schema": { "type": "integer", "default": 1 } },
+          { "name": "pageSize", "in": "query", "schema": { "type": "integer", "default": 10 } },
+          { "name": "search", "in": "query", "schema": { "type": "string" } },
+          { "name": "status", "in": "query", "schema": { "type": "string" } }
+        ],
+        "responses": {
+          "200": { "description": "Paginated list of customers" }
+        }
+      },
+      "post": {
+        "summary": "Create customer",
+        "security": [{ "bearerAuth": [] }],
+        "responses": {
+          "201": { "description": "Customer created" }
+        }
+      }
+    },
+    "/dashboard/stats": {
+      "get": {
+        "summary": "Get KPI dashboard analytics",
+        "security": [{ "bearerAuth": [] }],
+        "responses": {
+          "200": {
+            "description": "Calculated dashboard stats from live PostgreSQL",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/DashboardStats" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/dashboard/revenue": {
+      "get": {
+        "summary": "Get historical monthly revenue chart data",
+        "security": [{ "bearerAuth": [] }],
+        "parameters": [
+          { "name": "months", "in": "query", "schema": { "type": "integer", "default": 6 } }
+        ],
+        "responses": {
+          "200": { "description": "Monthly revenue records" }
+        }
+      }
+    },
+    "/dashboard/recent-activity": {
+      "get": {
+        "summary": "Get recent invoices and payments activity stream",
+        "security": [{ "bearerAuth": [] }],
+        "parameters": [
+          { "name": "limit", "in": "query", "schema": { "type": "integer", "default": 10 } }
+        ],
+        "responses": {
+          "200": { "description": "Recent activity feed" }
+        }
+      }
+    }
+  }
+}

@@ -67,4 +67,36 @@ export class InvoiceController {
       next(error);
     }
   }
+
+  public static async applyDiscount(
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ): Promise<void> {
+    try {
+      const updated = await InvoiceService.applyDiscount(
+        req.params.id,
+        req.body
+      );
+      sendSuccess(res, updated, "Discount applied to invoice successfully");
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  public static async recordPayment(
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ): Promise<void> {
+    try {
+      const result = await InvoiceService.recordPayment(
+        req.params.id,
+        req.body
+      );
+      sendSuccess(res, result, "Payment recorded against invoice successfully", 201);
+    } catch (error) {
+      next(error);
+    }
+  }
 }

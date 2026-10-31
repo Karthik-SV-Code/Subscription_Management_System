@@ -10,7 +10,7 @@ import {
   generateInvoiceBillingKey,
   toDecimal,
 } from "../utils/invoice-math";
-import { InvoiceStatus, Prisma } from "@prisma/client";
+import { InvoiceStatus, PaymentMethod, Prisma } from "@prisma/client";
 import { z } from "zod";
 
 // Zod Validation Schemas
@@ -60,6 +60,27 @@ export const updateInvoiceStatusSchema = z.object({
   notes: z.string().optional(),
 });
 
+export const recordPaymentSchema = z.object({
+  amount: z
+    .number({ invalid_type_error: "Amount must be a number" })
+    .positive("Payment amount must be greater than zero"),
+  paymentMethod: z
+    .enum(["credit_card", "bank_transfer", "ach", "sepa", "wire"])
+    .optional()
+    .default("credit_card"),
+  transactionReference: z.string().optional(),
+  lastFour: z.string().optional(),
+});
+
+export const applyDiscountSchema = z.object({
+  discountAmount: z.number().min(0).optional(),
+  discountPercent: z.number().min(0).max(100).optional(),
+  code: z.string().optional(),
+}).refine(
+  (data) => data.discountAmount !== undefined || data.discountPercent !== undefined,
+  { message: "Either discountAmount or discountPercent must be provided" }
+);
+
 export const invoiceQuerySchema = z.object({
   page: z
     .string()
@@ -96,6 +117,8 @@ export const invoiceQuerySchema = z.object({
 
 export type GenerateInvoicesInput = z.infer<typeof generateInvoicesSchema>;
 export type UpdateInvoiceStatusInput = z.infer<typeof updateInvoiceStatusSchema>;
+export type RecordPaymentInput = z.infer<typeof recordPaymentSchema>;
+export type ApplyDiscountInput = z.infer<typeof applyDiscountSchema>;
 export type InvoiceQueryInput = z.infer<typeof invoiceQuerySchema>;
 
 export class InvoiceService {
@@ -150,6 +173,7 @@ export class InvoiceService {
             },
           },
           lineItems: true,
+          payments: true,
           subscription: {
             select: {
               id: true,
@@ -181,6 +205,7 @@ export class InvoiceService {
       include: {
         customer: true,
         lineItems: true,
+        payments: true,
         subscription: {
           include: {
             plan: true,
@@ -435,5 +460,146 @@ export class InvoiceService {
     });
 
     return updated;
+  }
+
+  /**
+   * Applies a discount to an invoice (amount or percentage) and recalculates totals.
+   */
+  public static async applyDiscount(
+    invoiceId: string,
+    input: ApplyDiscountInput
+  ): Promise<unknown> {
+    const invoice = await prisma.invoice.findUnique({
+      where: { id: invoiceId },
+    });
+
+    if (!invoice) {
+      throw new AppError("Invoice not found", 404);
+    }
+
+    if (invoice.status === "PAID") {
+      throw new AppError("Cannot apply discount to an already paid invoice", 400);
+    }
+
+    let discountDec = toDecimal(0);
+    if (input.discountPercent !== undefined) {
+      discountDec = invoice.subtotal
+        .mul(toDecimal(input.discountPercent))
+        .div(100)
+        .toDecimalPlaces(2, Prisma.Decimal.ROUND_HALF_UP);
+    } else if (input.discountAmount !== undefined) {
+      discountDec = toDecimal(input.discountAmount).toDecimalPlaces(2, Prisma.Decimal.ROUND_HALF_UP);
+    }
+
+    // Subtotal after discount cannot be negative
+    const discountedSubtotal = Prisma.Decimal.max(
+      toDecimal(0),
+      invoice.subtotal.minus(discountDec)
+    );
+
+    // Recalculate tax on discounted amount
+    const taxAmount = calculateTaxAmount(discountedSubtotal, invoice.taxRate);
+    const newTotal = calculateTotal(discountedSubtotal, taxAmount);
+    const newAmountDue = Prisma.Decimal.max(toDecimal(0), newTotal.minus(invoice.amountPaid));
+
+    const updated = await prisma.invoice.update({
+      where: { id: invoiceId },
+      data: {
+        discountTotal: discountDec,
+        discountCode: input.code || "CUSTOM_DISCOUNT",
+        taxAmount,
+        total: newTotal,
+        amountDue: newAmountDue,
+      },
+      include: {
+        customer: true,
+        lineItems: true,
+      },
+    });
+
+    return updated;
+  }
+
+  /**
+   * Records a payment against an invoice (supports partial and full settlement)
+   * in an atomic Prisma transaction.
+   */
+  public static async recordPayment(
+    invoiceId: string,
+    input: RecordPaymentInput
+  ): Promise<unknown> {
+    const invoice = await prisma.invoice.findUnique({
+      where: { id: invoiceId },
+    });
+
+    if (!invoice) {
+      throw new AppError("Invoice not found", 404);
+    }
+
+    if (invoice.status === "PAID") {
+      throw new AppError("Invoice is already fully paid", 400);
+    }
+
+    const paymentAmountDec = toDecimal(input.amount).toDecimalPlaces(2, Prisma.Decimal.ROUND_HALF_UP);
+
+    if (paymentAmountDec.lte(0)) {
+      throw new AppError("Payment amount must be greater than zero", 400);
+    }
+
+    const txRef =
+      input.transactionReference ||
+      `tx_${invoice.invoiceNumber}_${Date.now()}_${Math.floor(Math.random() * 1000)}`;
+
+    const result = await prisma.$transaction(async (tx) => {
+      // 1. Create Payment Record
+      const payment = await tx.payment.create({
+        data: {
+          invoiceId: invoice.id,
+          customerId: invoice.customerId,
+          amount: paymentAmountDec,
+          currency: invoice.currency,
+          status: "succeeded",
+          paymentMethod: input.paymentMethod as PaymentMethod,
+          lastFour: input.lastFour || "4242",
+          transactionReference: txRef,
+          processedAt: new Date(),
+        },
+      });
+
+      // 2. Compute new amounts
+      const newAmountPaid = invoice.amountPaid.add(paymentAmountDec);
+      const newAmountDue = invoice.total.minus(newAmountPaid);
+      const isFullyPaid = newAmountDue.lte(0);
+
+      const updateData: Prisma.InvoiceUpdateInput = {
+        amountPaid: newAmountPaid,
+        amountDue: Prisma.Decimal.max(toDecimal(0), newAmountDue),
+      };
+
+      if (isFullyPaid) {
+        updateData.status = "PAID";
+        updateData.paidAt = new Date();
+      } else {
+        updateData.status = "PARTIALLY_PAID";
+      }
+
+      // 3. Update Invoice
+      const updatedInvoice = await tx.invoice.update({
+        where: { id: invoice.id },
+        data: updateData,
+        include: {
+          customer: true,
+          payments: true,
+          lineItems: true,
+        },
+      });
+
+      return {
+        payment,
+        invoice: updatedInvoice,
+      };
+    });
+
+    return result;
   }
 }

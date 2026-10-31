@@ -5,32 +5,45 @@
 
 ---
 
-## 1. Authentication & Security
+## 1. Architecture & Overview
 
-All write endpoints (`POST`, `PUT`, `DELETE`) and protected read endpoints require a JSON Web Token (JWT) passed in the `Authorization` HTTP header:
+SubscriptIQ is an enterprise-grade subscription management and recurring billing platform backend engineered with:
+- **Runtime:** Node.js & Express.js with TypeScript
+- **Database & ORM:** PostgreSQL with Prisma ORM
+- **Security:** JWT authentication, bcryptjs (salt rounds = 10), Helmet HTTP headers, CORS protection
+- **Validation:** Type-safe Zod runtime schema validation
+- **Financial Arithmetic:** Zero-loss PostgreSQL `Decimal(12, 2)` calculations avoiding IEEE-754 floating-point inaccuracies
+- **Data Protection:** Password hashes are strictly sanitized and never exposed in responses
+
+---
+
+## 2. Authentication & Authorization
+
+All write endpoints (`POST`, `PUT`, `PATCH`, `DELETE`) and protected read endpoints require a JSON Web Token (JWT) provided in the HTTP `Authorization` header:
 
 ```http
 Authorization: Bearer <jwt_token>
 ```
 
-Tokens are obtained by logging in via `POST /api/v1/auth/login` or registering via `POST /api/v1/auth/register`.
+### Roles & Access Control
+- `ADMIN`: Unrestricted administrative access across all modules, configuration, and overview.
+- `STAFF`: Access to day-to-day subscription and customer operational endpoints.
+- Role-based guard middleware (`authorize("ADMIN")`) rejects unpermitted requests with HTTP `403 Forbidden`.
 
 ---
 
-## 2. Standard Response Format
+## 3. Standard API Envelopes & Error Handling
 
-All JSON responses adhere to the standard SubscriptIQ envelope:
-
-### Single Entity / Action Response
+### 3.1 Standard Success Envelope
 ```json
 {
   "success": true,
-  "message": "Resource created or retrieved successfully",
+  "message": "Resource retrieved successfully",
   "data": { ... }
 }
 ```
 
-### Paginated List Response
+### 3.2 Standard Paginated Envelope
 ```json
 {
   "success": true,
@@ -45,7 +58,7 @@ All JSON responses adhere to the standard SubscriptIQ envelope:
 }
 ```
 
-### Error Response
+### 3.3 Standard Error Envelope
 ```json
 {
   "success": false,
@@ -59,14 +72,28 @@ All JSON responses adhere to the standard SubscriptIQ envelope:
 }
 ```
 
+### Common HTTP Status Codes
+- `200 OK`: Request succeeded.
+- `201 Created`: Resource successfully created.
+- `400 Bad Request`: Validation failure or invalid lifecycle transition.
+- `401 Unauthorized`: Missing, invalid, or expired JWT token.
+- `403 Forbidden`: Insufficient role permissions.
+- `404 Not Found`: Target resource not found in database.
+- `409 Conflict`: Unique constraint violation (e.g. duplicate email, product code, or billing cycle).
+- `500 Internal Server Error`: Centralized exception handler catch-all.
+
 ---
 
-## 3. System & Health Endpoints
+## 4. System & Health Endpoints
 
 ### `GET /health`
-Returns system heartbeat, uptime, server environment, and PostgreSQL connectivity status.
+Returns system uptime, environment, and PostgreSQL connection health.
 - **Access:** Public
-- **Response `200 OK`**:
+- **Example cURL:**
+  ```bash
+  curl -X GET http://localhost:8000/health
+  ```
+- **Response `200 OK`:**
   ```json
   {
     "success": true,
@@ -76,7 +103,7 @@ Returns system heartbeat, uptime, server environment, and PostgreSQL connectivit
       "service": "SubscriptIQ API",
       "version": "1.0.0",
       "environment": "development",
-      "timestamp": "2026-10-31T05:32:18.849Z",
+      "timestamp": "2026-10-31T08:46:46.313Z",
       "uptime": 120,
       "database": {
         "status": "connected"
@@ -86,385 +113,492 @@ Returns system heartbeat, uptime, server environment, and PostgreSQL connectivit
   ```
 
 ### `GET /api/v1`
-Returns API metadata, organization details, and the full endpoint catalog.
+API v1 root route returning service metadata and catalog of available endpoints.
 - **Access:** Public
 
 ---
 
-## 4. User Authentication Module
+## 5. Authentication Module
 
 ### `POST /api/v1/auth/register`
 Register a new administrator or staff account.
 - **Access:** Public
-- **Body:**
+- **Body Schema:**
+  | Field | Type | Required | Description |
+  | :--- | :--- | :---: | :--- |
+  | `email` | String | Yes | Valid email address (unique) |
+  | `password` | String | Yes | Min 8 chars, 1 uppercase, 1 lowercase, 1 number |
+  | `firstName` | String | Yes | Non-empty string |
+  | `lastName` | String | Yes | Non-empty string |
+  | `role` | String | No | `"ADMIN"` or `"STAFF"` (default: `"STAFF"`) |
+- **Example cURL:**
+  ```bash
+  curl -X POST http://localhost:8000/api/v1/auth/register \
+    -H "Content-Type: application/json" \
+    -d '{
+      "email": "admin@brightloop.com",
+      "password": "Password123!",
+      "firstName": "Alex",
+      "lastName": "Vance",
+      "role": "ADMIN"
+    }'
+  ```
+- **Response `201 Created`:**
   ```json
   {
-    "email": "user@example.com",
-    "password": "Password123!",
-    "firstName": "John",
-    "lastName": "Doe",
-    "role": "STAFF"
+    "success": true,
+    "message": "User registered successfully",
+    "data": {
+      "user": {
+        "id": "e21bda1b-684c-4734-b258-0056ce48f98c",
+        "email": "admin@brightloop.com",
+        "firstName": "Alex",
+        "lastName": "Vance",
+        "role": "ADMIN",
+        "isActive": true
+      },
+      "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+    }
   }
   ```
-- **Response `201 Created`**: Returns sanitized user object (without password) and JWT token.
 
 ### `POST /api/v1/auth/login`
-Authenticate existing user.
+Authenticate user with email and password to receive a JWT.
 - **Access:** Public
-- **Body:**
-  ```json
-  {
-    "email": "user@example.com",
-    "password": "Password123!"
-  }
+- **Example cURL:**
+  ```bash
+  curl -X POST http://localhost:8000/api/v1/auth/login \
+    -H "Content-Type: application/json" \
+    -d '{
+      "email": "admin@brightloop.com",
+      "password": "Password123!"
+    }'
   ```
-- **Response `200 OK`**: Returns user profile and JWT token.
 
 ### `GET /api/v1/auth/me`
-Retrieve currently authenticated user's profile.
-- **Access:** Private (`Bearer <token>` required)
+Retrieve authenticated user profile.
+- **Access:** Protected (`Bearer <token>`)
 
 ---
 
-## 5. Customers Module
+## 6. Customers Module
 
 ### `GET /api/v1/customers`
 List customers with pagination and filtering.
-- **Access:** Public / Authenticated
+- **Access:** Protected / Public
 - **Query Parameters:**
-  - `page` (number, default: `1`)
-  - `pageSize` (number, default: `10`, max: `100`)
-  - `search` (string, searches `name`, `email`, `companyName`)
-  - `status` (enum: `active`, `inactive`, `lead`, `churned`)
-- **Response `200 OK`**: Paginated list of customers with `activeSubscriptionsCount`.
+  - `page`: Page number (default: `1`)
+  - `pageSize`: Page size (default: `10`, max: `100`)
+  - `search`: Filter by name, email, or company name
+  - `status`: `active`, `inactive`, `lead`, `churned`
+- **Response `200 OK`:** Paginated customer records with `activeSubscriptionsCount`.
 
 ### `GET /api/v1/customers/:id`
-Retrieve customer by UUID with associated subscriptions and pricing plans.
-- **Access:** Public / Authenticated
-- **Response `200 OK`** or `404 Not Found`.
+Retrieve customer by UUID including associated subscriptions.
+- **Access:** Protected / Public
 
 ### `POST /api/v1/customers`
-Create a new customer.
-- **Access:** Private (`Bearer <token>` required)
-- **Body:**
+Create a customer.
+- **Access:** Protected (`Bearer <token>`)
+- **Body Schema:**
   ```json
   {
     "name": "Acme Innovations Ltd",
     "email": "billing@acme.com",
     "companyName": "Acme Corp",
     "status": "active",
-    "mrr": 499.00,
     "currency": "USD",
     "billingAddress": {
-      "line1": "100 Tech Boulevard",
+      "line1": "100 Tech Blvd",
       "city": "Austin",
       "state": "TX",
       "postalCode": "78701",
       "country": "US"
     },
-    "taxId": "US-987654321",
-    "stripeCustomerId": "cus_12345"
+    "taxId": "US-987654321"
   }
   ```
-- **Validation Rules:**
-  - `name`: Required non-empty string.
-  - `email`: Valid email string (must be unique).
-  - `mrr`: Non-negative number (`>= 0`).
-  - `currency`: 3-letter ISO code (default: `USD`).
-- **Response `201 Created`** or `400 Bad Request` or `409 Conflict`.
 
 ### `PUT /api/v1/customers/:id`
-Update an existing customer.
-- **Access:** Private (`Bearer <token>` required)
-- **Body:** Partial `createCustomerSchema` (at least one field).
-- **Response `200 OK`** or `404 Not Found`.
+Update customer details.
+- **Access:** Protected (`Bearer <token>`)
 
 ### `DELETE /api/v1/customers/:id`
-Delete a customer.
-- **Access:** Private (`Bearer <token>` required)
-- **Business Rule (Requirement 7):** Blocked if customer has active subscriptions (`active`, `trialing`, `past_due`, `paused`). Returns `400 Bad Request`.
-- **Response `200 OK`** or `400 Bad Request` or `404 Not Found`.
+Delete customer.
+- **Access:** Protected (`Bearer <token>`)
+- **Guarded Deletion:** Rejects deletion with `400 Bad Request` if customer has active subscriptions.
 
 ---
 
-## 6. Products Module
+## 7. Products Module
 
 ### `GET /api/v1/products`
-List products with pagination, search, and child plans.
-- **Access:** Public / Authenticated
-- **Query Parameters:**
-  - `page`, `pageSize`, `search`, `status` (`active`, `archived`, `draft`)
-- **Response `200 OK`**: List of products including nested `plans` and `plansCount`.
+List products with pagination and search.
+- **Access:** Protected / Public
+- **Query Parameters:** `page`, `pageSize`, `search`, `status`
 
 ### `GET /api/v1/products/:id`
-Retrieve product details and all active pricing tiers/plans.
-- **Access:** Public / Authenticated
+Retrieve product and all child pricing plans.
+- **Access:** Protected / Public
 
 ### `POST /api/v1/products`
-Create a new product.
-- **Access:** Private (`Bearer <token>` required)
-- **Body:**
+Create product.
+- **Access:** Protected (`Bearer <token>`)
+- **Body Schema:**
   ```json
   {
-    "name": "SubscriptIQ Enterprise Analytics",
+    "name": "SubscriptIQ Cloud Analytics",
     "code": "PROD-ANALYTICS",
-    "description": "Real-time subscription metrics, MRR forecasting, and churn analysis",
+    "description": "Enterprise recurring analytics",
     "status": "active",
-    "features": [
-      "Custom Dashboard Builder",
-      "Cohort Retention Heatmaps",
-      "Automated Webhooks"
-    ]
+    "features": ["Dashboards", "Cohort Analysis", "Automated Billing"]
   }
   ```
-- **Validation Rules:**
-  - `name`: Required non-empty string.
-  - `code`: Unique code, 2 to 50 uppercase characters.
-- **Response `201 Created`** or `409 Conflict`.
 
 ### `PUT /api/v1/products/:id`
-Update product metadata, status, or feature flags.
-- **Access:** Private (`Bearer <token>` required)
+Update product metadata.
+- **Access:** Protected (`Bearer <token>`)
 
 ### `DELETE /api/v1/products/:id`
-Delete a product.
-- **Access:** Private (`Bearer <token>` required)
-- **Business Rule (Requirement 7):** Blocked if any plan under this product is actively referenced by active subscriptions. Returns `400 Bad Request`.
+Delete product.
+- **Access:** Protected (`Bearer <token>`)
+- **Guarded Deletion:** Rejects deletion with `400 Bad Request` if any of its plans are actively subscribed.
 
 ---
 
-## 7. Plans Module
+## 8. Plans Module
 
 ### `GET /api/v1/plans`
-List pricing plans with pagination and filtering.
-- **Access:** Public / Authenticated
-- **Query Parameters:**
-  - `page`, `pageSize`, `search`, `productId`, `interval`, `isActive`
-- **Response `200 OK`**: Plans list with parent `product` summary.
+List plans with pagination and filters.
+- **Access:** Protected / Public
+- **Query Parameters:** `page`, `pageSize`, `search`, `productId`, `interval`, `isActive`
 
 ### `GET /api/v1/plans/:id`
-Retrieve plan details and associated product.
-- **Access:** Public / Authenticated
+Retrieve plan details and parent product.
+- **Access:** Protected / Public
 
 ### `POST /api/v1/plans`
-Create a new pricing plan under a product.
-- **Access:** Private (`Bearer <token>` required)
-- **Body:**
+Create a pricing plan.
+- **Access:** Protected (`Bearer <token>`)
+- **Body Schema:**
   ```json
   {
-    "productId": "e1f13b1b-52c6-43b6-b5b6-73130dcf2b17",
-    "name": "Enterprise Annual Plan",
-    "code": "PLAN-ENT-ANNUAL",
-    "description": "Annual recurring billing with 2 months free",
-    "amount": 999.00,
+    "productId": "97b102b4-52d3-4629-9dc4-ca20c7a52bb9",
+    "name": "Enterprise Pro Monthly",
+    "code": "PLAN-PRO-MONTHLY",
+    "description": "Full access for enterprise teams",
+    "amount": 150.00,
     "currency": "USD",
-    "interval": "year",
+    "interval": "month",
     "intervalCount": 1,
     "pricingModel": "flat_fee",
-    "trialPeriodDays": 14,
+    "trialPeriodDays": 0,
     "isActive": true
   }
   ```
-- **Validation Rules (Requirement 3):**
-  - `productId`: Must correspond to an existing product in the database.
-  - `code`: Unique uppercase plan code.
-  - `amount`: **Price must be a valid non-negative number (`>= 0`)**.
-  - `interval`: One of `day`, `week`, `month`, `quarter`, `year`.
-  - `intervalCount`: Integer `>= 1`.
-  - `pricingModel`: One of `flat_fee`, `per_seat`, `tiered`, `usage_based`.
-  - `trialPeriodDays`: Integer `>= 0`.
-- **Response `201 Created`** or `400 Bad Request` or `404 Not Found` (if product missing) or `409 Conflict`.
+- **Validation Rule:** Price `amount` must be non-negative (`>= 0`). Invalid values return `400 Bad Request`.
 
 ### `PUT /api/v1/plans/:id`
-Update an existing pricing plan.
-- **Access:** Private (`Bearer <token>` required)
-- **Body:** Partial `createPlanSchema`.
+Update plan parameters.
+- **Access:** Protected (`Bearer <token>`)
 
 ### `DELETE /api/v1/plans/:id`
-Delete a pricing plan.
-- **Access:** Private (`Bearer <token>` required)
-- **Business Rule (Requirement 7):** Blocked if this plan is actively referenced by active subscriptions. Returns `400 Bad Request`.
+Delete plan.
+- **Access:** Protected (`Bearer <token>`)
+- **Guarded Deletion:** Rejects deletion with `400 Bad Request` if plan is referenced by active subscriptions.
 
 ---
 
-## 8. Subscriptions & Lifecycle Module
-
-The Subscription module manages customer recurring subscriptions, calendar billing date calculations, month-end pinning, MRR aggregation, lifecycle state machine enforcement, and duplicate-invoice prevention.
+## 9. Subscriptions & Lifecycle Module
 
 ### Lifecycle State Machine & Valid Transitions
 
-| From Status | To `PAUSED` | To `ACTIVE` | To `CANCELLED` | Notes |
+| Current Status | Target `PAUSED` | Target `ACTIVE` | Target `CANCELLED` | Notes |
 | :--- | :---: | :---: | :---: | :--- |
-| **`ACTIVE`** | **VALID** | Invalid (Already active) | **VALID** | Halts or cancels recurring billing |
-| **`PAUSED`** | Invalid (Already paused) | **VALID** | **VALID** | Resumes or cancels subscription |
-| **`CANCELLED`** | **REJECTED (400)** | **REJECTED (400)** | **REJECTED (400)** | **Terminal State:** Cancelled subs cannot be transitioned |
-
----
+| **`ACTIVE`** | **VALID (200)** | Invalid (Already active) | **VALID (200)** | Pauses or halts subscription |
+| **`PAUSED`** | Invalid (Already paused) | **VALID (200)** | **VALID (200)** | Resumes or cancels subscription |
+| **`CANCELLED`** | **REJECTED (400)** | **REJECTED (400)** | **REJECTED (400)** | **Terminal State:** Cannot transition |
 
 ### `GET /api/v1/subscriptions`
-List subscriptions with pagination, status filtering, and multi-field search.
-- **Access:** Public / Authenticated
-- **Query Parameters:**
-  - `page` (number, default: `1`)
-  - `pageSize` (number, default: `10`, max: `100`)
-  - `search` (searches customer name, customer email, plan name, plan code)
-  - `status` (`ACTIVE`, `PAUSED`, `CANCELLED`)
-  - `customerId` (filter by specific customer UUID)
-  - `planId` (filter by specific plan UUID)
-- **Response `200 OK`**: Paginated list of subscriptions with embedded customer and plan details.
+List subscriptions with filters.
+- **Access:** Protected / Public
+- **Query Parameters:** `page`, `pageSize`, `search`, `status`, `customerId`, `planId`
 
 ### `GET /api/v1/subscriptions/:id`
-Retrieve subscription details by UUID.
-- **Access:** Public / Authenticated
+Retrieve subscription by UUID.
+- **Access:** Protected / Public
 
 ### `POST /api/v1/subscriptions`
-Create a new subscription referencing an existing customer and active plan.
-- **Access:** Private (`Bearer <token>` required)
-- **Body:**
+Create a subscription.
+- **Access:** Protected (`Bearer <token>`)
+- **Body Schema:**
   ```json
   {
-    "customerId": "8f972b21-4fa3-4cb5-8299-fc91950e3966",
-    "planId": "3b29c9a6-5fa7-4581-807e-114d5e8efca3",
-    "quantity": 3,
-    "startDate": "2026-01-31T00:00:00.000Z",
-    "billingInterval": "MONTHLY"
+    "customerId": "4d78140d-3890-4b19-a75e-e269e41d32aa",
+    "planId": "3ff59526-728b-494b-a010-fb81da9636c7",
+    "quantity": 2,
+    "startDate": "2026-10-31T00:00:00.000Z",
+    "billingInterval": "month"
   }
   ```
-- **Validation Rules & Automatic Calculations:**
-  - `customerId`: Required; must reference an existing customer.
-  - `planId`: Required; must reference an active, non-archived plan.
-  - `quantity`: Positive integer `>= 1` (default: `1`).
-  - `startDate`: ISO 8601 date string (default: current timestamp).
-  - `unitAmount`: Automatically set from `plan.amount`.
-  - `totalAmount`: Calculated as `plan.amount * quantity`.
-  - `mrr`: Calculated based on interval (Yearly: `total / 12`, Monthly: `total`).
-  - `nextBillingDate`: Computed with **month-end pinning** (e.g. Jan 31 -> Feb 28 -> Mar 31).
-  - `customer.mrr`: Updated automatically in a PostgreSQL transaction.
-- **Response `201 Created`** or `400 Bad Request` or `404 Not Found`.
+- **Automatic Calculations:**
+  - `unitAmount`: Inherited from `plan.amount`.
+  - `totalAmount`: Calculated as `unitAmount * quantity`.
+  - `mrr`: Computed via Decimal-safe math (Monthly: `totalAmount`; Yearly: `totalAmount / 12`).
+  - `nextBillingDate`: Calculated with **month-end pinning** (e.g. Jan 31 -> Feb 28 -> Mar 31).
 
 ### `PATCH /api/v1/subscriptions/:id/status`
-Transition subscription lifecycle status.
-- **Access:** Private (`Bearer <token>` required)
-- **Body:**
+Transition subscription lifecycle state.
+- **Access:** Protected (`Bearer <token>`)
+- **Body Schema:**
   ```json
   {
     "status": "PAUSED",
-    "reason": "Customer requested temporary freeze"
+    "reason": "Temporary customer pause"
   }
   ```
-- **Allowed Transitions:**
-  - `ACTIVE` -> `PAUSED`
-  - `PAUSED` -> `ACTIVE`
-  - `ACTIVE` -> `CANCELLED`
-  - `PAUSED` -> `CANCELLED`
-- **Enforcements:**
-  - Rejects attempts to transition a `CANCELLED` subscription with `400 Bad Request`.
-  - Rejects duplicate transitions (e.g. `ACTIVE` -> `ACTIVE`) with `400 Bad Request`.
-  - Updates customer's active MRR in a transaction (only `ACTIVE` subscriptions contribute).
-- **Response `200 OK`** or `400 Bad Request`.
 
 ### `POST /api/v1/subscriptions/:id/renew`
-Process a recurring billing renewal for an active subscription.
-- **Access:** Private (`Bearer <token>` required)
-- **Business Rules:**
-  - **Excludes cancelled subscriptions:** Returns `400 Bad Request`.
-  - **Excludes paused subscriptions:** Returns `400 Bad Request`.
-  - Advances `currentPeriodStart` and `currentPeriodEnd` while strictly preserving the month-end anchor.
-  - Increments `billingSequence` and generates an idempotent `lastBillingKey` to prevent duplicate invoices in recurring billing jobs.
-- **Response `200 OK`**: Returns updated subscription and `renewalSummary`.
+Renew an active subscription.
+- **Access:** Protected (`Bearer <token>`)
+- **Business Rule:** Rejects paused or cancelled subscriptions with `400 Bad Request`.
 
 ### `GET /api/v1/subscriptions/due/billing`
-Retrieve all subscriptions currently due for recurring billing.
-- **Access:** Private (`Bearer <token>` required)
-- **Query Parameters:**
-  - `asOfDate` (optional ISO 8601 date string, default: current time)
-  - `limit` (optional integer, default: 100)
-- **Business Rules:**
-  - Strictly returns only `ACTIVE` subscriptions where `nextBillingDate <= asOfDate`.
-  - **CANCELLED and PAUSED subscriptions are 100% excluded.**
-- **Response `200 OK`**.
+Query subscriptions eligible for recurring billing run.
+- **Access:** Protected (`Bearer <token>`)
+- **Query Parameters:** `asOfDate`, `limit`
+- **Business Rule:** Strictly returns only `ACTIVE` subscriptions where `nextBillingDate <= asOfDate`. Cancelled and paused subscriptions are excluded.
 
 ---
 
-## 9. Invoices & Recurring Billing Module
+## 10. Invoices & Billing Engine Module
 
-The Invoices module handles automated recurring billing runs, high-precision Decimal financial calculations, line-item snapshots preserving pricing history, and database-enforced duplicate invoice prevention.
-
-### Supported Invoice Statuses
-- `DRAFT`: Preliminary invoice draft, not yet finalized or dispatched.
-- `UNPAID`: Active outstanding invoice awaiting payment.
-- `PARTIALLY_PAID`: Partially paid invoice with remaining `amountDue`.
-- `PAID`: Fully settled invoice (`amountDue: 0.00`, `paidAt` recorded).
-- `OVERDUE`: Unpaid invoice past its `dueDate`.
-
----
+### Invoice Status Flow
+```
+[DRAFT] --> [UNPAID] --> [PARTIALLY_PAID] --> [PAID]
+                 |
+                 +-----> [OVERDUE]
+```
 
 ### `GET /api/v1/invoices`
-List invoices with pagination, filtering, and search.
-- **Access:** Public / Authenticated
-- **Query Parameters:**
-  - `page` (number, default: `1`)
-  - `pageSize` (number, default: `10`, max: `100`)
-  - `status` (`DRAFT`, `UNPAID`, `PARTIALLY_PAID`, `PAID`, `OVERDUE`)
-  - `customerId` (filter by customer UUID)
-  - `subscriptionId` (filter by subscription UUID)
-  - `search` (searches `invoiceNumber`, `customer.name`, `customer.email`)
-- **Response `200 OK`**: Paginated list of invoices with embedded customer details and line-item snapshots.
+List invoices with pagination and filters.
+- **Access:** Protected / Public
+- **Query Parameters:** `page`, `pageSize`, `status`, `customerId`, `subscriptionId`, `search`
 
 ### `GET /api/v1/invoices/:id`
-Retrieve detailed invoice by UUID with line-item snapshots and customer information.
-- **Access:** Public / Authenticated
-- **Response `200 OK`** or `404 Not Found`.
+Retrieve invoice by UUID with line-item snapshots and payments.
+- **Access:** Protected / Public
 
 ### `POST /api/v1/invoices/generate`
-Run automated recurring invoice generation for active subscriptions due for billing.
-- **Access:** Private (`Bearer <token>` required)
-- **Body:**
+Run recurring billing engine for due subscriptions.
+- **Access:** Protected (`Bearer <token>`)
+- **Body Schema:**
   ```json
   {
     "asOfDate": "2026-10-31T00:00:00.000Z",
     "subscriptionId": "optional-subscription-uuid",
-    "customerId": "optional-customer-uuid",
     "taxRate": 10.0,
     "dueDateDays": 14
   }
   ```
-- **Business & Financial Rules:**
-  - **Eligibility:** Strictly selects subscriptions with `status: ACTIVE` and `nextBillingDate <= asOfDate`. **CANCELLED and PAUSED subscriptions are 100% excluded.**
-  - **High-Precision Decimal Arithmetic:** Subtotal (`unitAmount * quantity`), tax (`subtotal * (taxRate / 100)`), and total (`subtotal + tax`) are calculated using PostgreSQL `Decimal` types—eliminating floating-point inaccuracies.
-  - **Historical Pricing Snapshots:** Each line item captures `planName`, `planCode`, `unitAmount`, `quantity`, and billing period dates at invoice creation time. Future plan price modifications never corrupt historical invoices.
-  - **Unique Invoice Numbering:** Formatted as `INV-YYYYMM-{SEQ}-{RANDOM}`.
-  - **Duplicate Prevention:**
-    - Unique database constraint: `@@unique([subscriptionId, billingPeriodStart, billingPeriodEnd])`
-    - Idempotent `billingCycleKey` constraint: `inv_{subscriptionId}_{periodStart}_{periodEnd}`
-    - Prevents duplicate invoice creation if the cycle was already billed.
-  - **Atomic Transaction:** In a single transaction, the invoice and line items are created and the subscription's billing period is advanced with calendar month-end pinning.
-- **Response `201 Created`**:
+- **Duplicate Prevention Guarantee:**
+  - Unique composite constraint: `@@unique([subscriptionId, billingPeriodStart, billingPeriodEnd])`
+  - Idempotent `billingCycleKey`: `inv_{subscriptionId}_{periodStart}_{periodEnd}`
+  - Second invocation for the same period safely returns `skippedCount: 1` without creating duplicates.
+- **Historical Snapshots:** Each line item stores a frozen snapshot of plan name, code, quantity, unit price, and period dates.
+
+### `PATCH /api/v1/invoices/:id/status`
+Update invoice status.
+- **Access:** Protected (`Bearer <token>`)
+- **Body Schema:**
+  ```json
+  {
+    "status": "PAID",
+    "notes": "Settled via automated ACH"
+  }
+  ```
+
+### `POST /api/v1/invoices/:id/discount`
+Apply an amount or percentage discount to an invoice before payment.
+- **Access:** Protected (`Bearer <token>`)
+- **Body Schema:**
+  ```json
+  {
+    "discountAmount": 50.00,
+    "discountCode": "PROMO50"
+  }
+  ```
+  *(Or `{ "discountPercent": 10, "discountCode": "FALL10" }`)*
+- **Calculations:**
+  - Discount is subtracted from subtotal before tax recalculation.
+  - Recalculates `subtotal`, `taxAmount`, `total`, and updates `amountDue`.
+
+### `POST /api/v1/invoices/:id/payments`
+Record a partial or full payment against an invoice.
+- **Access:** Protected (`Bearer <token>`)
+- **Body Schema:**
+  ```json
+  {
+    "amount": 100.00,
+    "method": "CREDIT_CARD",
+    "transactionReference": "TXN_CC_987654",
+    "notes": "First installment"
+  }
+  ```
+- **Automated Settlement Logic:**
+  - If `amountPaid < total`: Sets invoice status to `PARTIALLY_PAID` and updates `amountDue`.
+  - If `amountPaid >= total`: Sets invoice status to `PAID`, sets `amountDue = 0.00`, and records `paidAt = now()`.
+
+### `GET /api/v1/invoices/:id/payments`
+Retrieve complete payment history for an invoice.
+- **Access:** Protected (`Bearer <token>`)
+
+---
+
+## 11. Dashboard Analytics Module
+
+All dashboard analytics are computed directly from live PostgreSQL records using high-precision Decimal arithmetic.
+
+### `GET /api/v1/dashboard/stats`
+Retrieve high-level subscription and revenue KPI metrics.
+- **Access:** Protected (`Bearer <token>`)
+- **Example cURL:**
+  ```bash
+  curl -X GET http://localhost:8000/api/v1/dashboard/stats \
+    -H "Authorization: Bearer <token>"
+  ```
+- **Response `200 OK`:**
   ```json
   {
     "success": true,
-    "message": "Recurring invoice generation completed: 1 generated, 0 duplicates skipped",
+    "message": "Dashboard statistics retrieved successfully",
     "data": {
-      "generatedCount": 1,
-      "skippedCount": 0,
-      "totalAmountBilled": "220.00",
-      "invoices": [ ... ]
+      "totalCustomers": 12,
+      "activeSubscriptions": 8,
+      "totalSubscriptions": 14,
+      "monthlyRecurringRevenue": 1250.00,
+      "totalRevenueCollected": 5420.50,
+      "outstandingAmount": 380.00,
+      "paidInvoices": 18,
+      "unpaidInvoices": 2
     }
   }
   ```
 
-### `PATCH /api/v1/invoices/:id/status`
-Update invoice payment and workflow status.
-- **Access:** Private (`Bearer <token>` required)
-- **Body:**
+### `GET /api/v1/dashboard/revenue`
+Retrieve monthly revenue trends for the previous six months from actual payment records.
+- **Access:** Protected (`Bearer <token>`)
+- **Query Parameters:** `months` (optional integer, default: `6`)
+- **Example cURL:**
+  ```bash
+  curl -X GET "http://localhost:8000/api/v1/dashboard/revenue?months=6" \
+    -H "Authorization: Bearer <token>"
+  ```
+- **Response `200 OK`:**
   ```json
   {
-    "status": "PAID",
-    "notes": "Settled via automated ACH transfer"
+    "success": true,
+    "message": "Revenue chart data retrieved successfully",
+    "data": [
+      { "month": "2026-05", "label": "May 2026", "revenue": 850.00, "paymentsCount": 4 },
+      { "month": "2026-06", "label": "Jun 2026", "revenue": 920.00, "paymentsCount": 5 },
+      { "month": "2026-07", "label": "Jul 2026", "revenue": 1100.00, "paymentsCount": 6 },
+      { "month": "2026-08", "label": "Aug 2026", "revenue": 1050.00, "paymentsCount": 6 },
+      { "month": "2026-09", "label": "Sep 2026", "revenue": 1225.50, "paymentsCount": 7 },
+      { "month": "2026-10", "label": "Oct 2026", "revenue": 1275.00, "paymentsCount": 8 }
+    ]
   }
   ```
-- **Settlement Logic:**
-  - Transitioning to `PAID`: Automatically sets `amountPaid = total`, `amountDue = 0.00`, and records `paidAt = now()`.
-  - Transitioning to `PARTIALLY_PAID`: Accepts `amountPaid`, automatically calculates `amountDue = total - amountPaid`.
-  - Transitioning to `UNPAID` / `DRAFT`: Resets `amountPaid = 0.00`, `amountDue = total`, `paidAt = null`.
-- **Response `200 OK`** or `404 Not Found`.
+
+### `GET /api/v1/dashboard/recent-activity`
+Chronologically sorted real-time feed of recent invoices and payments.
+- **Access:** Protected (`Bearer <token>`)
+- **Query Parameters:** `limit` (optional integer, default: `10`, max: `50`)
+- **Response `200 OK`:**
+  ```json
+  {
+    "success": true,
+    "message": "Recent activity feed retrieved successfully",
+    "data": [
+      {
+        "id": "pay-uuid-1",
+        "type": "PAYMENT",
+        "description": "Payment for #INV-202610-0001 (CREDIT_CARD)",
+        "amount": 175.00,
+        "currency": "USD",
+        "status": "COMPLETED",
+        "customer": {
+          "id": "cust-uuid-1",
+          "name": "Acme Corp",
+          "email": "finance@acme.com",
+          "companyName": "Acme Global"
+        },
+        "date": "2026-10-31T08:47:31.382Z"
+      },
+      {
+        "id": "inv-uuid-1",
+        "type": "INVOICE",
+        "description": "Invoice #INV-202610-0001-3305 (PAID)",
+        "amount": 275.00,
+        "currency": "USD",
+        "status": "PAID",
+        "customer": {
+          "id": "cust-uuid-1",
+          "name": "Acme Corp",
+          "email": "finance@acme.com",
+          "companyName": "Acme Global"
+        },
+        "date": "2026-10-31T08:47:31.336Z"
+      }
+    ]
+  }
+  ```
+
+---
+
+## 12. MRR Calculation Methodology
+
+Monthly Recurring Revenue (MRR) represents the normalized monthly recurring subscription revenue under contract.
+
+### Formula
+- **For monthly plans (`interval: "month"`):**
+  $$\text{MRR} = \text{monthly plan price} \times \text{quantity}$$
+- **For yearly plans (`interval: "year"`):**
+  $$\text{MRR} = \frac{\text{yearly plan price} \times \text{quantity}}{12}$$
+
+### Calculation Rules & Exclusions
+1. **Strictly Active Subscriptions:** Only subscriptions with `status = "ACTIVE"` are included in MRR calculations.
+2. **Exclusion of Non-Active States:**
+   - `PAUSED`: Excluded (billing is temporarily frozen).
+   - `CANCELLED`: Excluded (contract terminated).
+   - Expired or Trialing without conversion: Excluded.
+3. **Decimal-Safe Precision:** All arithmetic uses `Prisma.Decimal` to avoid floating-point rounding errors. Division by 12 uses half-up rounding to 2 decimal places.
+
+---
+
+## 13. End-to-End Business Workflow (Verified Sequence)
+
+The complete end-to-end business flow is fully automated and verified via `test-workflow-e2e.ts`:
+
+```
+1. Admin logs in -> POST /api/v1/auth/login
+2. Create customer -> POST /api/v1/customers
+3. Create product -> POST /api/v1/products
+4. Create pricing plan ($150/mo) -> POST /api/v1/plans
+5. Create subscription (2 seats) -> POST /api/v1/subscriptions ($300/mo MRR)
+6. Generate invoice -> POST /api/v1/invoices/generate ($300 subtotal + $30 tax = $330)
+7. Apply discount ($50 off) -> POST /api/v1/invoices/:id/discount ($250 subtotal + $25 tax = $275 total)
+8. Record partial payment ($100) -> POST /api/v1/invoices/:id/payments (Status: PARTIALLY_PAID, Due: $175)
+9. Record remaining payment ($175) -> POST /api/v1/invoices/:id/payments
+10. Verify invoice becomes PAID -> Status: PAID, Amount Due: $0.00, paidAt recorded
+11. Fetch dashboard stats -> GET /api/v1/dashboard/stats
+12. Verify collected revenue and subscription metrics from live PostgreSQL
+```
+
+---
+
+## 14. OpenAPI 3.0 / Swagger Specification
+
+For API clients and automated tooling, an OpenAPI 3.0 document is maintained at `docs/openapi.json`.
+Base server URL: `http://localhost:8000/api/v1`.
+Authentication Scheme: HTTP Bearer JWT (`bearerAuth`).
