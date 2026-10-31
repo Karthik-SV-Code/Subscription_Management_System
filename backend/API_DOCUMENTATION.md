@@ -383,3 +383,88 @@ Retrieve all subscriptions currently due for recurring billing.
   - Strictly returns only `ACTIVE` subscriptions where `nextBillingDate <= asOfDate`.
   - **CANCELLED and PAUSED subscriptions are 100% excluded.**
 - **Response `200 OK`**.
+
+---
+
+## 9. Invoices & Recurring Billing Module
+
+The Invoices module handles automated recurring billing runs, high-precision Decimal financial calculations, line-item snapshots preserving pricing history, and database-enforced duplicate invoice prevention.
+
+### Supported Invoice Statuses
+- `DRAFT`: Preliminary invoice draft, not yet finalized or dispatched.
+- `UNPAID`: Active outstanding invoice awaiting payment.
+- `PARTIALLY_PAID`: Partially paid invoice with remaining `amountDue`.
+- `PAID`: Fully settled invoice (`amountDue: 0.00`, `paidAt` recorded).
+- `OVERDUE`: Unpaid invoice past its `dueDate`.
+
+---
+
+### `GET /api/v1/invoices`
+List invoices with pagination, filtering, and search.
+- **Access:** Public / Authenticated
+- **Query Parameters:**
+  - `page` (number, default: `1`)
+  - `pageSize` (number, default: `10`, max: `100`)
+  - `status` (`DRAFT`, `UNPAID`, `PARTIALLY_PAID`, `PAID`, `OVERDUE`)
+  - `customerId` (filter by customer UUID)
+  - `subscriptionId` (filter by subscription UUID)
+  - `search` (searches `invoiceNumber`, `customer.name`, `customer.email`)
+- **Response `200 OK`**: Paginated list of invoices with embedded customer details and line-item snapshots.
+
+### `GET /api/v1/invoices/:id`
+Retrieve detailed invoice by UUID with line-item snapshots and customer information.
+- **Access:** Public / Authenticated
+- **Response `200 OK`** or `404 Not Found`.
+
+### `POST /api/v1/invoices/generate`
+Run automated recurring invoice generation for active subscriptions due for billing.
+- **Access:** Private (`Bearer <token>` required)
+- **Body:**
+  ```json
+  {
+    "asOfDate": "2026-10-31T00:00:00.000Z",
+    "subscriptionId": "optional-subscription-uuid",
+    "customerId": "optional-customer-uuid",
+    "taxRate": 10.0,
+    "dueDateDays": 14
+  }
+  ```
+- **Business & Financial Rules:**
+  - **Eligibility:** Strictly selects subscriptions with `status: ACTIVE` and `nextBillingDate <= asOfDate`. **CANCELLED and PAUSED subscriptions are 100% excluded.**
+  - **High-Precision Decimal Arithmetic:** Subtotal (`unitAmount * quantity`), tax (`subtotal * (taxRate / 100)`), and total (`subtotal + tax`) are calculated using PostgreSQL `Decimal` types—eliminating floating-point inaccuracies.
+  - **Historical Pricing Snapshots:** Each line item captures `planName`, `planCode`, `unitAmount`, `quantity`, and billing period dates at invoice creation time. Future plan price modifications never corrupt historical invoices.
+  - **Unique Invoice Numbering:** Formatted as `INV-YYYYMM-{SEQ}-{RANDOM}`.
+  - **Duplicate Prevention:**
+    - Unique database constraint: `@@unique([subscriptionId, billingPeriodStart, billingPeriodEnd])`
+    - Idempotent `billingCycleKey` constraint: `inv_{subscriptionId}_{periodStart}_{periodEnd}`
+    - Prevents duplicate invoice creation if the cycle was already billed.
+  - **Atomic Transaction:** In a single transaction, the invoice and line items are created and the subscription's billing period is advanced with calendar month-end pinning.
+- **Response `201 Created`**:
+  ```json
+  {
+    "success": true,
+    "message": "Recurring invoice generation completed: 1 generated, 0 duplicates skipped",
+    "data": {
+      "generatedCount": 1,
+      "skippedCount": 0,
+      "totalAmountBilled": "220.00",
+      "invoices": [ ... ]
+    }
+  }
+  ```
+
+### `PATCH /api/v1/invoices/:id/status`
+Update invoice payment and workflow status.
+- **Access:** Private (`Bearer <token>` required)
+- **Body:**
+  ```json
+  {
+    "status": "PAID",
+    "notes": "Settled via automated ACH transfer"
+  }
+  ```
+- **Settlement Logic:**
+  - Transitioning to `PAID`: Automatically sets `amountPaid = total`, `amountDue = 0.00`, and records `paidAt = now()`.
+  - Transitioning to `PARTIALLY_PAID`: Accepts `amountPaid`, automatically calculates `amountDue = total - amountPaid`.
+  - Transitioning to `UNPAID` / `DRAFT`: Resets `amountPaid = 0.00`, `amountDue = total`, `paidAt = null`.
+- **Response `200 OK`** or `404 Not Found`.
