@@ -4,85 +4,17 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>SubscriptIQ — Subscription & Recurring Revenue Management</title>
-  <script src="https://cdn.tailwindcss.com"></script>
-  <script src="https://unpkg.com/lucide@latest"></script>
+  
+  
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
-  <script>
-    tailwind.config = {
-      theme: {
-        extend: {
-          colors: {
-            appBg: '#F5F6F8',
-            cardBg: '#FFFFFF',
-            textMain: '#171717',
-            textMuted: '#737373',
-            borderSubtle: '#EAECEF',
-            brandDark: '#171717',
-            brandAccent: '#4F46E5',
-          },
-          borderRadius: {
-            'card': '20px',
-            'elem': '12px',
-          },
-          boxShadow: {
-            'soft': '0 2px 10px rgba(0, 0, 0, 0.03)',
-            'hover': '0 6px 20px rgba(0, 0, 0, 0.06)',
-            'circle': '0 2px 8px rgba(0, 0, 0, 0.06)',
-          }
-        }
-      }
-    }
-  </script>
-  <style>
-    body {
-      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-      background-color: #F5F6F8;
-      color: #171717;
-      -webkit-font-smoothing: antialiased;
-    }
-    .tab-view { display: none; }
-    .tab-view.active { display: block; animation: fadeIn 0.18s ease-in-out; }
-    @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(4px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
-    .custom-scrollbar::-webkit-scrollbar { width: 4px; height: 4px; }
-    .custom-scrollbar::-webkit-scrollbar-thumb { background: #E2E8F0; border-radius: 4px; }
-    
-    /* Shrink / Expand transitions */
-    #app-sidebar {
-      transition: width 0.25s cubic-bezier(0.4, 0, 0.2, 1);
-    }
-    #main-wrapper, #app-header {
-      transition: padding-left 0.25s cubic-bezier(0.4, 0, 0.2, 1);
-    }
-    .sidebar-shrunk .nav-label,
-    .sidebar-shrunk .brand-title,
-    .sidebar-shrunk .profile-details {
-      display: none !important;
-    }
-    .sidebar-shrunk .nav-item {
-      justify-content: center !important;
-      padding-left: 0 !important;
-      padding-right: 0 !important;
-    }
-    .sidebar-shrunk .section-heading {
-      display: none !important;
-    }
-    .sidebar-shrunk .brand-header {
-      justify-content: center !important;
-      padding-left: 0 !important;
-      padding-right: 0 !important;
-    }
-    .sidebar-shrunk .profile-card {
-      padding: 0 !important;
-      background: transparent !important;
-      border: none !important;
-      justify-content: center !important;
-    }
+  
+  <link rel="stylesheet" href="./styles.css">
+  <link rel="stylesheet" href="./styles.css">
+  <style id="embedded-core-styles">
+*,:after,:before{--tw-border-spacing-x:0;--tw-border-spacing-y:0;--tw-translate-x:0;--tw-translate-y:0;--tw-rotate:0;--tw-skew-x:0;--tw-skew-y:0;--tw-scale-x:1;--tw-scale-y:1;--tw-pan-x: ;--tw-pan-y: ;--tw-pinch-zoom: ;--tw-scroll-snap-strictness:proximity;--tw-gradient-from-position: ;--tw-gradient-via-position: ;--tw-gradient-to-position: ;--tw-ordinal: ;--tw-slashed-zero: ;--tw-numeric-figure: ;--tw-numeric-spacing: ;--tw-numeric-fraction: ;--tw-ring-inset: ;--tw-ring-offset-width:0px;--tw-ring-offset-color:#fff;--tw-ring-color:rgba(59,130,246,.5);--tw-ring-offset-shadow:0 0 #0000;--tw-ring-shadow:0 0 #0000;--tw-shadow:0 0 #0000;--tw-shadow-colored:0 0 #0000;--tw-blur: ;--tw-brightness: ;--tw-contrast: ;--tw-grayscale: ;--tw-hue-rotate: ;--tw-invert: ;--tw-saturate: ;--tw-sepia: ;--tw-drop-shadow: ;--tw-backdrop-blur: ;--tw-backdrop-brightness: ;--tw-backdrop-contrast: ;--tw-backdrop-grayscale: ;--tw-backdrop-hue-rotate: ;--tw-backdrop-invert: ;--tw-backdrop-opacity: ;--tw-backdrop-saturate: ;--tw-backdrop-sepia: ;--tw-contain-size: ;--tw-contain-layout: ;--tw-contain-paint: ;--tw-contain-style: }::backdrop{--tw-border-spacing-x:0;--tw-border-spacing-y:0;--tw-translate-x:0;--tw-translate-y:0;--tw-rotate:0;--tw-skew-x:0;--tw-skew-y:0;--tw-scale-x:1;--tw-scale-y:1;--tw-pan-x: ;--tw-pan-y: ;--tw-pinch-zoom: ;--tw-scroll-snap-strictness:proximity;--tw-gradient-from-position: ;--tw-gradient-via-position: ;--tw-gradient-to-position: ;--tw-ordinal: ;--tw-slashed-zero: ;--tw-numeric-figure: ;--tw-numeric-spacing: ;--tw-numeric-fraction: ;--tw-ring-inset: ;--tw-ring-offset-width:0px;--tw-ring-offset-color:#fff;--tw-ring-color:rgba(59,130,246,.5);--tw-ring-offset-shadow:0 0 #0000;--tw-ring-shadow:0 0 #0000;--tw-shadow:0 0 #0000;--tw-shadow-colored:0 0 #0000;--tw-blur: ;--tw-brightness: ;--tw-contrast: ;--tw-grayscale: ;--tw-hue-rotate: ;--tw-invert: ;--tw-saturate: ;--tw-sepia: ;--tw-drop-shadow: ;--tw-backdrop-blur: ;--tw-backdrop-brightness: ;--tw-backdrop-contrast: ;--tw-backdrop-grayscale: ;--tw-backdrop-hue-rotate: ;--tw-backdrop-invert: ;--tw-backdrop-opacity: ;--tw-backdrop-saturate: ;--tw-backdrop-sepia: ;--tw-contain-size: ;--tw-contain-layout: ;--tw-contain-paint: ;--tw-contain-style: }/*! tailwindcss v3.4.19 | MIT License | https://tailwindcss.com*/*,:after,:before{box-sizing:border-box;border:0 solid #e5e7eb}:after,:before{--tw-content:""}:host,html{line-height:1.5;-webkit-text-size-adjust:100%;-moz-tab-size:4;-o-tab-size:4;tab-size:4;font-family:ui-sans-serif,system-ui,sans-serif,Apple Color Emoji,Segoe UI Emoji,Segoe UI Symbol,Noto Color Emoji;font-feature-settings:normal;font-variation-settings:normal;-webkit-tap-highlight-color:transparent}body{margin:0;line-height:inherit}hr{height:0;color:inherit;border-top-width:1px}abbr:where([title]){-webkit-text-decoration:underline dotted;text-decoration:underline dotted}h1,h2,h3,h4,h5,h6{font-size:inherit;font-weight:inherit}a{color:inherit;text-decoration:inherit}b,strong{font-weight:bolder}code,kbd,pre,samp{font-family:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,Liberation Mono,Courier New,monospace;font-feature-settings:normal;font-variation-settings:normal;font-size:1em}small{font-size:80%}sub,sup{font-size:75%;line-height:0;position:relative;vertical-align:baseline}sub{bottom:-.25em}sup{top:-.5em}table{text-indent:0;border-color:inherit;border-collapse:collapse}button,input,optgroup,select,textarea{font-family:inherit;font-feature-settings:inherit;font-variation-settings:inherit;font-size:100%;font-weight:inherit;line-height:inherit;letter-spacing:inherit;color:inherit;margin:0;padding:0}button,select{text-transform:none}button,input:where([type=button]),input:where([type=reset]),input:where([type=submit]){-webkit-appearance:button;background-color:transparent;background-image:none}:-moz-focusring{outline:auto}:-moz-ui-invalid{box-shadow:none}progress{vertical-align:baseline}::-webkit-inner-spin-button,::-webkit-outer-spin-button{height:auto}[type=search]{-webkit-appearance:textfield;outline-offset:-2px}::-webkit-search-decoration{-webkit-appearance:none}::-webkit-file-upload-button{-webkit-appearance:button;font:inherit}summary{display:list-item}blockquote,dd,dl,figure,h1,h2,h3,h4,h5,h6,hr,p,pre{margin:0}fieldset{margin:0}fieldset,legend{padding:0}menu,ol,ul{list-style:none;margin:0;padding:0}dialog{padding:0}textarea{resize:vertical}input::-moz-placeholder,textarea::-moz-placeholder{opacity:1;color:#9ca3af}input::placeholder,textarea::placeholder{opacity:1;color:#9ca3af}[role=button],button{cursor:pointer}:disabled{cursor:default}audio,canvas,embed,iframe,img,object,svg,video{display:block;vertical-align:middle}img,video{max-width:100%;height:auto}[hidden]:where(:not([hidden=until-found])){display:none}:root{--background:220 14% 97%;--foreground:0 0% 9%;--card:0 0% 100%;--card-foreground:0 0% 9%;--popover:0 0% 100%;--popover-foreground:0 0% 9%;--primary:0 0% 9%;--primary-foreground:0 0% 100%;--secondary:220 14% 94%;--secondary-foreground:0 0% 9%;--muted:220 14% 94%;--muted-foreground:0 0% 45%;--accent:220 14% 94%;--accent-foreground:0 0% 9%;--destructive:0 72% 51%;--destructive-foreground:0 0% 100%;--success:142 76% 36%;--success-foreground:0 0% 100%;--warning:38 92% 50%;--warning-foreground:0 0% 100%;--border:216 12% 93%;--input:216 12% 93%;--ring:0 0% 9%;--radius:1.125rem;--sidebar-background:0 0% 100%;--sidebar-foreground:0 0% 9%;--sidebar-primary:0 0% 9%;--sidebar-primary-foreground:0 0% 100%;--sidebar-accent:220 14% 96%;--sidebar-accent-foreground:0 0% 9%;--sidebar-border:216 12% 93%;--sidebar-ring:0 0% 9%}*{border-color:hsl(var(--border))}body{background-color:hsl(var(--background));color:hsl(var(--foreground));-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale}body ::-moz-selection{--tw-bg-opacity:1;background-color:rgb(23 23 23/var(--tw-bg-opacity,1));--tw-text-opacity:1;color:rgb(255 255 255/var(--tw-text-opacity,1))}body ::selection{--tw-bg-opacity:1;background-color:rgb(23 23 23/var(--tw-bg-opacity,1));--tw-text-opacity:1;color:rgb(255 255 255/var(--tw-text-opacity,1))}body::-moz-selection{--tw-bg-opacity:1;background-color:rgb(23 23 23/var(--tw-bg-opacity,1));--tw-text-opacity:1;color:rgb(255 255 255/var(--tw-text-opacity,1))}body::selection{--tw-bg-opacity:1;background-color:rgb(23 23 23/var(--tw-bg-opacity,1));--tw-text-opacity:1;color:rgb(255 255 255/var(--tw-text-opacity,1))}body{font-feature-settings:"cv02","cv03","cv04","cv11"}.sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border-width:0}.pointer-events-none{pointer-events:none}.fixed{position:fixed}.absolute{position:absolute}.relative{position:relative}.sticky{position:sticky}.inset-0{inset:0}.inset-y-0{top:0;bottom:0}.-top-3{top:-.75rem}.bottom-5{bottom:1.25rem}.left-0{left:0}.left-3{left:.75rem}.left-3\.5{left:.875rem}.left-\[50\%\]{left:50%}.left-full{left:100%}.right-1{right:.25rem}.right-1\.5{right:.375rem}.right-2{right:.5rem}.right-2\.5{right:.625rem}.right-3{right:.75rem}.right-4{right:1rem}.right-5{right:1.25rem}.right-6{right:1.5rem}.top-0{top:0}.top-1{top:.25rem}.top-1\.5{top:.375rem}.top-1\/2{top:50%}.top-2{top:.5rem}.top-2\.5{top:.625rem}.top-3{top:.75rem}.top-4{top:1rem}.top-\[50\%\]{top:50%}.z-20{z-index:20}.z-30{z-index:30}.z-40{z-index:40}.z-50{z-index:50}.-mx-1{margin-left:-.25rem;margin-right:-.25rem}.mx-4{margin-left:1rem;margin-right:1rem}.mx-auto{margin-left:auto;margin-right:auto}.my-1{margin-top:.25rem;margin-bottom:.25rem}.my-3{margin-top:.75rem;margin-bottom:.75rem}.mb-1{margin-bottom:.25rem}.mb-1\.5{margin-bottom:.375rem}.mb-2{margin-bottom:.5rem}.ml-3{margin-left:.75rem}.ml-auto{margin-left:auto}.mr-1{margin-right:.25rem}.mr-1\.5{margin-right:.375rem}.mr-2{margin-right:.5rem}.mt-0{margin-top:0}.mt-0\.5{margin-top:.125rem}.mt-1{margin-top:.25rem}.mt-1\.5{margin-top:.375rem}.mt-2{margin-top:.5rem}.mt-2\.5{margin-top:.625rem}.mt-3{margin-top:.75rem}.mt-4{margin-top:1rem}.mt-5{margin-top:1.25rem}.mt-6{margin-top:1.5rem}.block{display:block}.inline-block{display:inline-block}.flex{display:flex}.inline-flex{display:inline-flex}.table{display:table}.grid{display:grid}.hidden{display:none}.aspect-square{aspect-ratio:1/1}.h-1{height:.25rem}.h-1\.5{height:.375rem}.h-10{height:2.5rem}.h-11{height:2.75rem}.h-12{height:3rem}.h-14{height:3.5rem}.h-16{height:4rem}.h-2{height:.5rem}.h-20{height:5rem}.h-3{height:.75rem}.h-3\.5{height:.875rem}.h-4{height:1rem}.h-5{height:1.25rem}.h-52{height:13rem}.h-6{height:1.5rem}.h-64{height:16rem}.h-7{height:1.75rem}.h-8{height:2rem}.h-9{height:2.25rem}.h-full{height:100%}.h-px{height:1px}.h-screen{height:100vh}.min-h-screen{min-height:100vh}.w-1{width:.25rem}.w-1\.5{width:.375rem}.w-1\/4{width:25%}.w-10{width:2.5rem}.w-11{width:2.75rem}.w-12{width:3rem}.w-2{width:.5rem}.w-20{width:5rem}.w-24{width:6rem}.w-28{width:7rem}.w-3{width:.75rem}.w-3\.5{width:.875rem}.w-32{width:8rem}.w-36{width:9rem}.w-4{width:1rem}.w-40{width:10rem}.w-48{width:12rem}.w-5{width:1.25rem}.w-52{width:13rem}.w-56{width:14rem}.w-6{width:1.5rem}.w-64{width:16rem}.w-8{width:2rem}.w-9{width:2.25rem}.w-full{width:100%}.min-w-0{min-width:0}.min-w-\[8rem\]{min-width:8rem}.max-w-2xl{max-width:42rem}.max-w-7xl{max-width:80rem}.max-w-lg{max-width:32rem}.max-w-md{max-width:28rem}.max-w-sm{max-width:24rem}.flex-1{flex:1 1 0%}.shrink{flex-shrink:1}.shrink-0{flex-shrink:0}.grow{flex-grow:1}.border-collapse{border-collapse:collapse}.-translate-x-full{--tw-translate-x:-100%}.-translate-x-full,.-translate-y-1{transform:translate(var(--tw-translate-x),var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y))}.-translate-y-1{--tw-translate-y:-0.25rem}.-translate-y-1\/2{--tw-translate-y:-50%}.-translate-y-1\/2,.translate-x-0{transform:translate(var(--tw-translate-x),var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y))}.translate-x-0{--tw-translate-x:0px}.translate-x-\[-50\%\]{--tw-translate-x:-50%}.translate-x-\[-50\%\],.translate-y-\[-50\%\]{transform:translate(var(--tw-translate-x),var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y))}.translate-y-\[-50\%\]{--tw-translate-y:-50%}.transform{transform:translate(var(--tw-translate-x),var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y))}@keyframes ping{75%,to{transform:scale(2);opacity:0}}.animate-ping{animation:ping 1s cubic-bezier(0,0,.2,1) infinite}@keyframes pulse{50%{opacity:.5}}.animate-pulse{animation:pulse 2s cubic-bezier(.4,0,.6,1) infinite}.cursor-default{cursor:default}.cursor-pointer{cursor:pointer}.select-none{-webkit-user-select:none;-moz-user-select:none;user-select:none}.grid-cols-1{grid-template-columns:repeat(1,minmax(0,1fr))}.grid-cols-2{grid-template-columns:repeat(2,minmax(0,1fr))}.grid-cols-4{grid-template-columns:repeat(4,minmax(0,1fr))}.flex-col{flex-direction:column}.flex-col-reverse{flex-direction:column-reverse}.flex-wrap{flex-wrap:wrap}.items-start{align-items:flex-start}.items-end{align-items:flex-end}.items-center{align-items:center}.items-baseline{align-items:baseline}.items-stretch{align-items:stretch}.justify-start{justify-content:flex-start}.justify-end{justify-content:flex-end}.justify-center{justify-content:center}.justify-between{justify-content:space-between}.gap-0{gap:0}.gap-0\.5{gap:.125rem}.gap-1{gap:.25rem}.gap-1\.5{gap:.375rem}.gap-2{gap:.5rem}.gap-2\.5{gap:.625rem}.gap-3{gap:.75rem}.gap-4{gap:1rem}.gap-6{gap:1.5rem}.space-x-4>:not([hidden])~:not([hidden]){--tw-space-x-reverse:0;margin-right:calc(1rem*var(--tw-space-x-reverse));margin-left:calc(1rem*(1 - var(--tw-space-x-reverse)))}.space-y-1>:not([hidden])~:not([hidden]){--tw-space-y-reverse:0;margin-top:calc(.25rem*(1 - var(--tw-space-y-reverse)));margin-bottom:calc(.25rem*var(--tw-space-y-reverse))}.space-y-1\.5>:not([hidden])~:not([hidden]){--tw-space-y-reverse:0;margin-top:calc(.375rem*(1 - var(--tw-space-y-reverse)));margin-bottom:calc(.375rem*var(--tw-space-y-reverse))}.space-y-2>:not([hidden])~:not([hidden]){--tw-space-y-reverse:0;margin-top:calc(.5rem*(1 - var(--tw-space-y-reverse)));margin-bottom:calc(.5rem*var(--tw-space-y-reverse))}.space-y-2\.5>:not([hidden])~:not([hidden]){--tw-space-y-reverse:0;margin-top:calc(.625rem*(1 - var(--tw-space-y-reverse)));margin-bottom:calc(.625rem*var(--tw-space-y-reverse))}.space-y-3>:not([hidden])~:not([hidden]){--tw-space-y-reverse:0;margin-top:calc(.75rem*(1 - var(--tw-space-y-reverse)));margin-bottom:calc(.75rem*var(--tw-space-y-reverse))}.space-y-4>:not([hidden])~:not([hidden]){--tw-space-y-reverse:0;margin-top:calc(1rem*(1 - var(--tw-space-y-reverse)));margin-bottom:calc(1rem*var(--tw-space-y-reverse))}.space-y-6>:not([hidden])~:not([hidden]){--tw-space-y-reverse:0;margin-top:calc(1.5rem*(1 - var(--tw-space-y-reverse)));margin-bottom:calc(1.5rem*var(--tw-space-y-reverse))}.space-y-8>:not([hidden])~:not([hidden]){--tw-space-y-reverse:0;margin-top:calc(2rem*(1 - var(--tw-space-y-reverse)));margin-bottom:calc(2rem*var(--tw-space-y-reverse))}.divide-y>:not([hidden])~:not([hidden]){--tw-divide-y-reverse:0;border-top-width:calc(1px*(1 - var(--tw-divide-y-reverse)));border-bottom-width:calc(1px*var(--tw-divide-y-reverse))}.divide-\[\#EAECEF\]>:not([hidden])~:not([hidden]),.divide-borderSubtle>:not([hidden])~:not([hidden]){--tw-divide-opacity:1;border-color:rgb(234 236 239/var(--tw-divide-opacity,1))}.divide-slate-100>:not([hidden])~:not([hidden]){--tw-divide-opacity:1;border-color:rgb(241 245 249/var(--tw-divide-opacity,1))}.self-center{align-self:center}.overflow-hidden{overflow:hidden}.overflow-x-auto{overflow-x:auto}.overflow-y-auto{overflow-y:auto}.truncate{overflow:hidden;text-overflow:ellipsis}.truncate,.whitespace-nowrap{white-space:nowrap}.rounded{border-radius:.25rem}.rounded-2xl{border-radius:1rem}.rounded-\[20px\],.rounded-card{border-radius:20px}.rounded-elem{border-radius:12px}.rounded-full{border-radius:9999px}.rounded-lg{border-radius:var(--radius)}.rounded-md{border-radius:calc(var(--radius) - 2px)}.rounded-sm{border-radius:calc(var(--radius) - 4px)}.rounded-xl{border-radius:.75rem}.border{border-width:1px}.border-2{border-width:2px}.border-b{border-bottom-width:1px}.border-r{border-right-width:1px}.border-t{border-top-width:1px}.border-dashed{border-style:dashed}.border-\[\#171717\]{--tw-border-opacity:1;border-color:rgb(23 23 23/var(--tw-border-opacity,1))}.border-\[\#EAECEF\]{--tw-border-opacity:1;border-color:rgb(234 236 239/var(--tw-border-opacity,1))}.border-amber-100{--tw-border-opacity:1;border-color:rgb(254 243 199/var(--tw-border-opacity,1))}.border-amber-200{--tw-border-opacity:1;border-color:rgb(253 230 138/var(--tw-border-opacity,1))}.border-blue-200{--tw-border-opacity:1;border-color:rgb(191 219 254/var(--tw-border-opacity,1))}.border-borderSubtle{--tw-border-opacity:1;border-color:rgb(234 236 239/var(--tw-border-opacity,1))}.border-brandDark{--tw-border-opacity:1;border-color:rgb(23 23 23/var(--tw-border-opacity,1))}.border-emerald-100{--tw-border-opacity:1;border-color:rgb(209 250 229/var(--tw-border-opacity,1))}.border-emerald-200{--tw-border-opacity:1;border-color:rgb(167 243 208/var(--tw-border-opacity,1))}.border-indigo-100{--tw-border-opacity:1;border-color:rgb(224 231 255/var(--tw-border-opacity,1))}.border-indigo-200{--tw-border-opacity:1;border-color:rgb(199 210 254/var(--tw-border-opacity,1))}.border-input{border-color:hsl(var(--input))}.border-purple-200{--tw-border-opacity:1;border-color:rgb(233 213 255/var(--tw-border-opacity,1))}.border-rose-100{--tw-border-opacity:1;border-color:rgb(255 228 230/var(--tw-border-opacity,1))}.border-rose-200{--tw-border-opacity:1;border-color:rgb(254 205 211/var(--tw-border-opacity,1))}.border-sky-100{--tw-border-opacity:1;border-color:rgb(224 242 254/var(--tw-border-opacity,1))}.border-sky-200{--tw-border-opacity:1;border-color:rgb(186 230 253/var(--tw-border-opacity,1))}.border-slate-100{--tw-border-opacity:1;border-color:rgb(241 245 249/var(--tw-border-opacity,1))}.border-slate-200{--tw-border-opacity:1;border-color:rgb(226 232 240/var(--tw-border-opacity,1))}.border-slate-200\/60{border-color:rgba(226,232,240,.6)}.border-slate-200\/80{border-color:rgba(226,232,240,.8)}.border-slate-200\/90{border-color:rgba(226,232,240,.9)}.border-transparent{border-color:transparent}.bg-\[\#171717\]{--tw-bg-opacity:1;background-color:rgb(23 23 23/var(--tw-bg-opacity,1))}.bg-\[\#EAECEF\]{--tw-bg-opacity:1;background-color:rgb(234 236 239/var(--tw-bg-opacity,1))}.bg-\[\#F1F3F5\]{--tw-bg-opacity:1;background-color:rgb(241 243 245/var(--tw-bg-opacity,1))}.bg-\[\#F5F6F8\]{--tw-bg-opacity:1;background-color:rgb(245 246 248/var(--tw-bg-opacity,1))}.bg-\[\#F8FAFC\]{--tw-bg-opacity:1;background-color:rgb(248 250 252/var(--tw-bg-opacity,1))}.bg-amber-50{--tw-bg-opacity:1;background-color:rgb(255 251 235/var(--tw-bg-opacity,1))}.bg-amber-50\/60{background-color:rgba(255,251,235,.6)}.bg-amber-500{--tw-bg-opacity:1;background-color:rgb(245 158 11/var(--tw-bg-opacity,1))}.bg-appBg{--tw-bg-opacity:1;background-color:rgb(245 246 248/var(--tw-bg-opacity,1))}.bg-background{background-color:hsl(var(--background))}.bg-black{--tw-bg-opacity:1;background-color:rgb(0 0 0/var(--tw-bg-opacity,1))}.bg-black\/40{background-color:rgba(0,0,0,.4)}.bg-black\/50{background-color:rgba(0,0,0,.5)}.bg-blue-50{--tw-bg-opacity:1;background-color:rgb(239 246 255/var(--tw-bg-opacity,1))}.bg-blue-500{--tw-bg-opacity:1;background-color:rgb(59 130 246/var(--tw-bg-opacity,1))}.bg-brandDark{--tw-bg-opacity:1;background-color:rgb(23 23 23/var(--tw-bg-opacity,1))}.bg-cardBg{--tw-bg-opacity:1;background-color:rgb(255 255 255/var(--tw-bg-opacity,1))}.bg-destructive{background-color:hsl(var(--destructive))}.bg-emerald-50{--tw-bg-opacity:1;background-color:rgb(236 253 245/var(--tw-bg-opacity,1))}.bg-emerald-500{--tw-bg-opacity:1;background-color:rgb(16 185 129/var(--tw-bg-opacity,1))}.bg-emerald-600{--tw-bg-opacity:1;background-color:rgb(5 150 105/var(--tw-bg-opacity,1))}.bg-indigo-50{--tw-bg-opacity:1;background-color:rgb(238 242 255/var(--tw-bg-opacity,1))}.bg-indigo-50\/50{background-color:rgba(238,242,255,.5)}.bg-indigo-50\/60{background-color:rgba(238,242,255,.6)}.bg-indigo-500{--tw-bg-opacity:1;background-color:rgb(99 102 241/var(--tw-bg-opacity,1))}.bg-indigo-600{--tw-bg-opacity:1;background-color:rgb(79 70 229/var(--tw-bg-opacity,1))}.bg-muted{background-color:hsl(var(--muted))}.bg-muted\/60{background-color:hsl(var(--muted)/.6)}.bg-popover{background-color:hsl(var(--popover))}.bg-primary{background-color:hsl(var(--primary))}.bg-purple-50{--tw-bg-opacity:1;background-color:rgb(250 245 255/var(--tw-bg-opacity,1))}.bg-purple-600{--tw-bg-opacity:1;background-color:rgb(147 51 234/var(--tw-bg-opacity,1))}.bg-rose-400{--tw-bg-opacity:1;background-color:rgb(251 113 133/var(--tw-bg-opacity,1))}.bg-rose-50{--tw-bg-opacity:1;background-color:rgb(255 241 242/var(--tw-bg-opacity,1))}.bg-rose-50\/60{background-color:rgba(255,241,242,.6)}.bg-rose-500{--tw-bg-opacity:1;background-color:rgb(244 63 94/var(--tw-bg-opacity,1))}.bg-rose-600{--tw-bg-opacity:1;background-color:rgb(225 29 72/var(--tw-bg-opacity,1))}.bg-secondary{background-color:hsl(var(--secondary))}.bg-sky-50{--tw-bg-opacity:1;background-color:rgb(240 249 255/var(--tw-bg-opacity,1))}.bg-sky-50\/60{background-color:rgba(240,249,255,.6)}.bg-slate-100{--tw-bg-opacity:1;background-color:rgb(241 245 249/var(--tw-bg-opacity,1))}.bg-slate-200{--tw-bg-opacity:1;background-color:rgb(226 232 240/var(--tw-bg-opacity,1))}.bg-slate-400{--tw-bg-opacity:1;background-color:rgb(148 163 184/var(--tw-bg-opacity,1))}.bg-slate-50{--tw-bg-opacity:1;background-color:rgb(248 250 252/var(--tw-bg-opacity,1))}.bg-slate-50\/50{background-color:rgba(248,250,252,.5)}.bg-slate-50\/70{background-color:rgba(248,250,252,.7)}.bg-slate-50\/75{background-color:rgba(248,250,252,.75)}.bg-slate-50\/80{background-color:rgba(248,250,252,.8)}.bg-slate-900{--tw-bg-opacity:1;background-color:rgb(15 23 42/var(--tw-bg-opacity,1))}.bg-transparent{background-color:transparent}.bg-white{--tw-bg-opacity:1;background-color:rgb(255 255 255/var(--tw-bg-opacity,1))}.bg-white\/90{background-color:hsla(0,0%,100%,.9)}.bg-white\/95{background-color:hsla(0,0%,100%,.95)}.bg-gradient-to-br{background-image:linear-gradient(to bottom right,var(--tw-gradient-stops))}.from-indigo-600{--tw-gradient-from:#4f46e5 var(--tw-gradient-from-position);--tw-gradient-to:rgba(79,70,229,0) var(--tw-gradient-to-position);--tw-gradient-stops:var(--tw-gradient-from),var(--tw-gradient-to)}.to-indigo-700{--tw-gradient-to:#4338ca var(--tw-gradient-to-position)}.p-1{padding:.25rem}.p-1\.5{padding:.375rem}.p-12{padding:3rem}.p-2{padding:.5rem}.p-2\.5{padding:.625rem}.p-3{padding:.75rem}.p-3\.5{padding:.875rem}.p-4{padding:1rem}.p-5{padding:1.25rem}.p-6{padding:1.5rem}.p-8{padding:2rem}.px-1{padding-left:.25rem;padding-right:.25rem}.px-1\.5{padding-left:.375rem;padding-right:.375rem}.px-2{padding-left:.5rem;padding-right:.5rem}.px-2\.5{padding-left:.625rem;padding-right:.625rem}.px-3{padding-left:.75rem;padding-right:.75rem}.px-3\.5{padding-left:.875rem;padding-right:.875rem}.px-4{padding-left:1rem;padding-right:1rem}.px-5{padding-left:1.25rem;padding-right:1.25rem}.px-6{padding-left:1.5rem;padding-right:1.5rem}.py-0{padding-top:0;padding-bottom:0}.py-0\.5{padding-top:.125rem;padding-bottom:.125rem}.py-1{padding-top:.25rem;padding-bottom:.25rem}.py-1\.5{padding-top:.375rem;padding-bottom:.375rem}.py-12{padding-top:3rem;padding-bottom:3rem}.py-2{padding-top:.5rem;padding-bottom:.5rem}.py-2\.5{padding-top:.625rem;padding-bottom:.625rem}.py-3{padding-top:.75rem;padding-bottom:.75rem}.py-3\.5{padding-top:.875rem;padding-bottom:.875rem}.py-4{padding-top:1rem;padding-bottom:1rem}.py-5{padding-top:1.25rem;padding-bottom:1.25rem}.pb-1{padding-bottom:.25rem}.pb-2{padding-bottom:.5rem}.pb-3{padding-bottom:.75rem}.pb-4{padding-bottom:1rem}.pl-10{padding-left:2.5rem}.pl-2{padding-left:.5rem}.pl-3{padding-left:.75rem}.pl-8{padding-left:2rem}.pl-9{padding-left:2.25rem}.pr-12{padding-right:3rem}.pr-3{padding-right:.75rem}.pr-4{padding-right:1rem}.pr-8{padding-right:2rem}.pt-0{padding-top:0}.pt-1{padding-top:.25rem}.pt-2{padding-top:.5rem}.pt-3{padding-top:.75rem}.pt-4{padding-top:1rem}.text-left{text-align:left}.text-center{text-align:center}.text-right{text-align:right}.align-middle{vertical-align:middle}.font-mono{font-family:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,Liberation Mono,Courier New,monospace}.font-sans{font-family:ui-sans-serif,system-ui,sans-serif,Apple Color Emoji,Segoe UI Emoji,Segoe UI Symbol,Noto Color Emoji}.text-2xl{font-size:1.5rem;line-height:2rem}.text-3xl{font-size:1.875rem;line-height:2.25rem}.text-\[10px\]{font-size:10px}.text-\[11px\]{font-size:11px}.text-base{font-size:1rem;line-height:1.5rem}.text-lg{font-size:1.125rem;line-height:1.75rem}.text-sm{font-size:.875rem;line-height:1.25rem}.text-xl{font-size:1.25rem;line-height:1.75rem}.text-xs{font-size:.75rem;line-height:1rem}.font-bold{font-weight:700}.font-extrabold{font-weight:800}.font-medium{font-weight:500}.font-normal{font-weight:400}.font-semibold{font-weight:600}.uppercase{text-transform:uppercase}.leading-none{line-height:1}.leading-relaxed{line-height:1.625}.leading-tight{line-height:1.25}.tracking-tight{letter-spacing:-.025em}.tracking-wide{letter-spacing:.025em}.tracking-wider{letter-spacing:.05em}.text-\[\#171717\]{--tw-text-opacity:1;color:rgb(23 23 23/var(--tw-text-opacity,1))}.text-\[\#555\]{--tw-text-opacity:1;color:rgb(85 85 85/var(--tw-text-opacity,1))}.text-\[\#737373\]{--tw-text-opacity:1;color:rgb(115 115 115/var(--tw-text-opacity,1))}.text-amber-600{--tw-text-opacity:1;color:rgb(217 119 6/var(--tw-text-opacity,1))}.text-amber-700{--tw-text-opacity:1;color:rgb(180 83 9/var(--tw-text-opacity,1))}.text-amber-800{--tw-text-opacity:1;color:rgb(146 64 14/var(--tw-text-opacity,1))}.text-amber-900{--tw-text-opacity:1;color:rgb(120 53 15/var(--tw-text-opacity,1))}.text-blue-600{--tw-text-opacity:1;color:rgb(37 99 235/var(--tw-text-opacity,1))}.text-blue-700{--tw-text-opacity:1;color:rgb(29 78 216/var(--tw-text-opacity,1))}.text-brandDark{--tw-text-opacity:1;color:rgb(23 23 23/var(--tw-text-opacity,1))}.text-destructive-foreground{color:hsl(var(--destructive-foreground))}.text-emerald-600{--tw-text-opacity:1;color:rgb(5 150 105/var(--tw-text-opacity,1))}.text-emerald-700{--tw-text-opacity:1;color:rgb(4 120 87/var(--tw-text-opacity,1))}.text-foreground{color:hsl(var(--foreground))}.text-indigo-400{--tw-text-opacity:1;color:rgb(129 140 248/var(--tw-text-opacity,1))}.text-indigo-600{--tw-text-opacity:1;color:rgb(79 70 229/var(--tw-text-opacity,1))}.text-indigo-700{--tw-text-opacity:1;color:rgb(67 56 202/var(--tw-text-opacity,1))}.text-indigo-900{--tw-text-opacity:1;color:rgb(49 46 129/var(--tw-text-opacity,1))}.text-muted-foreground{color:hsl(var(--muted-foreground))}.text-popover-foreground{color:hsl(var(--popover-foreground))}.text-primary-foreground{color:hsl(var(--primary-foreground))}.text-purple-600{--tw-text-opacity:1;color:rgb(147 51 234/var(--tw-text-opacity,1))}.text-purple-700{--tw-text-opacity:1;color:rgb(126 34 206/var(--tw-text-opacity,1))}.text-rose-600{--tw-text-opacity:1;color:rgb(225 29 72/var(--tw-text-opacity,1))}.text-rose-700{--tw-text-opacity:1;color:rgb(190 18 60/var(--tw-text-opacity,1))}.text-rose-900{--tw-text-opacity:1;color:rgb(136 19 55/var(--tw-text-opacity,1))}.text-secondary-foreground{color:hsl(var(--secondary-foreground))}.text-sky-600{--tw-text-opacity:1;color:rgb(2 132 199/var(--tw-text-opacity,1))}.text-sky-700{--tw-text-opacity:1;color:rgb(3 105 161/var(--tw-text-opacity,1))}.text-sky-900{--tw-text-opacity:1;color:rgb(12 74 110/var(--tw-text-opacity,1))}.text-slate-300{--tw-text-opacity:1;color:rgb(203 213 225/var(--tw-text-opacity,1))}.text-slate-400{--tw-text-opacity:1;color:rgb(148 163 184/var(--tw-text-opacity,1))}.text-slate-500{--tw-text-opacity:1;color:rgb(100 116 139/var(--tw-text-opacity,1))}.text-slate-600{--tw-text-opacity:1;color:rgb(71 85 105/var(--tw-text-opacity,1))}.text-slate-700{--tw-text-opacity:1;color:rgb(51 65 85/var(--tw-text-opacity,1))}.text-slate-800{--tw-text-opacity:1;color:rgb(30 41 59/var(--tw-text-opacity,1))}.text-slate-900{--tw-text-opacity:1;color:rgb(15 23 42/var(--tw-text-opacity,1))}.text-textMain{--tw-text-opacity:1;color:rgb(23 23 23/var(--tw-text-opacity,1))}.text-textMuted{--tw-text-opacity:1;color:rgb(115 115 115/var(--tw-text-opacity,1))}.text-white{--tw-text-opacity:1;color:rgb(255 255 255/var(--tw-text-opacity,1))}.underline-offset-4{text-underline-offset:4px}.antialiased{-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale}.opacity-0{opacity:0}.opacity-70{opacity:.7}.opacity-75{opacity:.75}.shadow{--tw-shadow:0 1px 3px 0 rgba(0,0,0,.1),0 1px 2px -1px rgba(0,0,0,.1);--tw-shadow-colored:0 1px 3px 0 var(--tw-shadow-color),0 1px 2px -1px var(--tw-shadow-color)}.shadow,.shadow-2xl{box-shadow:var(--tw-ring-offset-shadow,0 0 #0000),var(--tw-ring-shadow,0 0 #0000),var(--tw-shadow)}.shadow-2xl{--tw-shadow:0 25px 50px -12px rgba(0,0,0,.25);--tw-shadow-colored:0 25px 50px -12px var(--tw-shadow-color)}.shadow-\[0_2px_10px_rgba\(0\2c 0\2c 0\2c 0\.03\)\]{--tw-shadow:0 2px 10px rgba(0,0,0,.03);--tw-shadow-colored:0 2px 10px var(--tw-shadow-color);box-shadow:var(--tw-ring-offset-shadow,0 0 #0000),var(--tw-ring-shadow,0 0 #0000),var(--tw-shadow)}.shadow-\[0_4px_20px_rgba\(0\2c 0\2c 0\2c 0\.04\)\]{--tw-shadow:0 4px 20px rgba(0,0,0,.04);--tw-shadow-colored:0 4px 20px var(--tw-shadow-color);box-shadow:var(--tw-ring-offset-shadow,0 0 #0000),var(--tw-ring-shadow,0 0 #0000),var(--tw-shadow)}.shadow-\[0_6px_20px_rgba\(0\2c 0\2c 0\2c 0\.06\)\]{--tw-shadow:0 6px 20px rgba(0,0,0,.06);--tw-shadow-colored:0 6px 20px var(--tw-shadow-color);box-shadow:var(--tw-ring-offset-shadow,0 0 #0000),var(--tw-ring-shadow,0 0 #0000),var(--tw-shadow)}.shadow-\[1px_0_3px_rgba\(0\2c 0\2c 0\2c 0\.02\)\]{--tw-shadow:1px 0 3px rgba(0,0,0,.02);--tw-shadow-colored:1px 0 3px var(--tw-shadow-color)}.shadow-\[1px_0_3px_rgba\(0\2c 0\2c 0\2c 0\.02\)\],.shadow-circle{box-shadow:var(--tw-ring-offset-shadow,0 0 #0000),var(--tw-ring-shadow,0 0 #0000),var(--tw-shadow)}.shadow-circle{--tw-shadow:0 2px 8px rgba(0,0,0,.06);--tw-shadow-colored:0 2px 8px var(--tw-shadow-color)}.shadow-hover{--tw-shadow:0 6px 20px rgba(0,0,0,.06);--tw-shadow-colored:0 6px 20px var(--tw-shadow-color)}.shadow-hover,.shadow-lg{box-shadow:var(--tw-ring-offset-shadow,0 0 #0000),var(--tw-ring-shadow,0 0 #0000),var(--tw-shadow)}.shadow-lg{--tw-shadow:0 10px 15px -3px rgba(0,0,0,.1),0 4px 6px -4px rgba(0,0,0,.1);--tw-shadow-colored:0 10px 15px -3px var(--tw-shadow-color),0 4px 6px -4px var(--tw-shadow-color)}.shadow-md{--tw-shadow:0 4px 6px -1px rgba(0,0,0,.1),0 2px 4px -2px rgba(0,0,0,.1);--tw-shadow-colored:0 4px 6px -1px var(--tw-shadow-color),0 2px 4px -2px var(--tw-shadow-color)}.shadow-md,.shadow-sm{box-shadow:var(--tw-ring-offset-shadow,0 0 #0000),var(--tw-ring-shadow,0 0 #0000),var(--tw-shadow)}.shadow-sm{--tw-shadow:0 1px 2px 0 rgba(0,0,0,.05);--tw-shadow-colored:0 1px 2px 0 var(--tw-shadow-color)}.shadow-soft{--tw-shadow:0 2px 10px rgba(0,0,0,.03);--tw-shadow-colored:0 2px 10px var(--tw-shadow-color)}.shadow-soft,.shadow-xl{box-shadow:var(--tw-ring-offset-shadow,0 0 #0000),var(--tw-ring-shadow,0 0 #0000),var(--tw-shadow)}.shadow-xl{--tw-shadow:0 20px 25px -5px rgba(0,0,0,.1),0 8px 10px -6px rgba(0,0,0,.1);--tw-shadow-colored:0 20px 25px -5px var(--tw-shadow-color),0 8px 10px -6px var(--tw-shadow-color)}.shadow-indigo-500{--tw-shadow-color:#6366f1;--tw-shadow:var(--tw-shadow-colored)}.shadow-indigo-500\/20{--tw-shadow-color:rgba(99,102,241,.2);--tw-shadow:var(--tw-shadow-colored)}.shadow-indigo-500\/25{--tw-shadow-color:rgba(99,102,241,.25);--tw-shadow:var(--tw-shadow-colored)}.outline-none{outline:2px solid transparent;outline-offset:2px}.outline{outline-style:solid}.ring-1{--tw-ring-offset-shadow:var(--tw-ring-inset) 0 0 0 var(--tw-ring-offset-width) var(--tw-ring-offset-color);--tw-ring-shadow:var(--tw-ring-inset) 0 0 0 calc(1px + var(--tw-ring-offset-width)) var(--tw-ring-color)}.ring-1,.ring-2{box-shadow:var(--tw-ring-offset-shadow),var(--tw-ring-shadow),var(--tw-shadow,0 0 #0000)}.ring-2{--tw-ring-offset-shadow:var(--tw-ring-inset) 0 0 0 var(--tw-ring-offset-width) var(--tw-ring-offset-color);--tw-ring-shadow:var(--tw-ring-inset) 0 0 0 calc(2px + var(--tw-ring-offset-width)) var(--tw-ring-color)}.ring-\[\#EAECEF\]{--tw-ring-opacity:1;--tw-ring-color:rgb(234 236 239/var(--tw-ring-opacity,1))}.ring-black{--tw-ring-opacity:1;--tw-ring-color:rgb(0 0 0/var(--tw-ring-opacity,1))}.ring-black\/5{--tw-ring-color:rgba(0,0,0,.05)}.ring-emerald-100{--tw-ring-opacity:1;--tw-ring-color:rgb(209 250 229/var(--tw-ring-opacity,1))}.ring-indigo-500{--tw-ring-opacity:1;--tw-ring-color:rgb(99 102 241/var(--tw-ring-opacity,1))}.ring-white{--tw-ring-opacity:1;--tw-ring-color:rgb(255 255 255/var(--tw-ring-opacity,1))}.ring-offset-background{--tw-ring-offset-color:hsl(var(--background))}.filter{filter:var(--tw-blur) var(--tw-brightness) var(--tw-contrast) var(--tw-grayscale) var(--tw-hue-rotate) var(--tw-invert) var(--tw-saturate) var(--tw-sepia) var(--tw-drop-shadow)}.backdrop-blur{--tw-backdrop-blur:blur(8px)}.backdrop-blur,.backdrop-blur-sm{backdrop-filter:var(--tw-backdrop-blur) var(--tw-backdrop-brightness) var(--tw-backdrop-contrast) var(--tw-backdrop-grayscale) var(--tw-backdrop-hue-rotate) var(--tw-backdrop-invert) var(--tw-backdrop-opacity) var(--tw-backdrop-saturate) var(--tw-backdrop-sepia)}.backdrop-blur-sm{--tw-backdrop-blur:blur(4px)}.transition{transition-property:color,background-color,border-color,text-decoration-color,fill,stroke,opacity,box-shadow,transform,filter,backdrop-filter;transition-timing-function:cubic-bezier(.4,0,.2,1);transition-duration:.15s}.transition-all{transition-property:all;transition-timing-function:cubic-bezier(.4,0,.2,1);transition-duration:.15s}.transition-colors{transition-property:color,background-color,border-color,text-decoration-color,fill,stroke;transition-timing-function:cubic-bezier(.4,0,.2,1);transition-duration:.15s}.transition-opacity{transition-property:opacity;transition-timing-function:cubic-bezier(.4,0,.2,1);transition-duration:.15s}.transition-transform{transition-property:transform;transition-timing-function:cubic-bezier(.4,0,.2,1);transition-duration:.15s}.duration-200{transition-duration:.2s}.duration-300{transition-duration:.3s}.ease-in-out{transition-timing-function:cubic-bezier(.4,0,.2,1)}@keyframes enter{0%{opacity:var(--tw-enter-opacity,1);transform:translate3d(var(--tw-enter-translate-x,0),var(--tw-enter-translate-y,0),0) scale3d(var(--tw-enter-scale,1),var(--tw-enter-scale,1),var(--tw-enter-scale,1)) rotate(var(--tw-enter-rotate,0))}}@keyframes exit{to{opacity:var(--tw-exit-opacity,1);transform:translate3d(var(--tw-exit-translate-x,0),var(--tw-exit-translate-y,0),0) scale3d(var(--tw-exit-scale,1),var(--tw-exit-scale,1),var(--tw-exit-scale,1)) rotate(var(--tw-exit-rotate,0))}}.slide-in-from-left-1{--tw-enter-translate-x:-0.25rem}.slide-out-to-left-1{--tw-exit-translate-x:-0.25rem}.duration-200{animation-duration:.2s}.duration-300{animation-duration:.3s}.ease-in-out{animation-timing-function:cubic-bezier(.4,0,.2,1)}.paused{animation-play-state:paused}.tab-view{display:none}.tab-view.active{display:block;animation:fadeIn .18s ease-in-out}@keyframes fadeIn{0%{opacity:0;transform:translateY(4px)}to{opacity:1;transform:translateY(0)}}.custom-scrollbar::-webkit-scrollbar{width:4px;height:4px}.custom-scrollbar::-webkit-scrollbar-thumb{background:#e2e8f0;border-radius:4px}#app-sidebar{transition:width .25s cubic-bezier(.4,0,.2,1)}#app-header,#main-wrapper{transition:padding-left .25s cubic-bezier(.4,0,.2,1)}.sidebar-shrunk .brand-title,.sidebar-shrunk .nav-label,.sidebar-shrunk .profile-details{display:none!important}.sidebar-shrunk .nav-item{justify-content:center!important;padding-left:0!important;padding-right:0!important}.sidebar-shrunk .section-heading{display:none!important}.sidebar-shrunk .brand-header{justify-content:center!important;padding-left:0!important;padding-right:0!important}.sidebar-shrunk .profile-card{padding:0!important;background:transparent!important;border:none!important;justify-content:center!important}.sidebar-shrunk #sidebar-profile-avatar{margin:0 auto}.sidebar-shrunk .sidebar-tooltip{display:block}.sidebar-tooltip{display:none}.selection\:bg-brandDark ::-moz-selection{--tw-bg-opacity:1;background-color:rgb(23 23 23/var(--tw-bg-opacity,1))}.selection\:bg-brandDark ::selection{--tw-bg-opacity:1;background-color:rgb(23 23 23/var(--tw-bg-opacity,1))}.selection\:text-white ::-moz-selection{--tw-text-opacity:1;color:rgb(255 255 255/var(--tw-text-opacity,1))}.selection\:text-white ::selection{--tw-text-opacity:1;color:rgb(255 255 255/var(--tw-text-opacity,1))}.selection\:bg-brandDark::-moz-selection{--tw-bg-opacity:1;background-color:rgb(23 23 23/var(--tw-bg-opacity,1))}.selection\:bg-brandDark::selection{--tw-bg-opacity:1;background-color:rgb(23 23 23/var(--tw-bg-opacity,1))}.selection\:text-white::-moz-selection{--tw-text-opacity:1;color:rgb(255 255 255/var(--tw-text-opacity,1))}.selection\:text-white::selection{--tw-text-opacity:1;color:rgb(255 255 255/var(--tw-text-opacity,1))}.file\:border-0::file-selector-button{border-width:0}.file\:bg-transparent::file-selector-button{background-color:transparent}.file\:text-sm::file-selector-button{font-size:.875rem;line-height:1.25rem}.file\:font-medium::file-selector-button{font-weight:500}.placeholder\:text-\[\#737373\]::-moz-placeholder{--tw-text-opacity:1;color:rgb(115 115 115/var(--tw-text-opacity,1))}.placeholder\:text-\[\#737373\]::placeholder{--tw-text-opacity:1;color:rgb(115 115 115/var(--tw-text-opacity,1))}.placeholder\:text-muted-foreground::-moz-placeholder{color:hsl(var(--muted-foreground))}.placeholder\:text-muted-foreground::placeholder{color:hsl(var(--muted-foreground))}.placeholder\:text-slate-400::-moz-placeholder{--tw-text-opacity:1;color:rgb(148 163 184/var(--tw-text-opacity,1))}.placeholder\:text-slate-400::placeholder{--tw-text-opacity:1;color:rgb(148 163 184/var(--tw-text-opacity,1))}.last\:border-0:last-child{border-width:0}.hover\:bg-\[\#E5E7EB\]:hover{--tw-bg-opacity:1;background-color:rgb(229 231 235/var(--tw-bg-opacity,1))}.hover\:bg-amber-50:hover{--tw-bg-opacity:1;background-color:rgb(255 251 235/var(--tw-bg-opacity,1))}.hover\:bg-black:hover{--tw-bg-opacity:1;background-color:rgb(0 0 0/var(--tw-bg-opacity,1))}.hover\:bg-destructive\/80:hover{background-color:hsl(var(--destructive)/.8)}.hover\:bg-emerald-50:hover{--tw-bg-opacity:1;background-color:rgb(236 253 245/var(--tw-bg-opacity,1))}.hover\:bg-emerald-700:hover{--tw-bg-opacity:1;background-color:rgb(4 120 87/var(--tw-bg-opacity,1))}.hover\:bg-indigo-100:hover{--tw-bg-opacity:1;background-color:rgb(224 231 255/var(--tw-bg-opacity,1))}.hover\:bg-indigo-50:hover{--tw-bg-opacity:1;background-color:rgb(238 242 255/var(--tw-bg-opacity,1))}.hover\:bg-indigo-50\/70:hover{background-color:rgba(238,242,255,.7)}.hover\:bg-indigo-700:hover{--tw-bg-opacity:1;background-color:rgb(67 56 202/var(--tw-bg-opacity,1))}.hover\:bg-primary\/80:hover{background-color:hsl(var(--primary)/.8)}.hover\:bg-rose-50:hover{--tw-bg-opacity:1;background-color:rgb(255 241 242/var(--tw-bg-opacity,1))}.hover\:bg-rose-700:hover{--tw-bg-opacity:1;background-color:rgb(190 18 60/var(--tw-bg-opacity,1))}.hover\:bg-secondary\/80:hover{background-color:hsl(var(--secondary)/.8)}.hover\:bg-slate-100:hover{--tw-bg-opacity:1;background-color:rgb(241 245 249/var(--tw-bg-opacity,1))}.hover\:bg-slate-100\/70:hover{background-color:rgba(241,245,249,.7)}.hover\:bg-slate-100\/80:hover{background-color:rgba(241,245,249,.8)}.hover\:bg-slate-200:hover{--tw-bg-opacity:1;background-color:rgb(226 232 240/var(--tw-bg-opacity,1))}.hover\:bg-slate-200\/80:hover{background-color:rgba(226,232,240,.8)}.hover\:bg-slate-50:hover{--tw-bg-opacity:1;background-color:rgb(248 250 252/var(--tw-bg-opacity,1))}.hover\:bg-slate-50\/60:hover{background-color:rgba(248,250,252,.6)}.hover\:bg-slate-50\/70:hover{background-color:rgba(248,250,252,.7)}.hover\:text-\[\#111\]:hover{--tw-text-opacity:1;color:rgb(17 17 17/var(--tw-text-opacity,1))}.hover\:text-\[\#171717\]:hover{--tw-text-opacity:1;color:rgb(23 23 23/var(--tw-text-opacity,1))}.hover\:text-amber-600:hover{--tw-text-opacity:1;color:rgb(217 119 6/var(--tw-text-opacity,1))}.hover\:text-amber-700:hover{--tw-text-opacity:1;color:rgb(180 83 9/var(--tw-text-opacity,1))}.hover\:text-emerald-700:hover{--tw-text-opacity:1;color:rgb(4 120 87/var(--tw-text-opacity,1))}.hover\:text-indigo-600:hover{--tw-text-opacity:1;color:rgb(79 70 229/var(--tw-text-opacity,1))}.hover\:text-indigo-700:hover{--tw-text-opacity:1;color:rgb(67 56 202/var(--tw-text-opacity,1))}.hover\:text-indigo-800:hover{--tw-text-opacity:1;color:rgb(55 48 163/var(--tw-text-opacity,1))}.hover\:text-indigo-900:hover{--tw-text-opacity:1;color:rgb(49 46 129/var(--tw-text-opacity,1))}.hover\:text-rose-700:hover{--tw-text-opacity:1;color:rgb(190 18 60/var(--tw-text-opacity,1))}.hover\:text-rose-800:hover{--tw-text-opacity:1;color:rgb(159 18 57/var(--tw-text-opacity,1))}.hover\:text-slate-700:hover{--tw-text-opacity:1;color:rgb(51 65 85/var(--tw-text-opacity,1))}.hover\:text-slate-900:hover{--tw-text-opacity:1;color:rgb(15 23 42/var(--tw-text-opacity,1))}.hover\:text-textMain:hover{--tw-text-opacity:1;color:rgb(23 23 23/var(--tw-text-opacity,1))}.hover\:underline:hover{text-decoration-line:underline}.hover\:opacity-100:hover{opacity:1}.hover\:shadow-\[0_6px_20px_rgba\(0\2c 0\2c 0\2c 0\.06\)\]:hover,.hover\:shadow-hover:hover{--tw-shadow:0 6px 20px rgba(0,0,0,.06);--tw-shadow-colored:0 6px 20px var(--tw-shadow-color);box-shadow:var(--tw-ring-offset-shadow,0 0 #0000),var(--tw-ring-shadow,0 0 #0000),var(--tw-shadow)}.hover\:shadow-md:hover{--tw-shadow:0 4px 6px -1px rgba(0,0,0,.1),0 2px 4px -2px rgba(0,0,0,.1);--tw-shadow-colored:0 4px 6px -1px var(--tw-shadow-color),0 2px 4px -2px var(--tw-shadow-color);box-shadow:var(--tw-ring-offset-shadow,0 0 #0000),var(--tw-ring-shadow,0 0 #0000),var(--tw-shadow)}.hover\:ring-slate-300:hover{--tw-ring-opacity:1;--tw-ring-color:rgb(203 213 225/var(--tw-ring-opacity,1))}.focus\:border-\[\#171717\]:focus{--tw-border-opacity:1;border-color:rgb(23 23 23/var(--tw-border-opacity,1))}.focus\:border-indigo-500:focus{--tw-border-opacity:1;border-color:rgb(99 102 241/var(--tw-border-opacity,1))}.focus\:bg-accent:focus{background-color:hsl(var(--accent))}.focus\:bg-white:focus{--tw-bg-opacity:1;background-color:rgb(255 255 255/var(--tw-bg-opacity,1))}.focus\:text-accent-foreground:focus{color:hsl(var(--accent-foreground))}.focus\:text-rose-600:focus{--tw-text-opacity:1;color:rgb(225 29 72/var(--tw-text-opacity,1))}.focus\:outline-none:focus{outline:2px solid transparent;outline-offset:2px}.focus\:ring-1:focus{--tw-ring-offset-shadow:var(--tw-ring-inset) 0 0 0 var(--tw-ring-offset-width) var(--tw-ring-offset-color);--tw-ring-shadow:var(--tw-ring-inset) 0 0 0 calc(1px + var(--tw-ring-offset-width)) var(--tw-ring-color)}.focus\:ring-1:focus,.focus\:ring-2:focus{box-shadow:var(--tw-ring-offset-shadow),var(--tw-ring-shadow),var(--tw-shadow,0 0 #0000)}.focus\:ring-2:focus{--tw-ring-offset-shadow:var(--tw-ring-inset) 0 0 0 var(--tw-ring-offset-width) var(--tw-ring-offset-color);--tw-ring-shadow:var(--tw-ring-inset) 0 0 0 calc(2px + var(--tw-ring-offset-width)) var(--tw-ring-color)}.focus\:ring-black\/5:focus{--tw-ring-color:rgba(0,0,0,.05)}.focus\:ring-brandDark:focus{--tw-ring-opacity:1;--tw-ring-color:rgb(23 23 23/var(--tw-ring-opacity,1))}.focus\:ring-indigo-500:focus{--tw-ring-opacity:1;--tw-ring-color:rgb(99 102 241/var(--tw-ring-opacity,1))}.focus\:ring-indigo-500\/20:focus{--tw-ring-color:rgba(99,102,241,.2)}.focus\:ring-ring:focus{--tw-ring-color:hsl(var(--ring))}.focus\:ring-offset-2:focus{--tw-ring-offset-width:2px}.focus-visible\:outline-none:focus-visible{outline:2px solid transparent;outline-offset:2px}.focus-visible\:ring-2:focus-visible{--tw-ring-offset-shadow:var(--tw-ring-inset) 0 0 0 var(--tw-ring-offset-width) var(--tw-ring-offset-color);--tw-ring-shadow:var(--tw-ring-inset) 0 0 0 calc(2px + var(--tw-ring-offset-width)) var(--tw-ring-color);box-shadow:var(--tw-ring-offset-shadow),var(--tw-ring-shadow),var(--tw-shadow,0 0 #0000)}.focus-visible\:ring-ring:focus-visible{--tw-ring-color:hsl(var(--ring))}.focus-visible\:ring-offset-2:focus-visible{--tw-ring-offset-width:2px}.disabled\:pointer-events-none:disabled{pointer-events:none}.disabled\:cursor-not-allowed:disabled{cursor:not-allowed}.disabled\:opacity-50:disabled{opacity:.5}.group:hover .group-hover\:text-\[\#171717\]{--tw-text-opacity:1;color:rgb(23 23 23/var(--tw-text-opacity,1))}.group:hover .group-hover\:text-slate-700{--tw-text-opacity:1;color:rgb(51 65 85/var(--tw-text-opacity,1))}.group:hover .group-hover\:opacity-100{opacity:1}.data-\[disabled\]\:pointer-events-none[data-disabled]{pointer-events:none}.data-\[state\=open\]\:bg-accent[data-state=open]{background-color:hsl(var(--accent))}.data-\[state\=open\]\:text-muted-foreground[data-state=open]{color:hsl(var(--muted-foreground))}.data-\[disabled\]\:opacity-50[data-disabled]{opacity:.5}.data-\[state\=open\]\:animate-in[data-state=open]{animation-name:enter;animation-duration:.15s;--tw-enter-opacity:initial;--tw-enter-scale:initial;--tw-enter-rotate:initial;--tw-enter-translate-x:initial;--tw-enter-translate-y:initial}.data-\[state\=closed\]\:animate-out[data-state=closed]{animation-name:exit;animation-duration:.15s;--tw-exit-opacity:initial;--tw-exit-scale:initial;--tw-exit-rotate:initial;--tw-exit-translate-x:initial;--tw-exit-translate-y:initial}.data-\[state\=closed\]\:fade-out-0[data-state=closed]{--tw-exit-opacity:0}.data-\[state\=open\]\:fade-in-0[data-state=open]{--tw-enter-opacity:0}.data-\[state\=closed\]\:zoom-out-95[data-state=closed]{--tw-exit-scale:.95}.data-\[state\=open\]\:zoom-in-95[data-state=open]{--tw-enter-scale:.95}.data-\[side\=bottom\]\:slide-in-from-top-2[data-side=bottom]{--tw-enter-translate-y:-0.5rem}.data-\[side\=left\]\:slide-in-from-right-2[data-side=left]{--tw-enter-translate-x:0.5rem}.data-\[side\=right\]\:slide-in-from-left-2[data-side=right]{--tw-enter-translate-x:-0.5rem}.data-\[side\=top\]\:slide-in-from-bottom-2[data-side=top]{--tw-enter-translate-y:0.5rem}.data-\[state\=closed\]\:slide-out-to-left-1\/2[data-state=closed]{--tw-exit-translate-x:-50%}.data-\[state\=closed\]\:slide-out-to-top-\[48\%\][data-state=closed]{--tw-exit-translate-y:-48%}.data-\[state\=open\]\:slide-in-from-left-1\/2[data-state=open]{--tw-enter-translate-x:-50%}.data-\[state\=open\]\:slide-in-from-top-\[48\%\][data-state=open]{--tw-enter-translate-y:-48%}@media (min-width:640px){.sm\:mx-8{margin-left:2rem;margin-right:2rem}.sm\:block{display:block}.sm\:flex{display:flex}.sm\:inline-flex{display:inline-flex}.sm\:w-48{width:12rem}.sm\:w-72{width:18rem}.sm\:max-w-\[425px\]{max-width:425px}.sm\:max-w-lg{max-width:32rem}.sm\:grid-cols-2{grid-template-columns:repeat(2,minmax(0,1fr))}.sm\:flex-row{flex-direction:row}.sm\:items-center{align-items:center}.sm\:justify-end{justify-content:flex-end}.sm\:justify-between{justify-content:space-between}.sm\:gap-0{gap:0}.sm\:gap-3{gap:.75rem}.sm\:gap-4{gap:1rem}.sm\:space-x-2>:not([hidden])~:not([hidden]){--tw-space-x-reverse:0;margin-right:calc(.5rem*var(--tw-space-x-reverse));margin-left:calc(.5rem*(1 - var(--tw-space-x-reverse)))}.sm\:rounded-lg{border-radius:var(--radius)}.sm\:p-6{padding:1.5rem}.sm\:p-8{padding:2rem}.sm\:px-6{padding-left:1.5rem;padding-right:1.5rem}.sm\:px-8{padding-left:2rem;padding-right:2rem}.sm\:text-left{text-align:left}.sm\:text-3xl{font-size:1.875rem;line-height:2.25rem}.sm\:text-sm{font-size:.875rem;line-height:1.25rem}}@media (min-width:768px){.md\:fixed{position:fixed}.md\:inset-y-0{top:0;bottom:0}.md\:flex{display:flex}.md\:hidden{display:none}.md\:w-20{width:5rem}.md\:w-64{width:16rem}.md\:w-80{width:20rem}.md\:translate-x-0{--tw-translate-x:0px;transform:translate(var(--tw-translate-x),var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y))}.md\:grid-cols-2{grid-template-columns:repeat(2,minmax(0,1fr))}.md\:grid-cols-3{grid-template-columns:repeat(3,minmax(0,1fr))}.md\:flex-row{flex-direction:row}.md\:flex-col{flex-direction:column}.md\:items-center{align-items:center}.md\:justify-between{justify-content:space-between}.md\:pl-20{padding-left:5rem}.md\:pl-64{padding-left:16rem}}@media (min-width:1024px){.lg\:flex{display:flex}.lg\:w-96{width:24rem}.lg\:grid-cols-2{grid-template-columns:repeat(2,minmax(0,1fr))}.lg\:grid-cols-4{grid-template-columns:repeat(4,minmax(0,1fr))}.lg\:p-8{padding:2rem}.lg\:px-8{padding-left:2rem;padding-right:2rem}}
   </style>
 </head>
 <body class="min-h-screen flex bg-appBg text-textMain selection:bg-brandDark selection:text-white">
@@ -95,7 +27,7 @@
       <!-- Brand Logo Header / Shrink Toggle Indicator -->
       <div class="brand-header h-14 flex items-center justify-center w-full px-4 mb-2">
         <div class="w-11 h-11 rounded-full bg-brandDark text-white flex items-center justify-center font-bold shadow-md ring-2 ring-black/5 shrink-0 cursor-pointer" onclick="toggleSidebarShrink()" title="Click to toggle expand/shrink">
-          <i data-lucide="zap" class="w-5 h-5 text-indigo-400"></i>
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-zap w-5 h-5 text-indigo-400"><path d="M4 14a1 1 0 0 1-.78-1.63l9.9-10.2a.5.5 0 0 1 .86.46l-1.92 6.02A1 1 0 0 0 13 10h7a1 1 0 0 1 .78 1.63l-9.9 10.2a.5.5 0 0 1-.86-.46l1.92-6.02A1 1 0 0 0 11 14z"></path></svg>
         </div>
         <div class="brand-title ml-3 min-w-0">
           <h1 class="text-sm font-bold tracking-tight text-textMain leading-none truncate">SubscriptIQ</h1>
@@ -109,7 +41,7 @@
         <!-- 1. Dashboard (Grid 4 circles / layout) -->
         <button onclick="navigateTo('dashboard', 'Dashboard', 'Revenue telemetry and executive summary')" id="btn-nav-dashboard" class="nav-item group relative flex items-center gap-3 w-full p-1 rounded-2xl transition-all">
           <div class="circle-btn w-11 h-11 rounded-full flex items-center justify-center transition-all bg-brandDark text-white shadow-circle shrink-0">
-            <i data-lucide="layout-grid" class="w-5 h-5"></i>
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-layout-grid w-5 h-5"><rect width="7" height="7" x="3" y="3" rx="1"></rect><rect width="7" height="7" x="14" y="3" rx="1"></rect><rect width="7" height="7" x="14" y="14" rx="1"></rect><rect width="7" height="7" x="3" y="14" rx="1"></rect></svg>
           </div>
           <span class="nav-label text-xs font-semibold text-textMain truncate">Dashboard</span>
           <div class="nav-tooltip absolute left-full ml-3 px-2.5 py-1 bg-brandDark text-white text-[11px] font-medium rounded-lg shadow-xl opacity-0 pointer-events-none group-hover:opacity-100 transition-opacity z-50 whitespace-nowrap">
@@ -120,7 +52,7 @@
         <!-- 2. Customers (User Icon) -->
         <button onclick="navigateTo('customers', 'Customers', 'Account profiles and subscriber lifecycle')" id="btn-nav-customers" class="nav-item group relative flex items-center gap-3 w-full p-1 rounded-2xl transition-all">
           <div class="circle-btn w-11 h-11 rounded-full flex items-center justify-center transition-all bg-[#F1F3F5] text-[#555] hover:bg-[#E5E7EB] hover:text-[#111] shrink-0">
-            <i data-lucide="users" class="w-5 h-5"></i>
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-users w-5 h-5"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M22 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
           </div>
           <span class="nav-label text-xs font-semibold text-textMuted truncate">Customers</span>
           <div class="nav-tooltip absolute left-full ml-3 px-2.5 py-1 bg-brandDark text-white text-[11px] font-medium rounded-lg shadow-xl opacity-0 pointer-events-none group-hover:opacity-100 transition-opacity z-50 whitespace-nowrap">
@@ -131,7 +63,7 @@
         <!-- 3. Products (Package Icon) -->
         <button onclick="navigateTo('products', 'Products', 'Product catalog and entitlements')" id="btn-nav-products" class="nav-item group relative flex items-center gap-3 w-full p-1 rounded-2xl transition-all">
           <div class="circle-btn w-11 h-11 rounded-full flex items-center justify-center transition-all bg-[#F1F3F5] text-[#555] hover:bg-[#E5E7EB] hover:text-[#111] shrink-0">
-            <i data-lucide="package" class="w-5 h-5"></i>
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-package w-5 h-5"><path d="M11 21.73a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73z"></path><path d="M12 22V12"></path><path d="m3.3 7 7.703 4.734a2 2 0 0 0 1.994 0L20.7 7"></path><path d="m7.5 4.27 9 5.15"></path></svg>
           </div>
           <span class="nav-label text-xs font-semibold text-textMuted truncate">Products</span>
           <div class="nav-tooltip absolute left-full ml-3 px-2.5 py-1 bg-brandDark text-white text-[11px] font-medium rounded-lg shadow-xl opacity-0 pointer-events-none group-hover:opacity-100 transition-opacity z-50 whitespace-nowrap">
@@ -142,7 +74,7 @@
         <!-- 4. Plans (Layers Icon) -->
         <button onclick="navigateTo('plans', 'Plans & Pricing', 'Billing cadences and pricing tiers')" id="btn-nav-plans" class="nav-item group relative flex items-center gap-3 w-full p-1 rounded-2xl transition-all">
           <div class="circle-btn w-11 h-11 rounded-full flex items-center justify-center transition-all bg-[#F1F3F5] text-[#555] hover:bg-[#E5E7EB] hover:text-[#111] shrink-0">
-            <i data-lucide="layers" class="w-5 h-5"></i>
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-layers w-5 h-5"><path d="m12.83 2.18a2 2 0 0 0-1.66 0L2.6 6.08a1 1 0 0 0 0 1.83l8.58 3.91a2 2 0 0 0 1.66 0l8.58-3.9a1 1 0 0 0 0-1.83Z"></path><path d="m22 17.65-9.17 4.16a2 2 0 0 1-1.66 0L2 17.65"></path><path d="m22 12.65-9.17 4.16a2 2 0 0 1-1.66 0L2 12.65"></path></svg>
           </div>
           <span class="nav-label text-xs font-semibold text-textMuted truncate">Plans</span>
           <div class="nav-tooltip absolute left-full ml-3 px-2.5 py-1 bg-brandDark text-white text-[11px] font-medium rounded-lg shadow-xl opacity-0 pointer-events-none group-hover:opacity-100 transition-opacity z-50 whitespace-nowrap">
@@ -153,7 +85,7 @@
         <!-- 5. Subscriptions (Repeat / Contracts Icon) -->
         <button onclick="navigateTo('subscriptions', 'Subscriptions', 'Active contracts, upgrades, and renewals')" id="btn-nav-subscriptions" class="nav-item group relative flex items-center gap-3 w-full p-1 rounded-2xl transition-all">
           <div class="circle-btn w-11 h-11 rounded-full flex items-center justify-center transition-all bg-[#F1F3F5] text-[#555] hover:bg-[#E5E7EB] hover:text-[#111] shrink-0">
-            <i data-lucide="repeat" class="w-5 h-5"></i>
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-repeat w-5 h-5"><path d="m17 2 4 4-4 4"></path><path d="M3 11v-1a4 4 0 0 1 4-4h14"></path><path d="m7 22-4-4 4-4"></path><path d="M21 13v1a4 4 0 0 1-4 4H3"></path></svg>
           </div>
           <span class="nav-label text-xs font-semibold text-textMuted truncate">Subscriptions</span>
           <div class="nav-tooltip absolute left-full ml-3 px-2.5 py-1 bg-brandDark text-white text-[11px] font-medium rounded-lg shadow-xl opacity-0 pointer-events-none group-hover:opacity-100 transition-opacity z-50 whitespace-nowrap">
@@ -164,7 +96,7 @@
         <!-- 6. Invoices (Clipboard / Receipt Icon) -->
         <button onclick="navigateTo('invoices', 'Billing & Invoices', 'Invoice runs and receivables')" id="btn-nav-invoices" class="nav-item group relative flex items-center gap-3 w-full p-1 rounded-2xl transition-all">
           <div class="circle-btn w-11 h-11 rounded-full flex items-center justify-center transition-all bg-[#F1F3F5] text-[#555] hover:bg-[#E5E7EB] hover:text-[#111] shrink-0">
-            <i data-lucide="clipboard-list" class="w-5 h-5"></i>
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-clipboard-list w-5 h-5"><rect width="8" height="4" x="8" y="2" rx="1" ry="1"></rect><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"></path><path d="M12 11h4"></path><path d="M12 16h4"></path><path d="M8 11h.01"></path><path d="M8 16h.01"></path></svg>
           </div>
           <span class="nav-label text-xs font-semibold text-textMuted truncate">Invoices</span>
           <div class="nav-tooltip absolute left-full ml-3 px-2.5 py-1 bg-brandDark text-white text-[11px] font-medium rounded-lg shadow-xl opacity-0 pointer-events-none group-hover:opacity-100 transition-opacity z-50 whitespace-nowrap">
@@ -175,7 +107,7 @@
         <!-- 7. Payments (Credit card with exchange arrows - EXACT MATCH TO IMAGE!) -->
         <button onclick="navigateTo('payments', 'Payments & Gateway', 'Transaction clearing and refunds')" id="btn-nav-payments" class="nav-item group relative flex items-center gap-3 w-full p-1 rounded-2xl transition-all">
           <div class="circle-btn w-11 h-11 rounded-full flex items-center justify-center transition-all bg-[#F1F3F5] text-[#555] hover:bg-[#E5E7EB] hover:text-[#111] shrink-0">
-            <i data-lucide="credit-card" class="w-5 h-5"></i>
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-credit-card w-5 h-5"><rect width="20" height="14" x="2" y="5" rx="2"></rect><line x1="2" x2="22" y1="10" y2="10"></line></svg>
           </div>
           <span class="nav-label text-xs font-semibold text-textMuted truncate">Payments</span>
           <div class="nav-tooltip absolute left-full ml-3 px-2.5 py-1 bg-brandDark text-white text-[11px] font-medium rounded-lg shadow-xl opacity-0 pointer-events-none group-hover:opacity-100 transition-opacity z-50 whitespace-nowrap">
@@ -186,7 +118,7 @@
         <!-- 8. Discounts (Dollar sign in circle / Tag) -->
         <button onclick="navigateTo('discounts', 'Discounts & Coupons', 'Promotions and partner incentives')" id="btn-nav-discounts" class="nav-item group relative flex items-center gap-3 w-full p-1 rounded-2xl transition-all">
           <div class="circle-btn w-11 h-11 rounded-full flex items-center justify-center transition-all bg-[#F1F3F5] text-[#555] hover:bg-[#E5E7EB] hover:text-[#111] shrink-0">
-            <i data-lucide="badge-dollar-sign" class="w-5 h-5"></i>
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-badge-dollar-sign w-5 h-5"><path d="M3.85 8.62a4 4 0 0 1 4.78-4.77 4 4 0 0 1 6.74 0 4 4 0 0 1 4.78 4.78 4 4 0 0 1 0 6.74 4 4 0 0 1-4.77 4.78 4 4 0 0 1-6.75 0 4 4 0 0 1-4.78-4.77 4 4 0 0 1 0-6.76Z"></path><path d="M16 8h-6a2 2 0 1 0 0 4h4a2 2 0 1 1 0 4H8"></path><path d="M12 18V6"></path></svg>
           </div>
           <span class="nav-label text-xs font-semibold text-textMuted truncate">Discounts</span>
           <div class="nav-tooltip absolute left-full ml-3 px-2.5 py-1 bg-brandDark text-white text-[11px] font-medium rounded-lg shadow-xl opacity-0 pointer-events-none group-hover:opacity-100 transition-opacity z-50 whitespace-nowrap">
@@ -203,7 +135,7 @@
       <!-- Settings (Hexagon / Gear Icon) -->
       <button onclick="navigateTo('settings', 'Platform Settings', 'API keys, webhooks, and team access')" id="btn-nav-settings" class="nav-item group relative flex items-center gap-3 w-full p-1 rounded-2xl transition-all">
         <div class="circle-btn w-11 h-11 rounded-full flex items-center justify-center transition-all bg-[#F1F3F5] text-[#555] hover:bg-[#E5E7EB] hover:text-[#111] shrink-0">
-          <i data-lucide="settings" class="w-5 h-5"></i>
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-settings w-5 h-5"><path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"></path><circle cx="12" cy="12" r="3"></circle></svg>
         </div>
         <span class="nav-label text-xs font-semibold text-textMuted truncate">Settings</span>
         <div class="nav-tooltip absolute left-full ml-3 px-2.5 py-1 bg-brandDark text-white text-[11px] font-medium rounded-lg shadow-xl opacity-0 pointer-events-none group-hover:opacity-100 transition-opacity z-50 whitespace-nowrap">
@@ -246,7 +178,7 @@
     <header id="app-header" class="sticky top-0 z-20 h-20 bg-white/90 backdrop-blur border-b border-borderSubtle px-4 sm:px-8 flex items-center justify-between">
       <div class="flex items-center gap-4">
         <button onclick="toggleSidebar()" class="p-2 rounded-lg text-textMuted hover:text-textMain hover:bg-slate-100 md:hidden">
-          <i data-lucide="menu" class="w-5 h-5"></i>
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-menu w-5 h-5"><line x1="4" x2="20" y1="12" y2="12"></line><line x1="4" x2="20" y1="6" y2="6"></line><line x1="4" x2="20" y1="18" y2="18"></line></svg>
         </button>
         <div>
           <h2 id="top-title" class="text-xl font-bold tracking-tight text-textMain">Dashboard</h2>
@@ -257,25 +189,25 @@
       <div class="flex items-center gap-3 sm:gap-4">
         <!-- Search bar -->
         <div class="relative w-48 sm:w-72">
-          <i data-lucide="search" class="w-4 h-4 absolute left-3.5 top-3 text-textMuted"></i>
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-search w-4 h-4 absolute left-3.5 top-3 text-textMuted"><circle cx="11" cy="11" r="8"></circle><path d="m21 21-4.3-4.3"></path></svg>
           <input type="text" id="global-search" oninput="handleGlobalSearch(this.value)" placeholder="Search records..." class="w-full bg-appBg border border-borderSubtle rounded-elem pl-10 pr-4 py-2 text-xs focus:bg-white focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition-all">
         </div>
 
         <!-- Date badge -->
         <div class="hidden lg:flex items-center gap-1.5 px-3 py-1.5 rounded-elem bg-appBg border border-borderSubtle text-xs font-medium text-textMuted">
-          <i data-lucide="calendar" class="w-3.5 h-3.5"></i>
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-calendar w-3.5 h-3.5"><path d="M8 2v4"></path><path d="M16 2v4"></path><rect width="18" height="18" x="3" y="4" rx="2"></rect><path d="M3 10h18"></path></svg>
           <span>Oct 31, 2026</span>
         </div>
 
         <!-- Notification Bell -->
         <button onclick="toggleNotificationToast()" class="relative p-2.5 rounded-elem hover:bg-slate-100 text-textMuted hover:text-textMain transition-colors">
-          <i data-lucide="bell" class="w-4 h-4"></i>
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-bell w-4 h-4"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"></path><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"></path></svg>
           <span class="absolute top-2 right-2 w-2 h-2 rounded-full bg-indigo-600 ring-2 ring-white"></span>
         </button>
 
         <!-- Direct Live App Link Pill -->
         <a href="http://localhost:3000/dashboard" target="_blank" class="hidden sm:inline-flex items-center gap-1.5 px-3 py-1.5 rounded-elem bg-indigo-50 hover:bg-indigo-100 text-indigo-700 text-xs font-semibold border border-indigo-200 transition-all">
-          <i data-lucide="external-link" class="w-3.5 h-3.5"></i>
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-external-link w-3.5 h-3.5"><path d="M15 3h6v6"></path><path d="M10 14 21 3"></path><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path></svg>
           <span>Open Next.js App</span>
         </a>
       </div>
@@ -287,7 +219,7 @@
         <span class="w-2 h-2 rounded-full bg-emerald-500"></span>
         <span class="text-textMain font-medium">All billing webhooks are operational. Next automatic billing cycle in 3 days.</span>
       </div>
-      <button onclick="toggleNotificationToast()" class="text-textMuted hover:text-textMain"><i data-lucide="x" class="w-4 h-4"></i></button>
+      <button onclick="toggleNotificationToast()" class="text-textMuted hover:text-textMain"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-x w-4 h-4"><path d="M18 6 6 18"></path><path d="m6 6 12 12"></path></svg></button>
     </div>
 
     <!-- Main Content Area -->
@@ -303,14 +235,14 @@
             <div class="flex items-center justify-between">
               <span class="text-xs font-semibold uppercase tracking-wider text-textMuted">Monthly Recurring Revenue</span>
               <div class="w-9 h-9 rounded-elem bg-indigo-50 text-indigo-600 flex items-center justify-center">
-                <i data-lucide="dollar-sign" class="w-4 h-4"></i>
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-dollar-sign w-4 h-4"><line x1="12" x2="12" y1="2" y2="22"></line><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path></svg>
               </div>
             </div>
             <div class="mt-4">
               <div class="text-3xl font-extrabold text-textMain tracking-tight">$42,600</div>
               <div class="mt-2 flex items-center gap-2 text-xs">
                 <span class="inline-flex items-center gap-1 font-semibold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-full border border-emerald-100">
-                  <i data-lucide="trending-up" class="w-3 h-3"></i> +12.4%
+                  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-trending-up w-3 h-3"><polyline points="22 7 13.5 15.5 8.5 10.5 2 17"></polyline><polyline points="16 7 22 7 22 13"></polyline></svg> +12.4%
                 </span>
                 <span class="text-textMuted">vs last month</span>
               </div>
@@ -322,14 +254,14 @@
             <div class="flex items-center justify-between">
               <span class="text-xs font-semibold uppercase tracking-wider text-textMuted">Active Subscriptions</span>
               <div class="w-9 h-9 rounded-elem bg-emerald-50 text-emerald-600 flex items-center justify-center">
-                <i data-lucide="repeat" class="w-4 h-4"></i>
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-repeat w-4 h-4"><path d="m17 2 4 4-4 4"></path><path d="M3 11v-1a4 4 0 0 1 4-4h14"></path><path d="m7 22-4-4 4-4"></path><path d="M21 13v1a4 4 0 0 1-4 4H3"></path></svg>
               </div>
             </div>
             <div class="mt-4">
               <div class="text-3xl font-extrabold text-textMain tracking-tight">640</div>
               <div class="mt-2 flex items-center gap-2 text-xs">
                 <span class="inline-flex items-center gap-1 font-semibold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-full border border-emerald-100">
-                  <i data-lucide="trending-up" class="w-3 h-3"></i> +8.2%
+                  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-trending-up w-3 h-3"><polyline points="22 7 13.5 15.5 8.5 10.5 2 17"></polyline><polyline points="16 7 22 7 22 13"></polyline></svg> +8.2%
                 </span>
                 <span class="text-textMuted">72 added this mo.</span>
               </div>
@@ -341,14 +273,14 @@
             <div class="flex items-center justify-between">
               <span class="text-xs font-semibold uppercase tracking-wider text-textMuted">Net Revenue Retention</span>
               <div class="w-9 h-9 rounded-elem bg-blue-50 text-blue-600 flex items-center justify-center">
-                <i data-lucide="pie-chart" class="w-4 h-4"></i>
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-pie-chart w-4 h-4"><path d="M21 12c.552 0 1.005-.449.95-.998a10 10 0 0 0-8.953-8.951c-.55-.055-.998.398-.998.95v8a1 1 0 0 0 1 1z"></path><path d="M21.21 15.89A10 10 0 1 1 8 2.83"></path></svg>
               </div>
             </div>
             <div class="mt-4">
               <div class="text-3xl font-extrabold text-textMain tracking-tight">108.5%</div>
               <div class="mt-2 flex items-center gap-2 text-xs">
                 <span class="inline-flex items-center gap-1 font-semibold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-full border border-emerald-100">
-                  <i data-lucide="trending-up" class="w-3 h-3"></i> +1.3%
+                  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-trending-up w-3 h-3"><polyline points="22 7 13.5 15.5 8.5 10.5 2 17"></polyline><polyline points="16 7 22 7 22 13"></polyline></svg> +1.3%
                 </span>
                 <span class="text-textMuted">expansion healthy</span>
               </div>
@@ -360,14 +292,14 @@
             <div class="flex items-center justify-between">
               <span class="text-xs font-semibold uppercase tracking-wider text-textMuted">Customer Accounts</span>
               <div class="w-9 h-9 rounded-elem bg-purple-50 text-purple-600 flex items-center justify-center">
-                <i data-lucide="users" class="w-4 h-4"></i>
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-users w-4 h-4"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M22 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
               </div>
             </div>
             <div class="mt-4">
               <div class="text-3xl font-extrabold text-textMain tracking-tight">582</div>
               <div class="mt-2 flex items-center gap-2 text-xs">
                 <span class="inline-flex items-center gap-1 font-semibold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-full border border-emerald-100">
-                  <i data-lucide="trending-up" class="w-3 h-3"></i> +5.0%
+                  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-trending-up w-3 h-3"><polyline points="22 7 13.5 15.5 8.5 10.5 2 17"></polyline><polyline points="16 7 22 7 22 13"></polyline></svg> +5.0%
                 </span>
                 <span class="text-textMuted">98.2% retention</span>
               </div>
@@ -415,7 +347,7 @@
             </div>
             <button onclick="navigateTo('customers', 'Customers', 'Account profiles and subscriber lifecycle')" class="text-xs font-semibold text-indigo-600 hover:text-indigo-800 transition-colors flex items-center gap-1">
               <span>View all 582 accounts</span>
-              <i data-lucide="arrow-right" class="w-3.5 h-3.5"></i>
+              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-arrow-right w-3.5 h-3.5"><path d="M5 12h14"></path><path d="m12 5 7 7-7 7"></path></svg>
             </button>
           </div>
 
@@ -494,7 +426,7 @@
             <p class="text-xs text-textMuted mt-0.5">Manage enterprise accounts, contacts, and active subscriptions</p>
           </div>
           <button onclick="openModal('addCustomerModal')" class="px-4 py-2.5 rounded-elem bg-brandDark text-white text-xs font-semibold hover:bg-black transition-all flex items-center gap-2 shadow-soft">
-            <i data-lucide="user-plus" class="w-4 h-4"></i>
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-user-plus w-4 h-4"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><line x1="19" x2="19" y1="8" y2="14"></line><line x1="22" x2="16" y1="11" y2="11"></line></svg>
             <span>Add New Customer</span>
           </button>
         </div>
@@ -502,7 +434,7 @@
         <div class="bg-cardBg rounded-card border border-borderSubtle shadow-soft overflow-hidden">
           <div class="p-4 border-b border-borderSubtle flex flex-col sm:flex-row sm:items-center justify-between gap-3">
             <div class="relative w-full sm:w-72">
-              <i data-lucide="search" class="w-4 h-4 absolute left-3 top-2.5 text-textMuted"></i>
+              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-search w-4 h-4 absolute left-3 top-2.5 text-textMuted"><circle cx="11" cy="11" r="8"></circle><path d="m21 21-4.3-4.3"></path></svg>
               <input type="text" placeholder="Filter customers..." class="w-full bg-appBg border border-borderSubtle rounded-elem pl-9 pr-3 py-1.5 text-xs focus:outline-none focus:ring-1 focus:ring-brandDark">
             </div>
             <div class="flex items-center gap-2 text-xs">
@@ -589,7 +521,7 @@
             <p class="text-xs text-textMuted mt-0.5">Software products and service entitlements available for subscription billing</p>
           </div>
           <button onclick="alert('Product Builder dialog initialized!')" class="px-4 py-2.5 rounded-elem bg-brandDark text-white text-xs font-semibold hover:bg-black transition-all flex items-center gap-2 shadow-soft">
-            <i data-lucide="plus" class="w-4 h-4"></i>
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-plus w-4 h-4"><path d="M5 12h14"></path><path d="M12 5v14"></path></svg>
             <span>Create Product</span>
           </button>
         </div>
@@ -606,9 +538,9 @@
             </div>
             <p class="text-xs text-textMuted mt-3">Complete enterprise subscription management, tax logic, and automated invoicing pipeline.</p>
             <div class="mt-4 pt-4 border-t border-borderSubtle space-y-2 text-xs">
-              <div class="flex items-center gap-2 text-textMain font-medium"><i data-lucide="check-circle-2" class="w-4 h-4 text-emerald-600"></i> Automated Invoicing & Global Tax Compliance</div>
-              <div class="flex items-center gap-2 text-textMain font-medium"><i data-lucide="check-circle-2" class="w-4 h-4 text-emerald-600"></i> Stripe, Paddle & ACH Gateway Reconciliation</div>
-              <div class="flex items-center gap-2 text-textMain font-medium"><i data-lucide="check-circle-2" class="w-4 h-4 text-emerald-600"></i> Customer Self-Service Account Portal</div>
+              <div class="flex items-center gap-2 text-textMain font-medium"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-check-circle-2 w-4 h-4 text-emerald-600"><circle cx="12" cy="12" r="10"></circle><path d="m9 12 2 2 4-4"></path></svg> Automated Invoicing & Global Tax Compliance</div>
+              <div class="flex items-center gap-2 text-textMain font-medium"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-check-circle-2 w-4 h-4 text-emerald-600"><circle cx="12" cy="12" r="10"></circle><path d="m9 12 2 2 4-4"></path></svg> Stripe, Paddle & ACH Gateway Reconciliation</div>
+              <div class="flex items-center gap-2 text-textMain font-medium"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-check-circle-2 w-4 h-4 text-emerald-600"><circle cx="12" cy="12" r="10"></circle><path d="m9 12 2 2 4-4"></path></svg> Customer Self-Service Account Portal</div>
             </div>
             <div class="mt-5 pt-4 border-t border-borderSubtle flex items-center justify-between text-xs">
               <span class="text-textMuted font-medium">3 Plans Configured</span>
@@ -627,9 +559,9 @@
             </div>
             <p class="text-xs text-textMuted mt-3">Predictive churn mitigation algorithms and dynamic expansion opportunity forecasting.</p>
             <div class="mt-4 pt-4 border-t border-borderSubtle space-y-2 text-xs">
-              <div class="flex items-center gap-2 text-textMain font-medium"><i data-lucide="check-circle-2" class="w-4 h-4 text-emerald-600"></i> AI Churn Risk Score & Warning Triggers</div>
-              <div class="flex items-center gap-2 text-textMain font-medium"><i data-lucide="check-circle-2" class="w-4 h-4 text-emerald-600"></i> Multi-cohort Retention Analysis</div>
-              <div class="flex items-center gap-2 text-textMain font-medium"><i data-lucide="check-circle-2" class="w-4 h-4 text-emerald-600"></i> Automated Dunning Recovery Flows</div>
+              <div class="flex items-center gap-2 text-textMain font-medium"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-check-circle-2 w-4 h-4 text-emerald-600"><circle cx="12" cy="12" r="10"></circle><path d="m9 12 2 2 4-4"></path></svg> AI Churn Risk Score & Warning Triggers</div>
+              <div class="flex items-center gap-2 text-textMain font-medium"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-check-circle-2 w-4 h-4 text-emerald-600"><circle cx="12" cy="12" r="10"></circle><path d="m9 12 2 2 4-4"></path></svg> Multi-cohort Retention Analysis</div>
+              <div class="flex items-center gap-2 text-textMain font-medium"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-check-circle-2 w-4 h-4 text-emerald-600"><circle cx="12" cy="12" r="10"></circle><path d="m9 12 2 2 4-4"></path></svg> Automated Dunning Recovery Flows</div>
             </div>
             <div class="mt-5 pt-4 border-t border-borderSubtle flex items-center justify-between text-xs">
               <span class="text-textMuted font-medium">2 Plans Configured</span>
@@ -647,7 +579,7 @@
             <p class="text-xs text-textMuted mt-0.5">Recurring billing intervals, trial rules, and seat quotas</p>
           </div>
           <button onclick="alert('New Plan Creator initialized!')" class="px-4 py-2.5 rounded-elem bg-brandDark text-white text-xs font-semibold hover:bg-black transition-all flex items-center gap-2 shadow-soft">
-            <i data-lucide="plus" class="w-4 h-4"></i>
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-plus w-4 h-4"><path d="M5 12h14"></path><path d="M12 5v14"></path></svg>
             <span>New Pricing Plan</span>
           </button>
         </div>
@@ -663,9 +595,9 @@
               </div>
               <p class="text-xs text-textMuted mt-2">Designed for early-stage companies and lean engineering teams.</p>
               <div class="mt-6 space-y-2.5 border-t border-borderSubtle pt-4 text-xs text-textMain">
-                <div class="flex items-center gap-2"><i data-lucide="check" class="w-4 h-4 text-emerald-600"></i> Up to 100 active subscriptions</div>
-                <div class="flex items-center gap-2"><i data-lucide="check" class="w-4 h-4 text-emerald-600"></i> 14-day free trial period</div>
-                <div class="flex items-center gap-2"><i data-lucide="check" class="w-4 h-4 text-emerald-600"></i> Webhook notifications</div>
+                <div class="flex items-center gap-2"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-check w-4 h-4 text-emerald-600"><path d="M20 6 9 17l-5-5"></path></svg> Up to 100 active subscriptions</div>
+                <div class="flex items-center gap-2"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-check w-4 h-4 text-emerald-600"><path d="M20 6 9 17l-5-5"></path></svg> 14-day free trial period</div>
+                <div class="flex items-center gap-2"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-check w-4 h-4 text-emerald-600"><path d="M20 6 9 17l-5-5"></path></svg> Webhook notifications</div>
               </div>
             </div>
             <button class="w-full mt-6 py-2.5 rounded-elem border border-borderSubtle hover:bg-slate-50 text-xs font-semibold transition-colors">Edit Plan Rules</button>
@@ -684,10 +616,10 @@
               </div>
               <p class="text-xs text-textMuted mt-2">Full billing automation, dynamic seat additions, and advanced telemetry.</p>
               <div class="mt-6 space-y-2.5 border-t border-borderSubtle pt-4 text-xs text-textMain">
-                <div class="flex items-center gap-2"><i data-lucide="check" class="w-4 h-4 text-emerald-600"></i> Unlimited active subscriptions</div>
-                <div class="flex items-center gap-2"><i data-lucide="check" class="w-4 h-4 text-emerald-600"></i> Per-seat scalable licensing</div>
-                <div class="flex items-center gap-2"><i data-lucide="check" class="w-4 h-4 text-emerald-600"></i> Priority email & Slack SLA</div>
-                <div class="flex items-center gap-2"><i data-lucide="check" class="w-4 h-4 text-emerald-600"></i> Automated dunning retries</div>
+                <div class="flex items-center gap-2"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-check w-4 h-4 text-emerald-600"><path d="M20 6 9 17l-5-5"></path></svg> Unlimited active subscriptions</div>
+                <div class="flex items-center gap-2"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-check w-4 h-4 text-emerald-600"><path d="M20 6 9 17l-5-5"></path></svg> Per-seat scalable licensing</div>
+                <div class="flex items-center gap-2"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-check w-4 h-4 text-emerald-600"><path d="M20 6 9 17l-5-5"></path></svg> Priority email & Slack SLA</div>
+                <div class="flex items-center gap-2"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-check w-4 h-4 text-emerald-600"><path d="M20 6 9 17l-5-5"></path></svg> Automated dunning retries</div>
               </div>
             </div>
             <button class="w-full mt-6 py-2.5 rounded-elem bg-brandDark hover:bg-black text-white text-xs font-semibold transition-colors">Edit Plan Rules</button>
@@ -703,9 +635,9 @@
               </div>
               <p class="text-xs text-textMuted mt-2">Custom contract terms, customized billing logic, and account manager.</p>
               <div class="mt-6 space-y-2.5 border-t border-borderSubtle pt-4 text-xs text-textMain">
-                <div class="flex items-center gap-2"><i data-lucide="check" class="w-4 h-4 text-emerald-600"></i> 99.99% Uptime Guarantee SLA</div>
-                <div class="flex items-center gap-2"><i data-lucide="check" class="w-4 h-4 text-emerald-600"></i> Dedicated Database Cluster</div>
-                <div class="flex items-center gap-2"><i data-lucide="check" class="w-4 h-4 text-emerald-600"></i> Custom ERP & Salesforce Sync</div>
+                <div class="flex items-center gap-2"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-check w-4 h-4 text-emerald-600"><path d="M20 6 9 17l-5-5"></path></svg> 99.99% Uptime Guarantee SLA</div>
+                <div class="flex items-center gap-2"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-check w-4 h-4 text-emerald-600"><path d="M20 6 9 17l-5-5"></path></svg> Dedicated Database Cluster</div>
+                <div class="flex items-center gap-2"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-check w-4 h-4 text-emerald-600"><path d="M20 6 9 17l-5-5"></path></svg> Custom ERP & Salesforce Sync</div>
               </div>
             </div>
             <button class="w-full mt-6 py-2.5 rounded-elem border border-borderSubtle hover:bg-slate-50 text-xs font-semibold transition-colors">Edit Plan Rules</button>
@@ -721,7 +653,7 @@
             <p class="text-xs text-textMuted mt-0.5">Recurring contract states, current periods, and renewal status</p>
           </div>
           <button onclick="alert('Contract Creator initialized!')" class="px-4 py-2.5 rounded-elem bg-brandDark text-white text-xs font-semibold hover:bg-black transition-all flex items-center gap-2 shadow-soft">
-            <i data-lucide="plus" class="w-4 h-4"></i>
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-plus w-4 h-4"><path d="M5 12h14"></path><path d="M12 5v14"></path></svg>
             <span>Create Subscription</span>
           </button>
         </div>
@@ -783,7 +715,7 @@
             <p class="text-xs text-textMuted mt-0.5">Automated billing cycles, tax calculations, and receipts</p>
           </div>
           <button onclick="alert('Invoice created successfully!')" class="px-4 py-2.5 rounded-elem bg-brandDark text-white text-xs font-semibold hover:bg-black transition-all flex items-center gap-2 shadow-soft">
-            <i data-lucide="file-text" class="w-4 h-4"></i>
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-file-text w-4 h-4"><path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z"></path><path d="M14 2v4a2 2 0 0 0 2 2h4"></path><path d="M10 9H8"></path><path d="M16 13H8"></path><path d="M16 17H8"></path></svg>
             <span>Generate Manual Invoice</span>
           </button>
         </div>
@@ -813,7 +745,7 @@
                 <td class="px-6 py-4 font-bold text-sm">$299.00</td>
                 <td class="px-6 py-4 text-right">
                   <button onclick="alert('Downloading PDF for INV-2026-00108...')" class="inline-flex items-center gap-1 text-indigo-600 font-semibold hover:underline">
-                    <i data-lucide="download" class="w-3.5 h-3.5"></i> PDF
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-download w-3.5 h-3.5"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" x2="12" y1="15" y2="3"></line></svg> PDF
                   </button>
                 </td>
               </tr>
@@ -829,7 +761,7 @@
                 <td class="px-6 py-4 font-bold text-sm">$4,800.00</td>
                 <td class="px-6 py-4 text-right">
                   <button onclick="alert('Downloading PDF for INV-2026-00109...')" class="inline-flex items-center gap-1 text-indigo-600 font-semibold hover:underline">
-                    <i data-lucide="download" class="w-3.5 h-3.5"></i> PDF
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-download w-3.5 h-3.5"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" x2="12" y1="15" y2="3"></line></svg> PDF
                   </button>
                 </td>
               </tr>
@@ -846,7 +778,7 @@
             <p class="text-xs text-textMuted mt-0.5">Real-time payment gateway telemetry and transaction verification</p>
           </div>
           <button onclick="alert('Payment gateways synchronized!')" class="px-4 py-2.5 rounded-elem border border-borderSubtle bg-white hover:bg-slate-50 text-xs font-semibold text-textMain transition-all flex items-center gap-2 shadow-soft">
-            <i data-lucide="refresh-cw" class="w-4 h-4"></i>
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-refresh-cw w-4 h-4"><path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8"></path><path d="M21 3v5h-5"></path><path d="M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16"></path><path d="M8 16H3v5"></path></svg>
             <span>Sync Gateways</span>
           </button>
         </div>
@@ -868,7 +800,7 @@
                 <td class="px-6 py-4 font-mono text-textMuted">ch_3P4k8L2eZvKYlo</td>
                 <td class="px-6 py-4 font-bold text-textMain">Acme Technologies Inc.</td>
                 <td class="px-6 py-4 flex items-center gap-2 text-textMain font-medium">
-                  <i data-lucide="credit-card" class="w-4 h-4 text-slate-500"></i> Visa •••• 4242
+                  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-credit-card w-4 h-4 text-slate-500"><rect width="20" height="14" x="2" y="5" rx="2"></rect><line x1="2" x2="22" y1="10" y2="10"></line></svg> Visa •••• 4242
                 </td>
                 <td class="px-6 py-4">
                   <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200">
@@ -882,7 +814,7 @@
                 <td class="px-6 py-4 font-mono text-textMuted">ach_098K4L1123P99</td>
                 <td class="px-6 py-4 font-bold text-textMain">Nexus Cloud Dynamics</td>
                 <td class="px-6 py-4 flex items-center gap-2 text-textMain font-medium">
-                  <i data-lucide="building-2" class="w-4 h-4 text-slate-500"></i> ACH •••• 6789
+                  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-building-2 w-4 h-4 text-slate-500"><path d="M6 22V4a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v18Z"></path><path d="M6 12H4a2 2 0 0 0-2 2v6a2 2 0 0 0 2 2h2"></path><path d="M18 9h2a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2h-2"></path><path d="M10 6h4"></path><path d="M10 10h4"></path><path d="M10 14h4"></path><path d="M10 18h4"></path></svg> ACH •••• 6789
                 </td>
                 <td class="px-6 py-4">
                   <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full font-semibold bg-amber-50 text-amber-700 border border-amber-200">
@@ -905,7 +837,7 @@
             <p class="text-xs text-textMuted mt-0.5">Manage early-adopter codes, partner rebates, and duration limitations</p>
           </div>
           <button onclick="alert('Coupon creator opened!')" class="px-4 py-2.5 rounded-elem bg-brandDark text-white text-xs font-semibold hover:bg-black transition-all flex items-center gap-2 shadow-soft">
-            <i data-lucide="plus" class="w-4 h-4"></i>
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-plus w-4 h-4"><path d="M5 12h14"></path><path d="M12 5v14"></path></svg>
             <span>Create Coupon Code</span>
           </button>
         </div>
@@ -964,7 +896,7 @@
           <div class="bg-cardBg p-6 rounded-card border border-borderSubtle shadow-soft">
             <div class="flex items-center gap-3">
               <div class="w-10 h-10 rounded-elem bg-indigo-50 text-indigo-600 flex items-center justify-center">
-                <i data-lucide="key" class="w-5 h-5"></i>
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-key w-5 h-5"><path d="m15.5 7.5 2.3 2.3a1 1 0 0 0 1.4 0l2.1-2.1a1 1 0 0 0 0-1.4L19 4"></path><path d="m21 2-9.6 9.6"></path><circle cx="7.5" cy="15.5" r="5.5"></circle></svg>
               </div>
               <div>
                 <h3 class="text-sm font-bold text-textMain">REST API Endpoint</h3>
@@ -980,7 +912,7 @@
           <div class="bg-cardBg p-6 rounded-card border border-borderSubtle shadow-soft">
             <div class="flex items-center gap-3">
               <div class="w-10 h-10 rounded-elem bg-purple-50 text-purple-600 flex items-center justify-center">
-                <i data-lucide="database" class="w-5 h-5"></i>
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-database w-5 h-5"><ellipse cx="12" cy="5" rx="9" ry="3"></ellipse><path d="M3 5V19A9 3 0 0 0 21 19V5"></path><path d="M3 12A9 3 0 0 0 21 12"></path></svg>
               </div>
               <div>
                 <h3 class="text-sm font-bold text-textMain">Supabase Backend</h3>
@@ -996,7 +928,7 @@
           <div class="bg-cardBg p-6 rounded-card border border-borderSubtle shadow-soft">
             <div class="flex items-center gap-3">
               <div class="w-10 h-10 rounded-elem bg-emerald-50 text-emerald-600 flex items-center justify-center">
-                <i data-lucide="shield-check" class="w-5 h-5"></i>
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-shield-check w-5 h-5"><path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"></path><path d="m9 12 2 2 4-4"></path></svg>
               </div>
               <div>
                 <h3 class="text-sm font-bold text-textMain">PCI & SOC2 Compliance</h3>
@@ -1012,7 +944,7 @@
           <div class="bg-cardBg p-6 rounded-card border border-borderSubtle shadow-soft">
             <div class="flex items-center gap-3">
               <div class="w-10 h-10 rounded-elem bg-amber-50 text-amber-600 flex items-center justify-center">
-                <i data-lucide="bell" class="w-5 h-5"></i>
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-bell w-5 h-5"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"></path><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"></path></svg>
               </div>
               <div>
                 <h3 class="text-sm font-bold text-textMain">Automated Dunning Alerts</h3>
@@ -1035,7 +967,7 @@
     <div class="bg-white rounded-card max-w-lg w-full p-6 border border-borderSubtle shadow-hover animate-fadeIn">
       <div class="flex items-center justify-between pb-4 border-b border-borderSubtle">
         <h3 id="modalCustomerName" class="text-base font-bold text-textMain">Customer Details</h3>
-        <button onclick="closeModal('viewCustomerModal')" class="text-textMuted hover:text-textMain"><i data-lucide="x" class="w-5 h-5"></i></button>
+        <button onclick="closeModal('viewCustomerModal')" class="text-textMuted hover:text-textMain"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-x w-5 h-5"><path d="M18 6 6 18"></path><path d="m6 6 12 12"></path></svg></button>
       </div>
       <div class="py-4 space-y-3 text-xs">
         <div class="flex justify-between py-1 border-b border-slate-100">
@@ -1067,7 +999,7 @@
     <div class="bg-white rounded-card max-w-md w-full p-6 border border-borderSubtle shadow-hover animate-fadeIn">
       <div class="flex items-center justify-between pb-4 border-b border-borderSubtle">
         <h3 class="text-base font-bold text-textMain">Add New Customer</h3>
-        <button onclick="closeModal('addCustomerModal')" class="text-textMuted hover:text-textMain"><i data-lucide="x" class="w-5 h-5"></i></button>
+        <button onclick="closeModal('addCustomerModal')" class="text-textMuted hover:text-textMain"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-x w-5 h-5"><path d="M18 6 6 18"></path><path d="m6 6 12 12"></path></svg></button>
       </div>
       <div class="py-4 space-y-3 text-xs">
         <div>
@@ -1122,7 +1054,7 @@
         mainWrapper.classList.add('md:pl-64');
         shrinkIcon.setAttribute('data-lucide', 'panel-left-close');
       }
-      lucide.createIcons();
+      if (window.lucide && typeof lucide.createIcons === "function") { if (window.lucide && typeof lucide.createIcons === "function") { lucide.createIcons(); } }
     }
 
     // Navigation routing
@@ -1197,6 +1129,89 @@
       if (modal) modal.classList.add('hidden');
     }
 
+    
+      function drawFallbackCharts() {
+        const mrr = document.getElementById('canvas-mrr');
+        if (mrr && mrr.getContext) {
+          const ctx = mrr.getContext('2d');
+          const w = mrr.parentElement ? mrr.parentElement.clientWidth : 600;
+          const h = 260;
+          mrr.width = w;
+          mrr.height = h;
+          ctx.clearRect(0, 0, w, h);
+          // Draw subtle grid lines
+          ctx.strokeStyle = '#EAECEF';
+          ctx.lineWidth = 1;
+          for (let y = 40; y < h; y += 50) {
+            ctx.beginPath();
+            ctx.moveTo(30, y);
+            ctx.lineTo(w - 20, y);
+            ctx.stroke();
+          }
+          // Draw trend line
+          const points = [
+            [40, h - 50], [90, h - 70], [150, h - 90], [210, h - 110],
+            [280, h - 130], [350, h - 150], [420, h - 170], [490, h - 190],
+            [560, h - 210], [w - 30, h - 230]
+          ];
+          const grad = ctx.createLinearGradient(0, 0, 0, h);
+          grad.addColorStop(0, 'rgba(23, 23, 23, 0.12)');
+          grad.addColorStop(1, 'rgba(23, 23, 23, 0.0)');
+          ctx.beginPath();
+          ctx.moveTo(points[0][0], h);
+          for (const pt of points) ctx.lineTo(pt[0], pt[1]);
+          ctx.lineTo(points[points.length - 1][0], h);
+          ctx.closePath();
+          ctx.fillStyle = grad;
+          ctx.fill();
+          ctx.beginPath();
+          ctx.moveTo(points[0][0], points[0][1]);
+          for (let i = 1; i < points.length; i++) {
+            ctx.lineTo(points[i][0], points[i][1]);
+          }
+          ctx.strokeStyle = '#171717';
+          ctx.lineWidth = 2.5;
+          ctx.stroke();
+          for (const pt of points) {
+            ctx.beginPath();
+            ctx.arc(pt[0], pt[1], 4, 0, Math.PI * 2);
+            ctx.fillStyle = '#171717';
+            ctx.fill();
+          }
+        }
+        const subs = document.getElementById('canvas-subs');
+        if (subs && subs.getContext) {
+          const ctx = subs.getContext('2d');
+          const w = subs.parentElement ? subs.parentElement.clientWidth : 400;
+          const h = 260;
+          subs.width = w;
+          subs.height = h;
+          ctx.clearRect(0, 0, w, h);
+          const months = ['May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct'];
+          const barW = 20;
+          const gap = w / (months.length + 1);
+          months.forEach((m, i) => {
+            const x = gap * (i + 0.8);
+            const subH = 120 + i * 15;
+            const churnH = 12 + (i % 3) * 4;
+            // Active bar
+            ctx.fillStyle = '#171717';
+            ctx.beginPath();
+            ctx.roundRect ? ctx.roundRect(x, h - subH - 30, barW, subH, [4, 4, 0, 0]) : ctx.rect(x, h - subH - 30, barW, subH);
+            ctx.fill();
+            // Churn bar
+            ctx.fillStyle = '#F43F5E';
+            ctx.beginPath();
+            ctx.roundRect ? ctx.roundRect(x + barW + 4, h - churnH - 30, barW, churnH, [4, 4, 0, 0]) : ctx.rect(x + barW + 4, h - churnH - 30, barW, churnH);
+            ctx.fill();
+            // Label
+            ctx.fillStyle = '#737373';
+            ctx.font = '11px Inter, sans-serif';
+            ctx.fillText(m, x + 4, h - 10);
+          });
+        }
+      }
+
     // Global search filter
     function handleGlobalSearch(query) {
       const q = query.toLowerCase().trim();
@@ -1214,9 +1229,10 @@
 
     // Initialize charts and icons
     document.addEventListener("DOMContentLoaded", () => {
-      lucide.createIcons();
+      if (window.lucide && typeof lucide.createIcons === "function") { if (window.lucide && typeof lucide.createIcons === "function") { lucide.createIcons(); } }
 
-      // MRR Area Chart
+      if (typeof Chart !== 'undefined') {
+        // MRR Area Chart
       const mrrCtx = document.getElementById('canvas-mrr').getContext('2d');
       const gradMrr = mrrCtx.createLinearGradient(0, 0, 0, 240);
       gradMrr.addColorStop(0, 'rgba(79, 70, 229, 0.25)');
@@ -1304,6 +1320,9 @@
           }
         }
       });
+      } else {
+        drawFallbackCharts();
+      }
     });
   </script>
 </body>

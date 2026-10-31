@@ -97,3 +97,55 @@
     font-feature-settings: "cv02", "cv03", "cv04", "cv11";
   }
 }
+
+/* Custom UI helpers for Static Previews and HTML viewer */
+.tab-view { display: none; }
+.tab-view.active { display: block; animation: fadeIn 0.18s ease-in-out; }
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(4px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.custom-scrollbar::-webkit-scrollbar { width: 4px; height: 4px; }
+.custom-scrollbar::-webkit-scrollbar-thumb { background: #E2E8F0; border-radius: 4px; }
+
+/* Shrink / Expand transitions */
+#app-sidebar {
+  transition: width 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+}
+#main-wrapper, #app-header {
+  transition: padding-left 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+}
+.sidebar-shrunk .nav-label,
+.sidebar-shrunk .brand-title,
+.sidebar-shrunk .profile-details {
+  display: none !important;
+}
+.sidebar-shrunk .nav-item {
+  justify-content: center !important;
+  padding-left: 0 !important;
+  padding-right: 0 !important;
+}
+.sidebar-shrunk .section-heading {
+  display: none !important;
+}
+.sidebar-shrunk .brand-header {
+  justify-content: center !important;
+  padding-left: 0 !important;
+  padding-right: 0 !important;
+}
+.sidebar-shrunk .profile-card {
+  padding: 0 !important;
+  background: transparent !important;
+  border: none !important;
+  justify-content: center !important;
+}
+.sidebar-shrunk #sidebar-profile-avatar {
+  margin: 0 auto;
+}
+.sidebar-shrunk .sidebar-tooltip {
+  display: block;
+}
+.sidebar-tooltip {
+  display: none;
+}
+

@@ -7,6 +7,8 @@ const config: Config = {
     "./src/components/**/*.{js,ts,jsx,tsx,mdx}",
     "./src/features/**/*.{js,ts,jsx,tsx,mdx}",
     "./src/app/**/*.{js,ts,jsx,tsx,mdx}",
+    "./index.html",
+    "./preview.html",
   ],
   theme: {
     container: {
@@ -89,6 +91,7 @@ const config: Config = {
         soft: "0 2px 10px rgba(0, 0, 0, 0.03)",
         hover: "0 6px 20px rgba(0, 0, 0, 0.06)",
         nav: "0 4px 12px rgba(0, 0, 0, 0.08)",
+        circle: "0 2px 8px rgba(0, 0, 0, 0.06)",
       },
       keyframes: {
         "accordion-down": {
