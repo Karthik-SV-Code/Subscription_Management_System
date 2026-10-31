@@ -64,3 +64,56 @@ export function formatPercentage(
   return formatted;
 }
 
+/**
+ * Trigger browser download of CSV data.
+ */
+export function downloadCSV(filename: string, rows: Record<string, unknown>[]): boolean {
+  if (!rows || !rows.length) return false;
+  
+  const headers = Object.keys(rows[0]);
+  const csvContent = [
+    headers.join(","),
+    ...rows.map((row) =>
+      headers
+        .map((header) => {
+          const val = row[header] ?? "";
+          const escaped = String(val).replace(/"/g, '""');
+          return `"${escaped}"`;
+        })
+        .join(",")
+    ),
+  ].join("\r\n");
+
+  const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
+  const url = URL.createObjectURL(blob);
+  const link = document.createElement("a");
+  link.setAttribute("href", url);
+  link.setAttribute("download", filename.endsWith(".csv") ? filename : `${filename}.csv`);
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
+  URL.revokeObjectURL(url);
+  return true;
+}
+
+/**
+ * Copy text to clipboard safely.
+ */
+export async function copyToClipboard(text: string): Promise<boolean> {
+  try {
+    if (navigator?.clipboard?.writeText) {
+      await navigator.clipboard.writeText(text);
+      return true;
+    }
+    const textArea = document.createElement("textarea");
+    textArea.value = text;
+    document.body.appendChild(textArea);
+    textArea.select();
+    document.execCommand("copy");
+    document.body.removeChild(textArea);
+    return true;
+  } catch {
+    return false;
+  }
+}
+

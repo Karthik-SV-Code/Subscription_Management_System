@@ -1,6 +1,11 @@
-import { redirect } from "next/navigation";
+import * as React from "react";
+import { DashboardShell } from "@/components/layout/dashboard-shell";
+import DashboardPage from "@/app/(dashboard)/dashboard/page";
 
 export default function RootPage() {
-  redirect("/dashboard");
+  return (
+    <DashboardShell>
+      <DashboardPage />
+    </DashboardShell>
+  );
 }
-

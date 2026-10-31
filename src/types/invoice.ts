@@ -2,7 +2,15 @@
  * Invoice & Payment Types
  */
 
-export type InvoiceStatus = "draft" | "open" | "paid" | "uncollectible" | "void";
+export type InvoiceStatus =
+  | "draft"
+  | "open"
+  | "paid"
+  | "pending"
+  | "overdue"
+  | "partially_paid"
+  | "uncollectible"
+  | "void";
 
 export type PaymentStatus = "succeeded" | "pending" | "failed" | "refunded";
 
@@ -33,6 +41,7 @@ export interface Invoice {
   amountPaid: number;
   amountDue: number;
   currency: string;
+  invoiceDate?: string;
   dueDate: string;
   paidAt?: string;
   lineItems: InvoiceLineItem[];

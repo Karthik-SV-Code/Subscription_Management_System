@@ -40,6 +40,7 @@ export const MAIN_NAV_ITEMS: NavItem[] = [
     title: "Subscriptions",
     href: "/subscriptions",
     icon: "Repeat",
+    badge: "1,284",
     description: "Active contracts, upgrades, downgrades, and renewals",
   },
   {
@@ -55,10 +56,10 @@ export const MAIN_NAV_ITEMS: NavItem[] = [
     description: "Transactions, refund logs, and gateway integrations",
   },
   {
-    title: "Discounts",
-    href: "/discounts",
-    icon: "Tag",
-    description: "Promotional codes, volume discounts, and coupon management",
+    title: "Analytics",
+    href: "/analytics",
+    icon: "BarChart3",
+    description: "MRR trends, churn analytics, and cohort performance",
   },
   {
     title: "Settings",

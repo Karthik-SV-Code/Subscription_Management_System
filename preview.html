@@ -9,96 +9,97 @@
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
   <style>
-    body { font-family: 'Inter', sans-serif; background-color: #F8FAFC; color: #0F172A; }
-    .sidebar-bg { background-color: #111827; }
-    .brand-primary { background-color: #4F46E5; }
-    .text-brand-primary { color: #4F46E5; }
-    .border-brand-primary { border-color: #4F46E5; }
-    .active-nav { background-color: #4F46E5; color: #FFFFFF !important; }
+    body { font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif; background-color: #F8FAFC; color: #0F172A; }
+    .sidebar-bg { background-color: #FFFFFF; }
+    .active-nav { background-color: #4F46E5 !important; color: #FFFFFF !important; box-shadow: 0 1px 3px rgba(79, 70, 229, 0.25); }
+    .active-nav i { color: #FFFFFF !important; }
     .tab-content { display: none; }
     .tab-content.active { display: block; }
   </style>
 </head>
-<body class="min-h-screen flex antialiased">
+<body class="min-h-screen flex antialiased bg-[#F8FAFC]">
 
   <!-- Mobile Sidebar Overlay -->
-  <div id="mobile-overlay" onclick="toggleSidebar()" class="fixed inset-0 z-40 bg-black/50 backdrop-blur-sm hidden md:hidden"></div>
+  <div id="mobile-overlay" onclick="toggleSidebar()" class="fixed inset-0 z-40 bg-black/40 backdrop-blur-xs hidden md:hidden"></div>
 
   <!-- Sidebar -->
-  <aside id="sidebar" class="fixed inset-y-0 left-0 z-50 w-64 sidebar-bg text-slate-100 flex flex-col border-r border-slate-800 transform -translate-x-full transition-transform duration-200 md:translate-x-0">
+  <aside id="sidebar" class="fixed inset-y-0 left-0 z-50 w-64 sidebar-bg text-slate-900 flex flex-col border-r border-slate-200/80 shadow-[1px_0_3px_rgba(0,0,0,0.02)] transform -translate-x-full transition-transform duration-200 md:translate-x-0 select-none">
     <!-- Brand Header -->
-    <div class="flex h-16 items-center px-6 border-b border-slate-800/80 gap-3">
-      <div class="flex h-9 w-9 items-center justify-center rounded-lg bg-indigo-600 text-white font-bold shadow-md shadow-indigo-500/20">
-        <i data-lucide="zap" class="w-5 h-5"></i>
+    <div class="flex h-16 items-center px-6 border-b border-slate-100 gap-3">
+      <div class="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-indigo-600 to-indigo-700 text-white font-bold shadow-md shadow-indigo-500/20">
+        <i data-lucide="sparkles" class="w-5 h-5"></i>
       </div>
       <div class="flex flex-col">
-        <span class="text-base font-bold tracking-tight text-white">SubscriptIQ</span>
-        <span class="text-[10px] uppercase tracking-wider text-slate-400 font-medium">Revenue Platform</span>
+        <div class="flex items-center gap-1.5">
+          <span class="text-base font-bold tracking-tight text-slate-900">SubscriptIQ</span>
+          <span class="inline-block h-2 w-2 rounded-full bg-emerald-500 ring-2 ring-emerald-100"></span>
+        </div>
+        <span class="text-[11px] font-medium tracking-wide text-slate-400">Subscription Platform</span>
       </div>
     </div>
 
     <!-- Navigation -->
-    <div class="flex-1 overflow-y-auto px-3 py-4 space-y-1">
-      <div class="px-3 pb-2 text-[11px] font-semibold uppercase tracking-wider text-slate-400">Platform Menu</div>
+    <div class="flex-1 overflow-y-auto px-4 py-5 space-y-1.5">
+      <div class="px-3 pb-2 text-[11px] font-semibold uppercase tracking-wider text-slate-400">Main Navigation</div>
       
-      <button onclick="switchTab('dashboard')" id="nav-dashboard" class="w-full group flex items-center gap-3 rounded-md px-3 py-2 text-sm font-medium transition-all active-nav">
+      <button onclick="switchTab('dashboard')" id="nav-dashboard" class="w-full group flex items-center gap-3 rounded-xl px-3.5 py-2.5 text-sm font-medium transition-all active-nav">
         <i data-lucide="layout-dashboard" class="w-4 h-4"></i>
         <span class="flex-1 text-left">Dashboard</span>
       </button>
 
-      <button onclick="switchTab('customers')" id="nav-customers" class="w-full group flex items-center gap-3 rounded-md px-3 py-2 text-sm font-medium text-slate-300 hover:bg-slate-800/70 hover:text-white transition-all">
-        <i data-lucide="users" class="w-4 h-4"></i>
+      <button onclick="switchTab('customers')" id="nav-customers" class="w-full group flex items-center gap-3 rounded-xl px-3.5 py-2.5 text-sm font-medium text-slate-600 hover:bg-slate-100/80 hover:text-slate-900 transition-all">
+        <i data-lucide="users" class="w-4 h-4 text-slate-400 group-hover:text-slate-700"></i>
         <span class="flex-1 text-left">Customers</span>
       </button>
 
-      <button onclick="switchTab('products')" id="nav-products" class="w-full group flex items-center gap-3 rounded-md px-3 py-2 text-sm font-medium text-slate-300 hover:bg-slate-800/70 hover:text-white transition-all">
-        <i data-lucide="package" class="w-4 h-4"></i>
+      <button onclick="switchTab('products')" id="nav-products" class="w-full group flex items-center gap-3 rounded-xl px-3.5 py-2.5 text-sm font-medium text-slate-600 hover:bg-slate-100/80 hover:text-slate-900 transition-all">
+        <i data-lucide="package" class="w-4 h-4 text-slate-400 group-hover:text-slate-700"></i>
         <span class="flex-1 text-left">Products</span>
       </button>
 
-      <button onclick="switchTab('plans')" id="nav-plans" class="w-full group flex items-center gap-3 rounded-md px-3 py-2 text-sm font-medium text-slate-300 hover:bg-slate-800/70 hover:text-white transition-all">
-        <i data-lucide="layers" class="w-4 h-4"></i>
+      <button onclick="switchTab('plans')" id="nav-plans" class="w-full group flex items-center gap-3 rounded-xl px-3.5 py-2.5 text-sm font-medium text-slate-600 hover:bg-slate-100/80 hover:text-slate-900 transition-all">
+        <i data-lucide="layers" class="w-4 h-4 text-slate-400 group-hover:text-slate-700"></i>
         <span class="flex-1 text-left">Plans</span>
       </button>
 
-      <button onclick="switchTab('subscriptions')" id="nav-subscriptions" class="w-full group flex items-center gap-3 rounded-md px-3 py-2 text-sm font-medium text-slate-300 hover:bg-slate-800/70 hover:text-white transition-all">
-        <i data-lucide="repeat" class="w-4 h-4"></i>
+      <button onclick="switchTab('subscriptions')" id="nav-subscriptions" class="w-full group flex items-center gap-3 rounded-xl px-3.5 py-2.5 text-sm font-medium text-slate-600 hover:bg-slate-100/80 hover:text-slate-900 transition-all">
+        <i data-lucide="repeat" class="w-4 h-4 text-slate-400 group-hover:text-slate-700"></i>
         <span class="flex-1 text-left">Subscriptions</span>
-        <span class="rounded-full bg-slate-800 px-2 py-0.5 text-[10px] font-medium text-slate-300">Live</span>
+        <span class="rounded-full bg-slate-100 text-slate-600 px-2 py-0.5 text-[10px] font-semibold">1,284</span>
       </button>
 
-      <button onclick="switchTab('invoices')" id="nav-invoices" class="w-full group flex items-center gap-3 rounded-md px-3 py-2 text-sm font-medium text-slate-300 hover:bg-slate-800/70 hover:text-white transition-all">
-        <i data-lucide="receipt" class="w-4 h-4"></i>
+      <button onclick="switchTab('invoices')" id="nav-invoices" class="w-full group flex items-center gap-3 rounded-xl px-3.5 py-2.5 text-sm font-medium text-slate-600 hover:bg-slate-100/80 hover:text-slate-900 transition-all">
+        <i data-lucide="receipt" class="w-4 h-4 text-slate-400 group-hover:text-slate-700"></i>
         <span class="flex-1 text-left">Invoices</span>
       </button>
 
-      <button onclick="switchTab('payments')" id="nav-payments" class="w-full group flex items-center gap-3 rounded-md px-3 py-2 text-sm font-medium text-slate-300 hover:bg-slate-800/70 hover:text-white transition-all">
-        <i data-lucide="credit-card" class="w-4 h-4"></i>
+      <button onclick="switchTab('payments')" id="nav-payments" class="w-full group flex items-center gap-3 rounded-xl px-3.5 py-2.5 text-sm font-medium text-slate-600 hover:bg-slate-100/80 hover:text-slate-900 transition-all">
+        <i data-lucide="credit-card" class="w-4 h-4 text-slate-400 group-hover:text-slate-700"></i>
         <span class="flex-1 text-left">Payments</span>
       </button>
 
-      <button onclick="switchTab('discounts')" id="nav-discounts" class="w-full group flex items-center gap-3 rounded-md px-3 py-2 text-sm font-medium text-slate-300 hover:bg-slate-800/70 hover:text-white transition-all">
-        <i data-lucide="tag" class="w-4 h-4"></i>
-        <span class="flex-1 text-left">Discounts</span>
+      <button onclick="switchTab('analytics')" id="nav-analytics" class="w-full group flex items-center gap-3 rounded-xl px-3.5 py-2.5 text-sm font-medium text-slate-600 hover:bg-slate-100/80 hover:text-slate-900 transition-all">
+        <i data-lucide="bar-chart-3" class="w-4 h-4 text-slate-400 group-hover:text-slate-700"></i>
+        <span class="flex-1 text-left">Analytics</span>
       </button>
 
-      <button onclick="switchTab('settings')" id="nav-settings" class="w-full group flex items-center gap-3 rounded-md px-3 py-2 text-sm font-medium text-slate-300 hover:bg-slate-800/70 hover:text-white transition-all">
-        <i data-lucide="settings" class="w-4 h-4"></i>
+      <button onclick="switchTab('settings')" id="nav-settings" class="w-full group flex items-center gap-3 rounded-xl px-3.5 py-2.5 text-sm font-medium text-slate-600 hover:bg-slate-100/80 hover:text-slate-900 transition-all">
+        <i data-lucide="settings" class="w-4 h-4 text-slate-400 group-hover:text-slate-700"></i>
         <span class="flex-1 text-left">Settings</span>
       </button>
     </div>
 
     <!-- Tier Footer -->
-    <div class="p-4 border-t border-slate-800/80">
-      <div class="flex items-center gap-3 rounded-lg bg-slate-900/80 p-3 border border-slate-800">
-        <div class="flex h-8 w-8 items-center justify-center rounded-md bg-emerald-500/10 text-emerald-400">
+    <div class="p-4 border-t border-slate-100 bg-slate-50/50">
+      <div class="flex items-center gap-3 rounded-xl bg-white p-3 border border-slate-200/80 shadow-2xs">
+        <div class="flex h-8 w-8 items-center justify-center rounded-lg bg-emerald-50 text-emerald-600 border border-emerald-100 shrink-0">
           <i data-lucide="shield-check" class="w-4 h-4"></i>
         </div>
-        <div class="flex flex-col text-xs min-w-0">
-          <span class="font-semibold text-white truncate">Enterprise Edition</span>
-          <span class="text-[11px] text-slate-400 truncate">Static Build Live</span>
+        <div class="flex flex-col text-xs min-w-0 flex-1">
+          <span class="font-semibold text-slate-800 truncate">SubscriptIQ Enterprise</span>
+          <span class="text-[11px] text-slate-400 truncate">Production · Live Sync</span>
         </div>
       </div>
     </div>
@@ -106,29 +107,54 @@
 
   <!-- Main Shell -->
   <div class="flex-1 flex flex-col md:pl-64 min-w-0">
-    <!-- Header -->
-    <header class="sticky top-0 z-30 flex h-16 w-full items-center justify-between border-b border-slate-200 bg-white/95 px-4 sm:px-6 backdrop-blur">
+    <!-- 3. TOP NAVIGATION BAR -->
+    <header class="sticky top-0 z-30 flex h-16 w-full items-center justify-between border-b border-slate-200/80 bg-white/95 px-4 sm:px-6 lg:px-8 backdrop-blur">
       <div class="flex items-center gap-3">
-        <button onclick="toggleSidebar()" class="md:hidden p-2 rounded-md hover:bg-slate-100 text-slate-600" aria-label="Toggle menu">
+        <button onclick="toggleSidebar()" class="md:hidden p-2 rounded-xl hover:bg-slate-100 text-slate-600" aria-label="Toggle menu">
           <i data-lucide="menu" class="w-5 h-5"></i>
         </button>
-        <div class="relative w-64 sm:w-80">
-          <i data-lucide="search" class="absolute left-3 top-2.5 w-4 h-4 text-slate-400"></i>
-          <input type="text" placeholder="Search subscriptions, customers, invoices..." class="w-full pl-9 pr-4 py-1.5 text-sm rounded-md border border-slate-200 bg-slate-50 focus:bg-white focus:outline-none focus:ring-2 focus:ring-indigo-500">
+        <div class="relative w-52 sm:w-72 md:w-80 lg:w-96">
+          <i data-lucide="search" class="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400"></i>
+          <input type="text" id="global-search" oninput="handleGlobalSearch(this.value)" placeholder="Search subscriptions, customers, invoices..." class="w-full pl-10 pr-12 py-2 text-sm rounded-xl border border-slate-200 bg-slate-50/70 text-slate-900 placeholder:text-slate-400 focus:bg-white focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition-all">
+          <div class="absolute right-2.5 top-1/2 -translate-y-1/2 hidden sm:flex items-center gap-0.5 rounded border border-slate-200 bg-white px-1.5 py-0.5 text-[10px] font-medium text-slate-400 shadow-2xs">
+            <span>⌘K</span>
+          </div>
         </div>
       </div>
 
-      <div class="flex items-center gap-3">
-        <div class="hidden sm:flex items-center gap-1.5 rounded-full bg-indigo-50 px-3 py-1 text-xs font-medium text-indigo-700">
-          <i data-lucide="sparkles" class="w-3.5 h-3.5"></i>
-          <span>SubscriptIQ v1.0</span>
+      <div class="flex items-center gap-2 sm:gap-3">
+        <!-- Current Date -->
+        <div class="hidden md:flex items-center gap-2 rounded-xl border border-slate-200/80 bg-slate-50/80 px-3 py-1.5 text-xs font-medium text-slate-700 shadow-2xs">
+          <i data-lucide="calendar" class="w-3.5 h-3.5 text-indigo-600"></i>
+          <span id="current-date-display">Sat, Oct 31, 2026</span>
         </div>
-        <button class="relative p-2 text-slate-500 hover:text-slate-700 rounded-full hover:bg-slate-100">
-          <i data-lucide="bell" class="w-4 h-4"></i>
-          <span class="absolute top-1.5 right-1.5 w-2 h-2 rounded-full bg-indigo-600 ring-2 ring-white"></span>
+
+        <!-- Export Button -->
+        <button onclick="triggerExport()" class="flex items-center gap-2 rounded-xl border border-slate-200/90 bg-white hover:bg-slate-50 text-slate-700 font-medium text-xs sm:text-sm px-3 py-1.5 shadow-2xs transition-all">
+          <i data-lucide="download" class="w-4 h-4 text-indigo-600"></i>
+          <span>Export</span>
         </button>
-        <div class="h-9 w-9 rounded-full bg-indigo-100 text-indigo-700 font-semibold flex items-center justify-center text-xs ring-1 ring-slate-200">
-          AD
+
+        <!-- Notification Icon -->
+        <div class="relative">
+          <button onclick="toggleNotificationDropdown()" class="relative p-2 text-slate-500 hover:text-slate-700 rounded-xl hover:bg-slate-100 transition-colors">
+            <i data-lucide="bell" class="w-4 h-4"></i>
+            <span class="absolute top-1.5 right-1.5 flex h-2 w-2">
+              <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-rose-400 opacity-75"></span>
+              <span class="relative inline-flex rounded-full h-2 w-2 bg-rose-500"></span>
+            </span>
+          </button>
+        </div>
+
+        <!-- User Profile -->
+        <div class="flex items-center gap-2.5 pl-2 pr-3 py-1.5 rounded-xl border border-slate-200/80 bg-white cursor-pointer hover:bg-slate-50 transition-all">
+          <div class="h-8 w-8 rounded-lg bg-gradient-to-br from-indigo-600 to-indigo-700 text-white font-bold flex items-center justify-center text-xs shadow-xs">
+            SM
+          </div>
+          <div class="hidden sm:flex flex-col text-left">
+            <span class="text-xs font-semibold text-slate-900 leading-tight">Sarah Miller</span>
+            <span class="text-[10px] text-slate-500 font-medium">RevOps Lead</span>
+          </div>
         </div>
       </div>
     </header>
@@ -137,534 +163,452 @@
     <main class="flex-1 p-4 sm:p-6 lg:p-8 max-w-7xl w-full mx-auto">
 
       <!-- ================= TAB: DASHBOARD ================= -->
-      <section id="tab-dashboard" class="tab-content active space-y-6">
-        <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 pb-2">
+      <section id="tab-dashboard" class="tab-content active space-y-8">
+        <!-- Page Title & Actions -->
+        <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 pb-1">
           <div>
-            <div class="flex items-center gap-2">
-              <h1 class="text-2xl font-bold tracking-tight text-slate-900">Dashboard Overview</h1>
-              <span class="px-2.5 py-0.5 text-xs font-medium rounded-full bg-indigo-50 text-indigo-700 border border-indigo-200">Production Mode</span>
+            <div class="flex items-center gap-2.5">
+              <h1 class="text-2xl sm:text-3xl font-extrabold tracking-tight text-slate-900">Subscription Management Dashboard</h1>
+              <span class="hidden sm:inline-flex items-center gap-1 rounded-full bg-indigo-50 px-2.5 py-0.5 text-xs font-semibold text-indigo-700 border border-indigo-200">
+                <i data-lucide="sparkles" class="w-3 h-3"></i> Live Telemetry
+              </span>
             </div>
-            <p class="text-sm text-slate-500 mt-1">Real-time recurring revenue telemetry, customer acquisition, and contract health.</p>
+            <p class="text-sm text-slate-500 mt-1">Real-time subscriber lifecycle management, recurring revenue velocity, and invoicing settlements.</p>
           </div>
-          <div class="flex items-center gap-3">
-            <span class="text-xs text-slate-400">Last updated: Just now</span>
+          <div class="flex items-center gap-2.5">
+            <button onclick="triggerExport()" class="px-3 py-1.5 rounded-xl border border-slate-200 bg-white hover:bg-slate-50 text-slate-700 text-xs font-medium shadow-2xs flex items-center gap-1.5">
+              <i data-lucide="download" class="w-3.5 h-3.5 text-slate-500"></i> Export Report
+            </button>
+            <button onclick="showToast('New Subscription Wizard Opened')" class="px-3.5 py-1.5 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-semibold shadow-sm shadow-indigo-500/25 flex items-center gap-1.5">
+              <i data-lucide="plus" class="w-3.5 h-3.5"></i> New Subscription
+            </button>
           </div>
         </div>
 
-        <!-- Metric Stat Cards -->
+        <!-- 4. DASHBOARD SUMMARY CARDS -->
         <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-          <!-- Card 1 -->
-          <div class="p-6 rounded-lg border border-slate-200/80 bg-white shadow-sm hover:shadow transition-shadow">
+          <!-- Card 1: MRR -->
+          <div class="rounded-2xl border border-slate-200/80 bg-white p-6 shadow-sm hover:shadow-md transition-all">
             <div class="flex items-center justify-between">
-              <span class="text-sm font-medium text-slate-500">Monthly Recurring Revenue</span>
-              <div class="flex h-9 w-9 items-center justify-center rounded-lg bg-indigo-50 text-indigo-600">
+              <span class="text-xs font-semibold uppercase tracking-wider text-slate-500">Monthly Recurring Revenue (MRR)</span>
+              <div class="flex h-10 w-10 items-center justify-center rounded-xl bg-indigo-50 text-indigo-600 border border-indigo-100">
                 <i data-lucide="dollar-sign" class="w-5 h-5"></i>
               </div>
             </div>
-            <div class="mt-3">
-              <div class="text-2xl font-bold text-slate-900">$42,600</div>
-              <div class="mt-2 flex items-center gap-2 text-xs">
-                <span class="inline-flex items-center gap-0.5 font-medium px-1.5 py-0.5 rounded bg-emerald-50 text-emerald-700">
-                  <i data-lucide="trending-up" class="w-3 h-3"></i> +12.4%
+            <div class="mt-4">
+              <div class="text-3xl font-extrabold tracking-tight text-slate-900">$68,450</div>
+              <div class="mt-3 flex flex-wrap items-center gap-2 text-xs">
+                <span class="inline-flex items-center gap-1 font-semibold px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200">
+                  <i data-lucide="trending-up" class="w-3 h-3"></i> +14.2%
                 </span>
-                <span class="text-slate-400">vs last month</span>
+                <span class="text-slate-400 font-medium">vs last month</span>
+                <span class="text-slate-500 font-medium w-full mt-1">ARR run-rate $821.4K · Net expansion +$4.8K</span>
               </div>
             </div>
           </div>
 
-          <!-- Card 2 -->
-          <div class="p-6 rounded-lg border border-slate-200/80 bg-white shadow-sm hover:shadow transition-shadow">
+          <!-- Card 2: Active Subscriptions -->
+          <div class="rounded-2xl border border-slate-200/80 bg-white p-6 shadow-sm hover:shadow-md transition-all">
             <div class="flex items-center justify-between">
-              <span class="text-sm font-medium text-slate-500">Active Subscriptions</span>
-              <div class="flex h-9 w-9 items-center justify-center rounded-lg bg-indigo-50 text-indigo-600">
+              <span class="text-xs font-semibold uppercase tracking-wider text-slate-500">Active Subscriptions</span>
+              <div class="flex h-10 w-10 items-center justify-center rounded-xl bg-sky-50 text-sky-600 border border-sky-100">
                 <i data-lucide="repeat" class="w-5 h-5"></i>
               </div>
             </div>
-            <div class="mt-3">
-              <div class="text-2xl font-bold text-slate-900">640</div>
-              <div class="mt-2 flex items-center gap-2 text-xs">
-                <span class="inline-flex items-center gap-0.5 font-medium px-1.5 py-0.5 rounded bg-emerald-50 text-emerald-700">
-                  <i data-lucide="trending-up" class="w-3 h-3"></i> +8.2%
+            <div class="mt-4">
+              <div class="text-3xl font-extrabold tracking-tight text-slate-900">1,284</div>
+              <div class="mt-3 flex flex-wrap items-center gap-2 text-xs">
+                <span class="inline-flex items-center gap-1 font-semibold px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200">
+                  <i data-lucide="trending-up" class="w-3 h-3"></i> +8.5%
                 </span>
-                <span class="text-slate-400">vs last month</span>
+                <span class="text-slate-400 font-medium">vs last month</span>
+                <span class="text-slate-500 font-medium w-full mt-1">98.2% retention rate · 36 new this month</span>
               </div>
             </div>
           </div>
 
-          <!-- Card 3 -->
-          <div class="p-6 rounded-lg border border-slate-200/80 bg-white shadow-sm hover:shadow transition-shadow">
+          <!-- Card 3: Total Customers -->
+          <div class="rounded-2xl border border-slate-200/80 bg-white p-6 shadow-sm hover:shadow-md transition-all">
             <div class="flex items-center justify-between">
-              <span class="text-sm font-medium text-slate-500">Net Revenue Retention</span>
-              <div class="flex h-9 w-9 items-center justify-center rounded-lg bg-indigo-50 text-indigo-600">
-                <i data-lucide="trending-up" class="w-5 h-5"></i>
-              </div>
-            </div>
-            <div class="mt-3">
-              <div class="text-2xl font-bold text-slate-900">108.5%</div>
-              <div class="mt-2 flex items-center gap-2 text-xs">
-                <span class="inline-flex items-center gap-0.5 font-medium px-1.5 py-0.5 rounded bg-emerald-50 text-emerald-700">
-                  <i data-lucide="trending-up" class="w-3 h-3"></i> +1.3%
-                </span>
-                <span class="text-slate-400">vs last quarter</span>
-              </div>
-            </div>
-          </div>
-
-          <!-- Card 4 -->
-          <div class="p-6 rounded-lg border border-slate-200/80 bg-white shadow-sm hover:shadow transition-shadow">
-            <div class="flex items-center justify-between">
-              <span class="text-sm font-medium text-slate-500">Active Accounts</span>
-              <div class="flex h-9 w-9 items-center justify-center rounded-lg bg-indigo-50 text-indigo-600">
+              <span class="text-xs font-semibold uppercase tracking-wider text-slate-500">Total Customers</span>
+              <div class="flex h-10 w-10 items-center justify-center rounded-xl bg-emerald-50 text-emerald-600 border border-emerald-100">
                 <i data-lucide="users" class="w-5 h-5"></i>
               </div>
             </div>
-            <div class="mt-3">
-              <div class="text-2xl font-bold text-slate-900">582</div>
-              <div class="mt-2 flex items-center gap-2 text-xs">
-                <span class="inline-flex items-center gap-0.5 font-medium px-1.5 py-0.5 rounded bg-emerald-50 text-emerald-700">
-                  <i data-lucide="trending-up" class="w-3 h-3"></i> +5.0%
+            <div class="mt-4">
+              <div class="text-3xl font-extrabold tracking-tight text-slate-900">942</div>
+              <div class="mt-3 flex flex-wrap items-center gap-2 text-xs">
+                <span class="inline-flex items-center gap-1 font-semibold px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200">
+                  <i data-lucide="trending-up" class="w-3 h-3"></i> +12.1%
                 </span>
-                <span class="text-slate-400">vs last month</span>
+                <span class="text-slate-400 font-medium">vs last month</span>
+                <span class="text-slate-500 font-medium w-full mt-1">86 Enterprise contracts · 856 Standard</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Card 4: Overdue Invoices -->
+          <div class="rounded-2xl border border-slate-200/80 bg-white p-6 shadow-sm hover:shadow-md transition-all">
+            <div class="flex items-center justify-between">
+              <span class="text-xs font-semibold uppercase tracking-wider text-slate-500">Overdue Invoices</span>
+              <div class="flex h-10 w-10 items-center justify-center rounded-xl bg-rose-50 text-rose-600 border border-rose-100">
+                <i data-lucide="alert-circle" class="w-5 h-5"></i>
+              </div>
+            </div>
+            <div class="mt-4">
+              <div class="text-3xl font-extrabold tracking-tight text-slate-900">14</div>
+              <div class="mt-3 flex flex-wrap items-center gap-2 text-xs">
+                <span class="inline-flex items-center gap-1 font-semibold px-2 py-0.5 rounded-full bg-rose-50 text-rose-700 border border-rose-200">
+                  Action Required
+                </span>
+                <span class="text-slate-400 font-medium">-4.8% vs last month</span>
+                <span class="text-slate-500 font-medium w-full mt-1">$4,280 pending recovery · 3 in dunning</span>
               </div>
             </div>
           </div>
         </div>
 
-        <!-- Charts Grid -->
+        <!-- 5. ANALYTICS SECTION -->
         <div class="grid gap-6 lg:grid-cols-2">
-          <!-- Area Chart -->
-          <div class="p-6 rounded-lg border border-slate-200 bg-white shadow-sm">
-            <h3 class="text-base font-semibold text-slate-900">Monthly Recurring Revenue (MRR)</h3>
-            <p class="text-xs text-slate-500 mt-1">Historical revenue trajectory and subscription momentum</p>
+          <!-- Revenue Trends Chart -->
+          <div class="rounded-2xl border border-slate-200/80 bg-white p-6 shadow-sm">
+            <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 pb-2 border-b border-slate-100">
+              <div>
+                <div class="flex items-center gap-2">
+                  <h3 class="text-base font-bold text-slate-900">Revenue Trends</h3>
+                  <span class="inline-flex items-center gap-1 rounded-full bg-emerald-50 px-2 py-0.5 text-xs font-semibold text-emerald-700 border border-emerald-200">
+                    <i data-lucide="trending-up" class="w-3 h-3"></i> +14.2% YoY
+                  </span>
+                </div>
+                <p class="text-xs text-slate-500 mt-0.5">Monthly recurring revenue (MRR) expansion trajectory vs target</p>
+              </div>
+              <div class="flex items-center gap-2">
+                <span class="text-xs text-slate-500">Target: <strong class="text-rose-600">$64.5k</strong></span>
+              </div>
+            </div>
             <div class="mt-4 h-64">
               <canvas id="mrrChart"></canvas>
             </div>
           </div>
 
-          <!-- Bar Chart -->
-          <div class="p-6 rounded-lg border border-slate-200 bg-white shadow-sm">
-            <h3 class="text-base font-semibold text-slate-900">Subscription Growth & Retention</h3>
-            <p class="text-xs text-slate-500 mt-1">Net active accounts vs churned contracts</p>
-            <div class="mt-4 h-64">
+          <!-- Subscription Overview Chart -->
+          <div class="rounded-2xl border border-slate-200/80 bg-white p-6 shadow-sm">
+            <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 pb-2 border-b border-slate-100">
+              <div>
+                <div class="flex items-center gap-2">
+                  <h3 class="text-base font-bold text-slate-900">Subscription Overview</h3>
+                  <span class="inline-flex items-center gap-1 rounded-full bg-indigo-50 px-2 py-0.5 text-xs font-semibold text-indigo-700 border border-indigo-200">
+                    1,496 Total
+                  </span>
+                </div>
+                <p class="text-xs text-slate-500 mt-0.5">Distribution across Active, Trial, Paused, and Cancelled</p>
+              </div>
+            </div>
+            <!-- Status pills -->
+            <div class="grid grid-cols-4 gap-2 py-3 border-b border-slate-100 text-xs">
+              <div class="bg-indigo-50/60 p-2 rounded-lg text-center border border-indigo-100">
+                <span class="block text-indigo-900 font-semibold">1,284</span>
+                <span class="text-[10px] text-indigo-600">Active</span>
+              </div>
+              <div class="bg-sky-50/60 p-2 rounded-lg text-center border border-sky-100">
+                <span class="block text-sky-900 font-semibold">126</span>
+                <span class="text-[10px] text-sky-600">Trial</span>
+              </div>
+              <div class="bg-amber-50/60 p-2 rounded-lg text-center border border-amber-100">
+                <span class="block text-amber-900 font-semibold">48</span>
+                <span class="text-[10px] text-amber-600">Paused</span>
+              </div>
+              <div class="bg-rose-50/60 p-2 rounded-lg text-center border border-rose-100">
+                <span class="block text-rose-900 font-semibold">38</span>
+                <span class="text-[10px] text-rose-600">Cancelled</span>
+              </div>
+            </div>
+            <div class="mt-4 h-52">
               <canvas id="subsChart"></canvas>
             </div>
           </div>
         </div>
 
-        <!-- Recent Activity Table Preview -->
-        <div class="rounded-lg border border-slate-200 bg-white shadow-sm overflow-hidden">
-          <div class="p-4 border-b border-slate-100 flex items-center justify-between">
-            <h3 class="text-base font-semibold text-slate-900">Recent Customer Activity</h3>
-            <button onclick="switchTab('customers')" class="text-xs text-indigo-600 hover:underline font-medium">View all customers &rarr;</button>
+        <!-- 6. RECENT SUBSCRIPTIONS TABLE -->
+        <div class="rounded-2xl border border-slate-200/80 bg-white shadow-sm overflow-hidden">
+          <div class="p-5 sm:p-6 border-b border-slate-100 flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+            <div>
+              <div class="flex items-center gap-2">
+                <h3 class="text-base font-bold text-slate-900">Recent Subscriptions</h3>
+                <span class="rounded-full bg-slate-100 px-2.5 py-0.5 text-xs font-semibold text-slate-600">10 records</span>
+              </div>
+              <p class="text-xs text-slate-500 mt-1">Real-time subscriber lifecycle status, pricing plans, and recurring contract values.</p>
+            </div>
+            <div class="flex items-center gap-2">
+              <input type="text" id="sub-filter-input" oninput="filterSubTable(this.value)" placeholder="Filter subscriptions..." class="pl-3 pr-3 py-1.5 text-xs rounded-xl border border-slate-200 bg-slate-50 focus:bg-white focus:outline-none focus:ring-2 focus:ring-indigo-500">
+            </div>
           </div>
-          <table class="w-full text-left text-sm">
-            <thead class="bg-slate-50/80 text-xs font-semibold text-slate-500 uppercase">
-              <tr>
-                <th class="px-4 py-3">Customer</th>
-                <th class="px-4 py-3">Status</th>
-                <th class="px-4 py-3">Plan</th>
-                <th class="px-4 py-3">MRR</th>
-                <th class="px-4 py-3 text-right">Actions</th>
-              </tr>
-            </thead>
-            <tbody class="divide-y divide-slate-100 text-slate-700">
-              <tr>
-                <td class="px-4 py-3 font-medium text-slate-900">Acme Technologies Inc.</td>
-                <td class="px-4 py-3"><span class="px-2 py-0.5 rounded-full text-xs font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200">Active</span></td>
-                <td class="px-4 py-3">Growth Scale</td>
-                <td class="px-4 py-3 font-semibold">$2,450.00</td>
-                <td class="px-4 py-3 text-right"><span class="text-xs text-indigo-600 hover:underline cursor-pointer">Manage</span></td>
-              </tr>
-              <tr>
-                <td class="px-4 py-3 font-medium text-slate-900">Nexus Cloud Dynamics</td>
-                <td class="px-4 py-3"><span class="px-2 py-0.5 rounded-full text-xs font-semibold bg-indigo-50 text-indigo-700 border border-indigo-200">Trialing</span></td>
-                <td class="px-4 py-3">Enterprise Dedicated</td>
-                <td class="px-4 py-3 font-semibold">$4,800.00</td>
-                <td class="px-4 py-3 text-right"><span class="text-xs text-indigo-600 hover:underline cursor-pointer">Manage</span></td>
-              </tr>
-            </tbody>
-          </table>
+          <div class="overflow-x-auto">
+            <table class="w-full text-left text-sm" id="subscriptions-table">
+              <thead class="bg-slate-50/75 border-b border-slate-100 text-[11px] font-semibold uppercase tracking-wider text-slate-500">
+                <tr>
+                  <th class="px-5 py-3.5">Subscription ID</th>
+                  <th class="px-5 py-3.5">Customer Name</th>
+                  <th class="px-5 py-3.5">Product / Plan</th>
+                  <th class="px-5 py-3.5">Billing Cycle</th>
+                  <th class="px-5 py-3.5">Start Date</th>
+                  <th class="px-5 py-3.5 text-right">Amount</th>
+                  <th class="px-5 py-3.5 text-center">Status</th>
+                  <th class="px-5 py-3.5 text-right">Action</th>
+                </tr>
+              </thead>
+              <tbody class="divide-y divide-slate-100 text-slate-700 text-xs">
+                <tr class="hover:bg-slate-50/70 transition-colors">
+                  <td class="px-5 py-3.5 font-mono font-semibold text-slate-900">SUB-8921</td>
+                  <td class="px-5 py-3.5">
+                    <div class="font-semibold text-slate-900">Acme Technologies Inc.</div>
+                    <div class="text-[11px] text-slate-400">billing@acme-tech.com</div>
+                  </td>
+                  <td class="px-5 py-3.5">Enterprise Dedicated</td>
+                  <td class="px-5 py-3.5"><span class="bg-slate-100 px-2 py-0.5 rounded-md font-medium text-slate-700">Annual</span></td>
+                  <td class="px-5 py-3.5 text-slate-600">Jun 15, 2026</td>
+                  <td class="px-5 py-3.5 text-right font-bold text-slate-900">$9,600.00/yr</td>
+                  <td class="px-5 py-3.5 text-center"><span class="px-2.5 py-0.5 rounded-full bg-emerald-50 text-emerald-700 font-semibold border border-emerald-200">Active</span></td>
+                  <td class="px-5 py-3.5 text-right"><button onclick="showToast('Viewing SUB-8921')" class="text-indigo-600 hover:text-indigo-800 font-semibold">View</button></td>
+                </tr>
+                <tr class="hover:bg-slate-50/70 transition-colors">
+                  <td class="px-5 py-3.5 font-mono font-semibold text-slate-900">SUB-8920</td>
+                  <td class="px-5 py-3.5">
+                    <div class="font-semibold text-slate-900">Nexus Cloud Dynamics</div>
+                    <div class="text-[11px] text-slate-400">finance@nexuscloud.io</div>
+                  </td>
+                  <td class="px-5 py-3.5">Growth Scale</td>
+                  <td class="px-5 py-3.5"><span class="bg-slate-100 px-2 py-0.5 rounded-md font-medium text-slate-700">Monthly</span></td>
+                  <td class="px-5 py-3.5 text-slate-600">Oct 01, 2026</td>
+                  <td class="px-5 py-3.5 text-right font-bold text-slate-900">$499.00/mo</td>
+                  <td class="px-5 py-3.5 text-center"><span class="px-2.5 py-0.5 rounded-full bg-emerald-50 text-emerald-700 font-semibold border border-emerald-200">Active</span></td>
+                  <td class="px-5 py-3.5 text-right"><button onclick="showToast('Viewing SUB-8920')" class="text-indigo-600 hover:text-indigo-800 font-semibold">View</button></td>
+                </tr>
+                <tr class="hover:bg-slate-50/70 transition-colors">
+                  <td class="px-5 py-3.5 font-mono font-semibold text-slate-900">SUB-8919</td>
+                  <td class="px-5 py-3.5">
+                    <div class="font-semibold text-slate-900">QuantumWave AI Labs</div>
+                    <div class="text-[11px] text-slate-400">ops@quantumwave.ai</div>
+                  </td>
+                  <td class="px-5 py-3.5">Predictive Intelligence</td>
+                  <td class="px-5 py-3.5"><span class="bg-slate-100 px-2 py-0.5 rounded-md font-medium text-slate-700">Monthly</span></td>
+                  <td class="px-5 py-3.5 text-slate-600">Oct 24, 2026</td>
+                  <td class="px-5 py-3.5 text-right font-bold text-slate-900">$799.00/mo</td>
+                  <td class="px-5 py-3.5 text-center"><span class="px-2.5 py-0.5 rounded-full bg-indigo-50 text-indigo-700 font-semibold border border-indigo-200">Trial</span></td>
+                  <td class="px-5 py-3.5 text-right"><button onclick="showToast('Viewing SUB-8919')" class="text-indigo-600 hover:text-indigo-800 font-semibold">View</button></td>
+                </tr>
+                <tr class="hover:bg-slate-50/70 transition-colors">
+                  <td class="px-5 py-3.5 font-mono font-semibold text-slate-900">SUB-8917</td>
+                  <td class="px-5 py-3.5">
+                    <div class="font-semibold text-slate-900">BluePeak Analytics</div>
+                    <div class="text-[11px] text-slate-400">accounts@bluepeakanalytics.com</div>
+                  </td>
+                  <td class="px-5 py-3.5">Growth Scale</td>
+                  <td class="px-5 py-3.5"><span class="bg-slate-100 px-2 py-0.5 rounded-md font-medium text-slate-700">Monthly</span></td>
+                  <td class="px-5 py-3.5 text-slate-600">Sep 15, 2026</td>
+                  <td class="px-5 py-3.5 text-right font-bold text-slate-900">$499.00/mo</td>
+                  <td class="px-5 py-3.5 text-center"><span class="px-2.5 py-0.5 rounded-full bg-amber-50 text-amber-800 font-semibold border border-amber-200">Paused</span></td>
+                  <td class="px-5 py-3.5 text-right"><button onclick="showToast('Viewing SUB-8917')" class="text-indigo-600 hover:text-indigo-800 font-semibold">View</button></td>
+                </tr>
+                <tr class="hover:bg-slate-50/70 transition-colors">
+                  <td class="px-5 py-3.5 font-mono font-semibold text-slate-900">SUB-8915</td>
+                  <td class="px-5 py-3.5">
+                    <div class="font-semibold text-slate-900">Vortex Media Group</div>
+                    <div class="text-[11px] text-slate-400">accounting@vortexmedia.net</div>
+                  </td>
+                  <td class="px-5 py-3.5">Starter Basic</td>
+                  <td class="px-5 py-3.5"><span class="bg-slate-100 px-2 py-0.5 rounded-md font-medium text-slate-700">Monthly</span></td>
+                  <td class="px-5 py-3.5 text-slate-600">Aug 01, 2026</td>
+                  <td class="px-5 py-3.5 text-right font-bold text-slate-900">$199.00/mo</td>
+                  <td class="px-5 py-3.5 text-center"><span class="px-2.5 py-0.5 rounded-full bg-rose-50 text-rose-700 font-semibold border border-rose-200">Cancelled</span></td>
+                  <td class="px-5 py-3.5 text-right"><button onclick="showToast('Viewing SUB-8915')" class="text-indigo-600 hover:text-indigo-800 font-semibold">View</button></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- 7. RECENT INVOICES TABLE -->
+        <div class="rounded-2xl border border-slate-200/80 bg-white shadow-sm overflow-hidden">
+          <div class="p-5 sm:p-6 border-b border-slate-100 flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+            <div>
+              <div class="flex items-center gap-2">
+                <h3 class="text-base font-bold text-slate-900">Recent Invoices</h3>
+                <span class="rounded-full bg-slate-100 px-2.5 py-0.5 text-xs font-semibold text-slate-600">10 invoices</span>
+              </div>
+              <p class="text-xs text-slate-500 mt-1">Accounts receivable, billing schedules, and customer settlement records.</p>
+            </div>
+            <div class="flex items-center gap-2">
+              <input type="text" id="inv-filter-input" oninput="filterInvTable(this.value)" placeholder="Filter invoices..." class="pl-3 pr-3 py-1.5 text-xs rounded-xl border border-slate-200 bg-slate-50 focus:bg-white focus:outline-none focus:ring-2 focus:ring-indigo-500">
+            </div>
+          </div>
+          <div class="overflow-x-auto">
+            <table class="w-full text-left text-sm" id="invoices-table">
+              <thead class="bg-slate-50/75 border-b border-slate-100 text-[11px] font-semibold uppercase tracking-wider text-slate-500">
+                <tr>
+                  <th class="px-5 py-3.5">Invoice ID</th>
+                  <th class="px-5 py-3.5">Customer</th>
+                  <th class="px-5 py-3.5">Invoice Date</th>
+                  <th class="px-5 py-3.5">Due Date</th>
+                  <th class="px-5 py-3.5 text-right">Amount</th>
+                  <th class="px-5 py-3.5 text-center">Payment Status</th>
+                  <th class="px-5 py-3.5 text-right">Action</th>
+                </tr>
+              </thead>
+              <tbody class="divide-y divide-slate-100 text-slate-700 text-xs">
+                <tr class="hover:bg-slate-50/70 transition-colors">
+                  <td class="px-5 py-3.5 font-mono font-semibold text-slate-900">INV-2026-0248</td>
+                  <td class="px-5 py-3.5 font-semibold text-slate-900">Acme Technologies Inc.</td>
+                  <td class="px-5 py-3.5 text-slate-600">Oct 15, 2026</td>
+                  <td class="px-5 py-3.5 text-slate-600">Oct 29, 2026</td>
+                  <td class="px-5 py-3.5 text-right font-bold text-slate-900">$9,600.00</td>
+                  <td class="px-5 py-3.5 text-center"><span class="px-2.5 py-0.5 rounded-full bg-emerald-50 text-emerald-700 font-semibold border border-emerald-200">Paid</span></td>
+                  <td class="px-5 py-3.5 text-right"><button onclick="showToast('Downloading INV-2026-0248 receipt')" class="text-indigo-600 hover:text-indigo-800 font-semibold">Download</button></td>
+                </tr>
+                <tr class="hover:bg-slate-50/70 transition-colors">
+                  <td class="px-5 py-3.5 font-mono font-semibold text-slate-900">INV-2026-0246</td>
+                  <td class="px-5 py-3.5 font-semibold text-slate-900">Apex Global Systems</td>
+                  <td class="px-5 py-3.5 text-slate-600">Oct 05, 2026</td>
+                  <td class="px-5 py-3.5 font-bold text-rose-600">Oct 19, 2026</td>
+                  <td class="px-5 py-3.5 text-right font-bold text-slate-900">$3,200.00</td>
+                  <td class="px-5 py-3.5 text-center"><span class="px-2.5 py-0.5 rounded-full bg-rose-50 text-rose-700 font-semibold border border-rose-200">Overdue</span></td>
+                  <td class="px-5 py-3.5 text-right"><button onclick="showToast('Payment reminder sent to Apex Global Systems')" class="text-rose-600 hover:text-rose-800 font-semibold">Remind</button></td>
+                </tr>
+                <tr class="hover:bg-slate-50/70 transition-colors">
+                  <td class="px-5 py-3.5 font-mono font-semibold text-slate-900">INV-2026-0245</td>
+                  <td class="px-5 py-3.5 font-semibold text-slate-900">Horizon Fintech Corp</td>
+                  <td class="px-5 py-3.5 text-slate-600">Oct 10, 2026</td>
+                  <td class="px-5 py-3.5 text-slate-600">Nov 05, 2026</td>
+                  <td class="px-5 py-3.5 text-right font-bold text-slate-900">$5,400.00</td>
+                  <td class="px-5 py-3.5 text-center"><span class="px-2.5 py-0.5 rounded-full bg-amber-50 text-amber-700 font-semibold border border-amber-200">Partially Paid</span></td>
+                  <td class="px-5 py-3.5 text-right"><button onclick="showToast('Viewing INV-2026-0245 details')" class="text-indigo-600 hover:text-indigo-800 font-semibold">Details</button></td>
+                </tr>
+                <tr class="hover:bg-slate-50/70 transition-colors">
+                  <td class="px-5 py-3.5 font-mono font-semibold text-slate-900">INV-2026-0244</td>
+                  <td class="px-5 py-3.5 font-semibold text-slate-900">QuantumWave AI Labs</td>
+                  <td class="px-5 py-3.5 text-slate-600">Oct 24, 2026</td>
+                  <td class="px-5 py-3.5 text-slate-600">Nov 07, 2026</td>
+                  <td class="px-5 py-3.5 text-right font-bold text-slate-900">$799.00</td>
+                  <td class="px-5 py-3.5 text-center"><span class="px-2.5 py-0.5 rounded-full bg-sky-50 text-sky-700 font-semibold border border-sky-200">Pending</span></td>
+                  <td class="px-5 py-3.5 text-right"><button onclick="showToast('Viewing INV-2026-0244 details')" class="text-indigo-600 hover:text-indigo-800 font-semibold">Details</button></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
         </div>
       </section>
 
-      <!-- ================= TAB: CUSTOMERS ================= -->
+      <!-- ================= OTHER TABS ================= -->
       <section id="tab-customers" class="tab-content space-y-6">
-        <div class="flex items-center justify-between pb-2">
-          <div>
-            <h1 class="text-2xl font-bold tracking-tight text-slate-900">Customer Management</h1>
-            <p class="text-sm text-slate-500 mt-1">Manage corporate accounts, billing contacts, payment profiles, and lifecycle stages.</p>
-          </div>
-          <button class="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-md text-sm font-medium flex items-center gap-2">
-            <i data-lucide="user-plus" class="w-4 h-4"></i> Add Customer
-          </button>
-        </div>
-
-        <div class="rounded-lg border border-slate-200 bg-white shadow-sm overflow-hidden">
-          <table class="w-full text-left text-sm">
-            <thead class="bg-slate-50/80 text-xs font-semibold text-slate-500 uppercase">
-              <tr>
-                <th class="px-4 py-3">Customer ID</th>
-                <th class="px-4 py-3">Company / Account</th>
-                <th class="px-4 py-3">Status</th>
-                <th class="px-4 py-3">Billing Email</th>
-                <th class="px-4 py-3">Monthly Value</th>
-              </tr>
-            </thead>
-            <tbody class="divide-y divide-slate-100 text-slate-700">
-              <tr>
-                <td class="px-4 py-3 text-xs text-slate-400 font-mono">cust_01HX9J1Q7M001</td>
-                <td class="px-4 py-3 font-medium text-slate-900">Acme Technologies Inc.</td>
-                <td class="px-4 py-3"><span class="px-2 py-0.5 rounded-full text-xs font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200">Active</span></td>
-                <td class="px-4 py-3 text-slate-500">billing@acme-tech.com</td>
-                <td class="px-4 py-3 font-semibold">$2,450.00</td>
-              </tr>
-              <tr>
-                <td class="px-4 py-3 text-xs text-slate-400 font-mono">cust_01HX9J1Q7M002</td>
-                <td class="px-4 py-3 font-medium text-slate-900">Nexus Cloud Dynamics</td>
-                <td class="px-4 py-3"><span class="px-2 py-0.5 rounded-full text-xs font-semibold bg-indigo-50 text-indigo-700 border border-indigo-200">Trialing</span></td>
-                <td class="px-4 py-3 text-slate-500">finance@nexuscloud.io</td>
-                <td class="px-4 py-3 font-semibold">$4,800.00</td>
-              </tr>
-              <tr>
-                <td class="px-4 py-3 text-xs text-slate-400 font-mono">cust_01HX9J1Q7M003</td>
-                <td class="px-4 py-3 font-medium text-slate-900">Starlight Mediaworks</td>
-                <td class="px-4 py-3"><span class="px-2 py-0.5 rounded-full text-xs font-semibold bg-slate-100 text-slate-700 border border-slate-200">Inactive</span></td>
-                <td class="px-4 py-3 text-slate-500">accounts@starlight.co</td>
-                <td class="px-4 py-3 font-semibold">$0.00</td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
+        <h2 class="text-2xl font-bold text-slate-900">Customer Management</h2>
+        <p class="text-slate-500">Corporate accounts, billing contacts, and payment profiles.</p>
       </section>
-
-      <!-- ================= TAB: PRODUCTS ================= -->
       <section id="tab-products" class="tab-content space-y-6">
-        <div class="flex items-center justify-between pb-2">
-          <div>
-            <h1 class="text-2xl font-bold tracking-tight text-slate-900">Product Catalog</h1>
-            <p class="text-sm text-slate-500 mt-1">Configure subscription products, plan associations, feature packages, and service tiers.</p>
-          </div>
-          <button class="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-md text-sm font-medium flex items-center gap-2">
-            <i data-lucide="plus" class="w-4 h-4"></i> New Product
-          </button>
-        </div>
-
-        <div class="grid gap-6 md:grid-cols-2">
-          <div class="p-6 rounded-lg border border-slate-200 bg-white shadow-sm">
-            <div class="flex items-center justify-between">
-              <h3 class="text-lg font-bold text-slate-900">SubscriptIQ Core SaaS Suite</h3>
-              <span class="px-2 py-0.5 rounded-full text-xs font-semibold bg-emerald-50 text-emerald-700">Active</span>
-            </div>
-            <p class="text-sm text-slate-500 mt-2">Complete subscription management and billing automation platform.</p>
-            <div class="mt-4 space-y-2 border-t border-slate-100 pt-4 text-xs text-slate-600">
-              <div class="flex items-center gap-2"><i data-lucide="check-circle" class="w-4 h-4 text-emerald-500"></i> Automated Invoicing & Tax</div>
-              <div class="flex items-center gap-2"><i data-lucide="check-circle" class="w-4 h-4 text-emerald-500"></i> Stripe & Paddle Gateway Sync</div>
-              <div class="flex items-center gap-2"><i data-lucide="check-circle" class="w-4 h-4 text-emerald-500"></i> Customer Self-Service Portal</div>
-            </div>
-          </div>
-
-          <div class="p-6 rounded-lg border border-slate-200 bg-white shadow-sm">
-            <div class="flex items-center justify-between">
-              <h3 class="text-lg font-bold text-slate-900">Revenue Intelligence Engine</h3>
-              <span class="px-2 py-0.5 rounded-full text-xs font-semibold bg-emerald-50 text-emerald-700">Active</span>
-            </div>
-            <p class="text-sm text-slate-500 mt-2">Predictive churn mitigation and dynamic MRR expansion forecasting.</p>
-            <div class="mt-4 space-y-2 border-t border-slate-100 pt-4 text-xs text-slate-600">
-              <div class="flex items-center gap-2"><i data-lucide="check-circle" class="w-4 h-4 text-emerald-500"></i> AI Churn Prediction</div>
-              <div class="flex items-center gap-2"><i data-lucide="check-circle" class="w-4 h-4 text-emerald-500"></i> Cohort Retention Modeling</div>
-              <div class="flex items-center gap-2"><i data-lucide="check-circle" class="w-4 h-4 text-emerald-500"></i> Automated Dunning Campaigns</div>
-            </div>
-          </div>
-        </div>
+        <h2 class="text-2xl font-bold text-slate-900">Product Catalog</h2>
+        <p class="text-slate-500">Core SaaS suites and add-on subscriptions.</p>
       </section>
-
-      <!-- ================= TAB: PLANS ================= -->
       <section id="tab-plans" class="tab-content space-y-6">
-        <div class="flex items-center justify-between pb-2">
-          <div>
-            <h1 class="text-2xl font-bold tracking-tight text-slate-900">Pricing Plans & Cadence</h1>
-            <p class="text-sm text-slate-500 mt-1">Pricing tiers, trial configurations, seat-based metrics, and billing rules.</p>
-          </div>
-          <button class="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-md text-sm font-medium flex items-center gap-2">
-            <i data-lucide="plus" class="w-4 h-4"></i> Create Plan
-          </button>
-        </div>
-
-        <div class="grid gap-6 md:grid-cols-3">
-          <div class="p-6 rounded-lg border border-slate-200 bg-white shadow-sm">
-            <span class="text-xs uppercase font-semibold text-slate-400">Entry Tier</span>
-            <h3 class="text-lg font-bold text-slate-900 mt-1">Starter Tier</h3>
-            <div class="mt-3 text-3xl font-extrabold text-slate-900">$99<span class="text-xs font-normal text-slate-500">/month</span></div>
-            <p class="text-xs text-slate-500 mt-2">Designed for high-growth startups and small teams.</p>
-            <div class="mt-4 pt-4 border-t border-slate-100 text-xs text-slate-600">14-Day Free Trial included</div>
-          </div>
-
-          <div class="p-6 rounded-lg border-2 border-indigo-600 bg-white shadow-md relative">
-            <span class="absolute -top-3 right-4 px-2 py-0.5 bg-indigo-600 text-white text-[10px] font-bold rounded uppercase">Most Popular</span>
-            <span class="text-xs uppercase font-semibold text-indigo-600">Scale Tier</span>
-            <h3 class="text-lg font-bold text-slate-900 mt-1">Growth Scale</h3>
-            <div class="mt-3 text-3xl font-extrabold text-slate-900">$299<span class="text-xs font-normal text-slate-500">/month</span></div>
-            <p class="text-xs text-slate-500 mt-2">Advanced billing controls, webhooks, and team roles.</p>
-            <div class="mt-4 pt-4 border-t border-slate-100 text-xs text-slate-600">Per-seat scalable licensing</div>
-          </div>
-
-          <div class="p-6 rounded-lg border border-slate-200 bg-white shadow-sm">
-            <span class="text-xs uppercase font-semibold text-slate-400">Enterprise</span>
-            <h3 class="text-lg font-bold text-slate-900 mt-1">Enterprise Dedicated</h3>
-            <div class="mt-3 text-3xl font-extrabold text-slate-900">$9,900<span class="text-xs font-normal text-slate-500">/year</span></div>
-            <p class="text-xs text-slate-500 mt-2">Custom contracts, SLA guarantees, and dedicated account manager.</p>
-            <div class="mt-4 pt-4 border-t border-slate-100 text-xs text-slate-600">Tiered volume pricing & SLA</div>
-          </div>
-        </div>
+        <h2 class="text-2xl font-bold text-slate-900">Pricing Plans</h2>
+        <p class="text-slate-500">Tier definitions, billing cadence, and feature entitlements.</p>
       </section>
-
-      <!-- ================= TAB: SUBSCRIPTIONS ================= -->
       <section id="tab-subscriptions" class="tab-content space-y-6">
-        <div class="flex items-center justify-between pb-2">
-          <div>
-            <h1 class="text-2xl font-bold tracking-tight text-slate-900">Subscriptions</h1>
-            <p class="text-sm text-slate-500 mt-1">Active customer contracts, renewal dates, upgrades, and cancellations.</p>
-          </div>
-          <button class="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-md text-sm font-medium flex items-center gap-2">
-            <i data-lucide="plus" class="w-4 h-4"></i> New Subscription
-          </button>
-        </div>
-
-        <div class="rounded-lg border border-slate-200 bg-white shadow-sm overflow-hidden">
-          <table class="w-full text-left text-sm">
-            <thead class="bg-slate-50/80 text-xs font-semibold text-slate-500 uppercase">
-              <tr>
-                <th class="px-4 py-3">Subscription ID</th>
-                <th class="px-4 py-3">Customer</th>
-                <th class="px-4 py-3">Plan</th>
-                <th class="px-4 py-3">Status</th>
-                <th class="px-4 py-3">Renewal Period</th>
-                <th class="px-4 py-3">MRR</th>
-              </tr>
-            </thead>
-            <tbody class="divide-y divide-slate-100 text-slate-700">
-              <tr>
-                <td class="px-4 py-3 text-xs text-slate-400 font-mono">sub_01HX9M001</td>
-                <td class="px-4 py-3 font-medium text-slate-900">Acme Technologies Inc.</td>
-                <td class="px-4 py-3">Growth Scale (Monthly)</td>
-                <td class="px-4 py-3"><span class="px-2 py-0.5 rounded-full text-xs font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200">Active</span></td>
-                <td class="px-4 py-3 text-xs text-slate-500">Jul 01, 2024</td>
-                <td class="px-4 py-3 font-semibold">$299.00</td>
-              </tr>
-              <tr>
-                <td class="px-4 py-3 text-xs text-slate-400 font-mono">sub_01HX9M002</td>
-                <td class="px-4 py-3 font-medium text-slate-900">Nexus Cloud Dynamics</td>
-                <td class="px-4 py-3">Enterprise Dedicated (Annual)</td>
-                <td class="px-4 py-3"><span class="px-2 py-0.5 rounded-full text-xs font-semibold bg-indigo-50 text-indigo-700 border border-indigo-200">Trialing</span></td>
-                <td class="px-4 py-3 text-xs text-slate-500">Jun 24, 2024</td>
-                <td class="px-4 py-3 font-semibold">$4,800.00</td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
+        <h2 class="text-2xl font-bold text-slate-900">Subscriptions Full Roster</h2>
+        <p class="text-slate-500">Active subscriber contracts and renewal schedules.</p>
       </section>
-
-      <!-- ================= TAB: INVOICES ================= -->
       <section id="tab-invoices" class="tab-content space-y-6">
-        <div class="flex items-center justify-between pb-2">
-          <div>
-            <h1 class="text-2xl font-bold tracking-tight text-slate-900">Billing & Invoices</h1>
-            <p class="text-sm text-slate-500 mt-1">Billing runs, automated tax calculations, line item breakdowns, and receivables.</p>
-          </div>
-          <button class="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-md text-sm font-medium flex items-center gap-2">
-            <i data-lucide="file-text" class="w-4 h-4"></i> Generate Invoice
-          </button>
-        </div>
-
-        <div class="rounded-lg border border-slate-200 bg-white shadow-sm overflow-hidden">
-          <table class="w-full text-left text-sm">
-            <thead class="bg-slate-50/80 text-xs font-semibold text-slate-500 uppercase">
-              <tr>
-                <th class="px-4 py-3">Invoice Number</th>
-                <th class="px-4 py-3">Customer</th>
-                <th class="px-4 py-3">Status</th>
-                <th class="px-4 py-3">Due Date</th>
-                <th class="px-4 py-3">Total Amount</th>
-                <th class="px-4 py-3 text-right">Receipt</th>
-              </tr>
-            </thead>
-            <tbody class="divide-y divide-slate-100 text-slate-700">
-              <tr>
-                <td class="px-4 py-3 font-mono font-medium text-slate-900">INV-2024-00108</td>
-                <td class="px-4 py-3">Acme Technologies Inc.</td>
-                <td class="px-4 py-3"><span class="px-2 py-0.5 rounded-full text-xs font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200">Paid</span></td>
-                <td class="px-4 py-3 text-xs text-slate-500">Jun 15, 2024</td>
-                <td class="px-4 py-3 font-semibold">$299.00</td>
-                <td class="px-4 py-3 text-right"><span class="text-xs text-indigo-600 hover:underline cursor-pointer">Download PDF</span></td>
-              </tr>
-              <tr>
-                <td class="px-4 py-3 font-mono font-medium text-slate-900">INV-2024-00109</td>
-                <td class="px-4 py-3">Nexus Cloud Dynamics</td>
-                <td class="px-4 py-3"><span class="px-2 py-0.5 rounded-full text-xs font-semibold bg-blue-50 text-blue-700 border border-blue-200">Open</span></td>
-                <td class="px-4 py-3 text-xs text-slate-500">Jul 01, 2024</td>
-                <td class="px-4 py-3 font-semibold">$4,800.00</td>
-                <td class="px-4 py-3 text-right"><span class="text-xs text-indigo-600 hover:underline cursor-pointer">Download PDF</span></td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
+        <h2 class="text-2xl font-bold text-slate-900">Invoice Ledger</h2>
+        <p class="text-slate-500">Receivables, recurring invoices, and dunning logs.</p>
       </section>
-
-      <!-- ================= TAB: PAYMENTS ================= -->
       <section id="tab-payments" class="tab-content space-y-6">
-        <div class="flex items-center justify-between pb-2">
-          <div>
-            <h1 class="text-2xl font-bold tracking-tight text-slate-900">Payment Transactions</h1>
-            <p class="text-sm text-slate-500 mt-1">Audit gateway transaction logs, ACH and card clearing, dunning retries, and refunds.</p>
-          </div>
-          <button class="px-4 py-2 border border-slate-200 hover:bg-slate-50 text-slate-700 rounded-md text-sm font-medium flex items-center gap-2">
-            <i data-lucide="refresh-cw" class="w-4 h-4"></i> Sync Gateways
-          </button>
-        </div>
-
-        <div class="rounded-lg border border-slate-200 bg-white shadow-sm overflow-hidden">
-          <table class="w-full text-left text-sm">
-            <thead class="bg-slate-50/80 text-xs font-semibold text-slate-500 uppercase">
-              <tr>
-                <th class="px-4 py-3">Reference</th>
-                <th class="px-4 py-3">Customer</th>
-                <th class="px-4 py-3">Method</th>
-                <th class="px-4 py-3">Status</th>
-                <th class="px-4 py-3">Amount</th>
-                <th class="px-4 py-3">Processed Date</th>
-              </tr>
-            </thead>
-            <tbody class="divide-y divide-slate-100 text-slate-700">
-              <tr>
-                <td class="px-4 py-3 font-mono text-xs text-slate-400">ch_3P4k8L2eZvKY</td>
-                <td class="px-4 py-3 font-medium text-slate-900">Acme Technologies Inc.</td>
-                <td class="px-4 py-3 text-xs text-slate-600">Card ending 4242</td>
-                <td class="px-4 py-3"><span class="px-2 py-0.5 rounded-full text-xs font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200">Succeeded</span></td>
-                <td class="px-4 py-3 font-semibold">$299.00</td>
-                <td class="px-4 py-3 text-xs text-slate-500">Jun 01, 2024</td>
-              </tr>
-              <tr>
-                <td class="px-4 py-3 font-mono text-xs text-slate-400">ach_098K4L1123P</td>
-                <td class="px-4 py-3 font-medium text-slate-900">Nexus Cloud Dynamics</td>
-                <td class="px-4 py-3 text-xs text-slate-600">ACH ending 6789</td>
-                <td class="px-4 py-3"><span class="px-2 py-0.5 rounded-full text-xs font-semibold bg-amber-50 text-amber-700 border border-amber-200">Pending</span></td>
-                <td class="px-4 py-3 font-semibold">$4,800.00</td>
-                <td class="px-4 py-3 text-xs text-slate-500">Jun 15, 2024</td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
+        <h2 class="text-2xl font-bold text-slate-900">Payment Gateway Transactions</h2>
+        <p class="text-slate-500">Settlements, card charges, and ACH transfers.</p>
       </section>
-
-      <!-- ================= TAB: DISCOUNTS ================= -->
-      <section id="tab-discounts" class="tab-content space-y-6">
-        <div class="flex items-center justify-between pb-2">
-          <div>
-            <h1 class="text-2xl font-bold tracking-tight text-slate-900">Discounts & Coupons</h1>
-            <p class="text-sm text-slate-500 mt-1">Promotional discount codes, partner coupon campaigns, and customer loyalty rebates.</p>
-          </div>
-          <button class="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-md text-sm font-medium flex items-center gap-2">
-            <i data-lucide="plus" class="w-4 h-4"></i> Create Coupon
-          </button>
-        </div>
-
-        <div class="grid gap-4 md:grid-cols-2">
-          <div class="p-6 rounded-lg border border-slate-200 bg-white shadow-sm flex items-center justify-between">
-            <div>
-              <span class="px-2 py-0.5 font-mono text-xs font-bold rounded bg-indigo-50 text-indigo-700 border border-indigo-200">LAUNCH20</span>
-              <h3 class="font-bold text-slate-900 mt-2">Early Adopter Promotion</h3>
-              <p class="text-xs text-slate-500 mt-1">20% off for 3 recurring months</p>
-            </div>
-            <div class="text-right">
-              <span class="text-xs text-slate-400">Redeemed</span>
-              <div class="text-lg font-bold text-slate-900">42 / 100</div>
-            </div>
-          </div>
-
-          <div class="p-6 rounded-lg border border-slate-200 bg-white shadow-sm flex items-center justify-between">
-            <div>
-              <span class="px-2 py-0.5 font-mono text-xs font-bold rounded bg-indigo-50 text-indigo-700 border border-indigo-200">STARTUP50</span>
-              <h3 class="font-bold text-slate-900 mt-2">Incubator Partner Grant</h3>
-              <p class="text-xs text-slate-500 mt-1">50% off for 6 recurring months</p>
-            </div>
-            <div class="text-right">
-              <span class="text-xs text-slate-400">Redeemed</span>
-              <div class="text-lg font-bold text-slate-900">18 / 25</div>
-            </div>
-          </div>
-        </div>
+      <section id="tab-analytics" class="tab-content space-y-6">
+        <h2 class="text-2xl font-bold text-slate-900">Revenue & Cohort Analytics</h2>
+        <p class="text-slate-500">MRR expansion, cohort retention, and churn analysis.</p>
       </section>
-
-      <!-- ================= TAB: SETTINGS ================= -->
       <section id="tab-settings" class="tab-content space-y-6">
-        <div class="pb-2">
-          <h1 class="text-2xl font-bold tracking-tight text-slate-900">Settings & Configuration</h1>
-          <p class="text-sm text-slate-500 mt-1">Platform architecture, API access keys, billing rules, and security controls.</p>
-        </div>
-
-        <div class="grid gap-4 md:grid-cols-2">
-          <div class="p-6 rounded-lg border border-slate-200 bg-white shadow-sm">
-            <div class="flex items-center gap-3">
-              <div class="h-9 w-9 rounded-lg bg-indigo-50 text-indigo-600 flex items-center justify-center">
-                <i data-lucide="key" class="w-5 h-5"></i>
-              </div>
-              <div>
-                <h3 class="font-semibold text-slate-900">API Keys & REST Endpoints</h3>
-                <p class="text-xs text-slate-500">Access tokens for external REST services</p>
-              </div>
-            </div>
-            <div class="mt-4 pt-4 border-t border-slate-100 flex items-center justify-between text-xs">
-              <span class="text-slate-500">Endpoint Status</span>
-              <span class="font-semibold text-emerald-600 flex items-center gap-1"><i data-lucide="check" class="w-3.5 h-3.5"></i> Connected</span>
-            </div>
-          </div>
-
-          <div class="p-6 rounded-lg border border-slate-200 bg-white shadow-sm">
-            <div class="flex items-center gap-3">
-              <div class="h-9 w-9 rounded-lg bg-indigo-50 text-indigo-600 flex items-center justify-center">
-                <i data-lucide="shield" class="w-5 h-5"></i>
-              </div>
-              <div>
-                <h3 class="font-semibold text-slate-900">Security & RBAC Controls</h3>
-                <p class="text-xs text-slate-500">Role-based access permissions</p>
-              </div>
-            </div>
-            <div class="mt-4 pt-4 border-t border-slate-100 flex items-center justify-between text-xs">
-              <span class="text-slate-500">Encryption Level</span>
-              <span class="font-semibold text-slate-700">AES-256 / SOC2</span>
-            </div>
-          </div>
-        </div>
+        <h2 class="text-2xl font-bold text-slate-900">Platform Settings</h2>
+        <p class="text-slate-500">Billing rules, currency thresholds, and webhook endpoints.</p>
       </section>
-
     </main>
   </div>
 
+  <!-- Toast Notification element -->
+  <div id="toast" class="fixed bottom-5 right-5 z-50 hidden items-center gap-2.5 rounded-xl bg-slate-900 px-4 py-3 text-white shadow-xl">
+    <i data-lucide="sparkles" class="w-4 h-4 text-indigo-400"></i>
+    <span id="toast-text" class="text-xs sm:text-sm font-medium">Notification</span>
+  </div>
+
   <script>
-    // Tab switching logic
+    function showToast(msg) {
+      const toast = document.getElementById('toast');
+      const text = document.getElementById('toast-text');
+      text.innerText = msg;
+      toast.classList.remove('hidden');
+      toast.classList.add('flex');
+      setTimeout(() => {
+        toast.classList.remove('flex');
+        toast.classList.add('hidden');
+      }, 3500);
+    }
+
+    function triggerExport() {
+      const csv = "Type,ID,Customer,Amount,Status\nSubscription,SUB-8921,Acme Technologies,$9600,Active\nSubscription,SUB-8920,Nexus Cloud,$499,Active\nInvoice,INV-2026-0248,Acme Technologies,$9600,Paid\nInvoice,INV-2026-0246,Apex Global,$3200,Overdue";
+      const blob = new Blob([csv], { type: 'text/csv' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'subscriptiq-report.csv';
+      a.click();
+      URL.revokeObjectURL(url);
+      showToast('Dashboard report exported to CSV successfully!');
+    }
+
+    function filterSubTable(query) {
+      const q = query.toLowerCase();
+      const rows = document.querySelectorAll('#subscriptions-table tbody tr');
+      rows.forEach(r => {
+        const text = r.innerText.toLowerCase();
+        r.style.display = text.includes(q) ? '' : 'none';
+      });
+    }
+
+    function filterInvTable(query) {
+      const q = query.toLowerCase();
+      const rows = document.querySelectorAll('#invoices-table tbody tr');
+      rows.forEach(r => {
+        const text = r.innerText.toLowerCase();
+        r.style.display = text.includes(q) ? '' : 'none';
+      });
+    }
+
+    function handleGlobalSearch(query) {
+      filterSubTable(query);
+      filterInvTable(query);
+    }
+
     function switchTab(tabId) {
       document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
-      const activeEl = document.getElementById('tab-' + tabId);
-      if (activeEl) activeEl.classList.add('active');
+      const target = document.getElementById('tab-' + tabId);
+      if (target) target.classList.add('active');
 
       document.querySelectorAll('aside button').forEach(btn => {
         btn.classList.remove('active-nav');
-        btn.classList.add('text-slate-300');
+        btn.classList.add('text-slate-600');
       });
       const activeBtn = document.getElementById('nav-' + tabId);
       if (activeBtn) {
         activeBtn.classList.add('active-nav');
-        activeBtn.classList.remove('text-slate-300');
+        activeBtn.classList.remove('text-slate-600');
       }
 
-      // Close mobile sidebar if open
       const sidebar = document.getElementById('sidebar');
       const overlay = document.getElementById('mobile-overlay');
       sidebar.classList.add('-translate-x-full');
       overlay.classList.add('hidden');
     }
 
-    // Mobile sidebar toggle
     function toggleSidebar() {
       const sidebar = document.getElementById('sidebar');
       const overlay = document.getElementById('mobile-overlay');
@@ -678,31 +622,42 @@
       }
     }
 
-    // Initialize Lucide icons
     document.addEventListener("DOMContentLoaded", () => {
       lucide.createIcons();
 
-      // MRR Area Chart
+      // MRR Line Chart
       const mrrCtx = document.getElementById('mrrChart').getContext('2d');
-      const mrrGradient = mrrCtx.createLinearGradient(0, 0, 0, 240);
-      mrrGradient.addColorStop(0, 'rgba(79, 70, 229, 0.3)');
+      const mrrGradient = mrrCtx.createLinearGradient(0, 0, 0, 220);
+      mrrGradient.addColorStop(0, 'rgba(79, 70, 229, 0.18)');
       mrrGradient.addColorStop(1, 'rgba(79, 70, 229, 0.0)');
 
       new Chart(mrrCtx, {
         type: 'line',
         data: {
-          labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul'],
-          datasets: [{
-            label: 'MRR ($)',
-            data: [18500, 21200, 24800, 28400, 33100, 37900, 42600],
-            borderColor: '#4F46E5',
-            backgroundColor: mrrGradient,
-            fill: true,
-            tension: 0.35,
-            borderWidth: 2.5,
-            pointBackgroundColor: '#4F46E5',
-            pointRadius: 4,
-          }]
+          labels: ['May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct'],
+          datasets: [
+            {
+              label: 'Actual MRR ($)',
+              data: [57900, 60800, 63100, 65400, 66900, 68450],
+              borderColor: '#4F46E5',
+              backgroundColor: mrrGradient,
+              fill: true,
+              tension: 0.35,
+              borderWidth: 3,
+              pointBackgroundColor: '#4F46E5',
+              pointRadius: 4,
+            },
+            {
+              label: 'Target Baseline ($)',
+              data: [55000, 58000, 60500, 62000, 63500, 64500],
+              borderColor: '#F43F5E',
+              borderDash: [5, 5],
+              fill: false,
+              tension: 0.35,
+              borderWidth: 2,
+              pointRadius: 0,
+            }
+          ]
         },
         options: {
           responsive: true,
@@ -718,24 +673,36 @@
         }
       });
 
-      // Subscription Growth Bar Chart
+      // Subscription Overview Bar Chart
       const subsCtx = document.getElementById('subsChart').getContext('2d');
       new Chart(subsCtx, {
         type: 'bar',
         data: {
-          labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul'],
+          labels: ['May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct'],
           datasets: [
             {
               label: 'Active',
-              data: [240, 295, 360, 410, 490, 565, 640],
+              data: [1040, 1110, 1165, 1210, 1250, 1284],
               backgroundColor: '#4F46E5',
-              borderRadius: 4
+              borderRadius: 2
             },
             {
-              label: 'Churned',
-              data: [12, 14, 10, 18, 15, 16, 13],
+              label: 'Trial',
+              data: [95, 108, 114, 120, 118, 126],
+              backgroundColor: '#0EA5E9',
+              borderRadius: 2
+            },
+            {
+              label: 'Paused',
+              data: [32, 35, 40, 42, 45, 48],
+              backgroundColor: '#F59E0B',
+              borderRadius: 2
+            },
+            {
+              label: 'Cancelled',
+              data: [24, 28, 30, 34, 36, 38],
               backgroundColor: '#F43F5E',
-              borderRadius: 4
+              borderRadius: 2
             }
           ]
         },
@@ -743,11 +710,11 @@
           responsive: true,
           maintainAspectRatio: false,
           plugins: {
-            legend: { position: 'top', align: 'end', labels: { boxWidth: 12 } }
+            legend: { position: 'top', align: 'end', labels: { boxWidth: 10, font: { size: 10 } } }
           },
           scales: {
-            x: { grid: { display: false } },
-            y: { grid: { color: '#F1F5F9' } }
+            x: { stacked: true, grid: { display: false } },
+            y: { stacked: true, grid: { color: '#F1F5F9' } }
           }
         }
       });
@@ -755,4 +722,3 @@
   </script>
 </body>
 </html>
-

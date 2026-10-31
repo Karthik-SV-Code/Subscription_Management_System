@@ -5,8 +5,10 @@
 export type SubscriptionStatus =
   | "active"
   | "trialing"
+  | "trial"
   | "past_due"
   | "canceled"
+  | "cancelled"
   | "paused"
   | "incomplete";
 
@@ -15,8 +17,10 @@ export interface SubscriptionItem {
   subscriptionId: string;
   planId: string;
   planName: string;
+  productName?: string;
   unitAmount: number;
   quantity: number;
+  billingCycle?: "Monthly" | "Annual" | "Quarterly";
 }
 
 export interface SubscriptionDiscount {
@@ -33,7 +37,10 @@ export interface Subscription {
   customerId: string;
   customerName: string;
   customerEmail: string;
+  customerAvatar?: string;
   status: SubscriptionStatus;
+  billingCycle?: "Monthly" | "Annual" | "Quarterly";
+  productName?: string;
   currentPeriodStart: string;
   currentPeriodEnd: string;
   cancelAtPeriodEnd: boolean;
