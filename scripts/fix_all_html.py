@@ -207,34 +207,6 @@ def process_index_html(compiled_css):
         f.write(content)
     print("✓ index.html processed successfully.")
 
-def process_preview_html(compiled_css):
-    path = os.path.join(ROOT_DIR, "preview.html")
-    if not os.path.exists(path):
-        return
-    print("Processing preview.html for bulletproof offline CSS and SVGs...")
-    with open(path, "r", encoding="utf-8") as f:
-        content = f.read()
-
-    content = replace_lucide_tags(content)
-    content = re.sub(r'<script\s+src="https:\/\/cdn\.tailwindcss\.com"><\/script>', '', content)
-    content = re.sub(r'<script\s+src="https:\/\/unpkg\.com\/lucide@latest"><\/script>', '', content)
-
-    style_replacement = f"""<link rel="stylesheet" href="./styles.css">
-  <style id="embedded-core-styles">
-{compiled_css}
-  </style>"""
-    
-    if '<style id="embedded-core-styles">' in content:
-        content = re.sub(r'<style id="embedded-core-styles">.*?<\/style>', lambda m: style_replacement, content, flags=re.DOTALL)
-    elif '<style>' in content:
-        content = re.sub(r'<style>.*?<\/style>', lambda m: style_replacement, content, count=1, flags=re.DOTALL)
-    else:
-        content = content.replace('</head>', f'  {style_replacement}\n</head>')
-
-    with open(path, "w", encoding="utf-8") as f:
-        f.write(content)
-    print("✓ preview.html processed successfully.")
-
 def process_out_directory(compiled_css):
     out_dir = os.path.join(ROOT_DIR, "out")
     if not os.path.exists(out_dir):
@@ -285,7 +257,6 @@ def main():
         print("Failed to compile CSS!")
         return
     process_index_html(compiled_css)
-    process_preview_html(compiled_css)
     process_out_directory(compiled_css)
     print("=== All HTML files fixed and verified! ===")
 
