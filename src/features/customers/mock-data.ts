@@ -1,0 +1,55 @@
+import { Customer } from "@/types/customer";
+
+export const MOCK_CUSTOMERS: Customer[] = [
+  {
+    id: "cust_01HX9J1Q7M001",
+    name: "Acme Technologies Inc.",
+    email: "billing@acme-tech.com",
+    companyName: "Acme Tech",
+    status: "active",
+    mrr: 2450,
+    currency: "USD",
+    activeSubscriptionsCount: 3,
+    billingAddress: {
+      line1: "100 Market St",
+      city: "San Francisco",
+      state: "CA",
+      postalCode: "94105",
+      country: "US",
+    },
+    createdAt: "2024-01-15T10:00:00Z",
+    updatedAt: "2024-06-01T12:00:00Z",
+  },
+  {
+    id: "cust_01HX9J1Q7M002",
+    name: "Nexus Cloud Dynamics",
+    email: "finance@nexuscloud.io",
+    companyName: "Nexus Cloud",
+    status: "active",
+    mrr: 4800,
+    currency: "USD",
+    activeSubscriptionsCount: 2,
+    billingAddress: {
+      line1: "450 Lexington Ave",
+      city: "New York",
+      state: "NY",
+      postalCode: "10017",
+      country: "US",
+    },
+    createdAt: "2024-02-10T14:30:00Z",
+    updatedAt: "2024-06-15T09:20:00Z",
+  },
+  {
+    id: "cust_01HX9J1Q7M003",
+    name: "Starlight Mediaworks",
+    email: "accounts@starlight.co",
+    companyName: "Starlight Media",
+    status: "inactive",
+    mrr: 0,
+    currency: "USD",
+    activeSubscriptionsCount: 0,
+    createdAt: "2024-03-01T11:00:00Z",
+    updatedAt: "2024-05-20T16:00:00Z",
+  },
+];
+
