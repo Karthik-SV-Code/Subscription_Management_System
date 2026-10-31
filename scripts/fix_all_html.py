@@ -38,80 +38,89 @@ def process_out_directory(compiled_css):
     # Copy styles.css into out/styles.css
     shutil.copy(os.path.join(ROOT_DIR, "styles.css"), os.path.join(out_dir, "styles.css"))
 
-    # Client-side enhancer script for offline file:// viewing
+    # Client-side enhancer script for offline file:// viewing and seamless interactivity
     enhancer_script = """<script id="offline-interactive-enhancer">
-document.addEventListener('DOMContentLoaded', function() {
-  function initSidebar() {
-    var aside = document.getElementById('app-sidebar') || document.querySelector('aside');
-    var container = document.getElementById('desktop-sidebar-container') || (aside ? aside.parentElement : null);
-    var mainViewport = document.getElementById('main-content-viewport') || document.querySelector('div.md\\\\:pl-20, div.md\\\\:pl-64');
-    var toggleButtons = document.querySelectorAll('#sidebar-brand-header, #sidebar-collapse-btn, [title*="expand"], [title*="shrink"], [title*="Expand"], [title*="Shrink"]');
+(function() {
+  // 1. Capture-phase navigation link interception for file:// protocol
+  // When viewed as local files, Next.js client router intercepts clicks in the bubble phase and calls e.preventDefault().
+  // Because fetch() is blocked by browser CORS on file:// (origin null), navigation fails.
+  // By capturing clicks at document level in the capture phase on file://, we navigate directly.
+  if (window.location.protocol === 'file:') {
+    document.addEventListener('click', function(e) {
+      var link = e.target.closest('a[href]');
+      if (link && link.href) {
+        var rawHref = link.getAttribute('href');
+        if (rawHref && !rawHref.startsWith('#') && !rawHref.startsWith('javascript:')) {
+          e.stopImmediatePropagation();
+          e.preventDefault();
+          window.location.href = link.href;
+        }
+      }
+    }, true);
+  }
 
-    if (!aside) return;
+  // 2. Global event-delegated sidebar expand/shrink toggle
+  document.addEventListener('click', function(e) {
+    var toggleBtn = e.target.closest('#sidebar-brand-header, #sidebar-collapse-btn');
+    if (toggleBtn) {
+      var aside = document.getElementById('app-sidebar');
+      var container = document.getElementById('desktop-sidebar-container');
+      var mainViewport = document.getElementById('main-content-viewport');
+      if (!aside) return;
 
-    var isCollapsed = aside.classList.contains('w-20');
-
-    function updateSidebarClasses() {
-      if (isCollapsed) {
-        aside.classList.remove('w-64');
-        aside.classList.add('w-20');
+      var isExpanded = aside.classList.contains('sidebar-expanded') || (!aside.classList.contains('sidebar-shrunk') && aside.classList.contains('w-64'));
+      if (isExpanded) {
+        aside.classList.remove('sidebar-expanded', 'w-64');
+        aside.classList.add('sidebar-shrunk', 'w-20');
         if (container) {
-          container.classList.remove('md:w-64');
+          container.classList.remove('sidebar-expanded', 'md:w-64');
           container.classList.add('md:w-20');
         }
         if (mainViewport) {
-          mainViewport.classList.remove('md:pl-64');
+          mainViewport.classList.remove('sidebar-expanded', 'md:pl-64');
           mainViewport.classList.add('md:pl-20');
         }
       } else {
-        aside.classList.remove('w-20');
-        aside.classList.add('w-64');
+        aside.classList.add('sidebar-expanded', 'w-64');
+        aside.classList.remove('sidebar-shrunk', 'w-20');
         if (container) {
+          container.classList.add('sidebar-expanded', 'md:w-64');
           container.classList.remove('md:w-20');
-          container.classList.add('md:w-64');
         }
         if (mainViewport) {
+          mainViewport.classList.add('sidebar-expanded', 'md:pl-64');
           mainViewport.classList.remove('md:pl-20');
-          mainViewport.classList.add('md:pl-64');
         }
       }
     }
+  });
 
-    toggleButtons.forEach(function(btn) {
-      btn.addEventListener('click', function(e) {
-        // Toggle after short delay so if React hydrated, React takes precedence
-        setTimeout(function() {
-          isCollapsed = !isCollapsed;
-          updateSidebarClasses();
-        }, 15);
-      });
-    });
-  }
-
-  function initMobileDrawer() {
-    var headerBtn = document.querySelector('header button');
+  // 3. Mobile Drawer Hamburger & Overlay handling
+  document.addEventListener('click', function(e) {
+    var headerBtn = e.target.closest('header button');
     var overlay = document.getElementById('mobile-drawer-overlay');
     var drawer = document.getElementById('mobile-drawer-sidebar');
 
     if (headerBtn && drawer) {
-      headerBtn.addEventListener('click', function() {
-        drawer.classList.toggle('-translate-x-full');
-        drawer.classList.toggle('translate-x-0');
-        if (overlay) overlay.classList.toggle('hidden');
-      });
-    }
-    if (overlay && drawer) {
-      overlay.addEventListener('click', function() {
+      var isHidden = drawer.classList.contains('-translate-x-full');
+      if (isHidden) {
+        drawer.classList.remove('-translate-x-full');
+        drawer.classList.add('translate-x-0');
+        if (overlay) overlay.classList.remove('hidden');
+      } else {
         drawer.classList.add('-translate-x-full');
         drawer.classList.remove('translate-x-0');
-        overlay.classList.add('hidden');
-      });
+        if (overlay) overlay.classList.add('hidden');
+      }
+    } else if (e.target.closest('#mobile-drawer-overlay')) {
+      if (drawer) {
+        drawer.classList.add('-translate-x-full');
+        drawer.classList.remove('translate-x-0');
+      }
+      if (overlay) overlay.classList.add('hidden');
     }
-  }
-
-  initSidebar();
-  initMobileDrawer();
-});
+  });
+})();
 </script>"""
 
     for fpath in html_files:
@@ -134,14 +143,21 @@ document.addEventListener('DOMContentLoaded', function() {
         # Root link
         html = re.sub(r'href="/?"(?=[ >])', f'href="{prefix}index.html"', html)
 
-        # Inject embedded CSS in head if not already present
-        if '<style id="inlined-theme-css">' not in html:
+        # Inject embedded CSS in head
+        if '<style id="inlined-theme-css">' in html:
+            html = re.sub(r'<style id="inlined-theme-css">.*?</style>', f'<style id="inlined-theme-css">\n{compiled_css}\n</style>', html, flags=re.DOTALL)
+        else:
             embedded_tag = f"""<style id="inlined-theme-css">\n{compiled_css}\n</style>\n</head>"""
             html = html.replace('</head>', embedded_tag)
 
-        # Inject offline enhancer script if not already present
-        if '<script id="offline-interactive-enhancer">' not in html:
+        # Inject offline enhancer script
+        if '<script id="offline-interactive-enhancer">' in html:
+            html = re.sub(r'<script id="offline-interactive-enhancer">.*?</script>', enhancer_script, html, flags=re.DOTALL)
+        else:
             html = html.replace('</body>', f'{enhancer_script}\n</body>')
+
+        with open(fpath, "w", encoding="utf-8") as f:
+            f.write(html)
 
         with open(fpath, "w", encoding="utf-8") as f:
             f.write(html)

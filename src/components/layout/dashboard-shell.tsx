@@ -14,6 +14,12 @@ export function DashboardShell({ children }: DashboardShellProps) {
   // Default to collapsed/shrunk icon rail as in the reference image
   const [isCollapsed, setIsCollapsed] = React.useState(true);
 
+  React.useEffect(() => {
+    if (typeof document !== "undefined") {
+      document.body.setAttribute("data-hydrated", "true");
+    }
+  }, []);
+
   const toggleCollapse = React.useCallback(() => {
     setIsCollapsed((prev) => !prev);
   }, []);
@@ -25,7 +31,7 @@ export function DashboardShell({ children }: DashboardShellProps) {
         id="desktop-sidebar-container"
         className={cn(
           "hidden md:fixed md:inset-y-0 md:flex md:flex-col z-40 transition-all duration-300",
-          isCollapsed ? "md:w-20" : "md:w-64"
+          isCollapsed ? "md:w-20" : "sidebar-expanded md:w-64"
         )}
       >
         <Sidebar
@@ -62,7 +68,7 @@ export function DashboardShell({ children }: DashboardShellProps) {
         id="main-content-viewport"
         className={cn(
           "flex flex-1 flex-col min-w-0 transition-all duration-300",
-          isCollapsed ? "md:pl-20" : "md:pl-64"
+          isCollapsed ? "md:pl-20" : "sidebar-expanded md:pl-64"
         )}
       >
         <Header onToggleSidebar={() => setMobileSidebarOpen((prev) => !prev)} />

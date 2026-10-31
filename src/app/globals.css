@@ -112,39 +112,110 @@
 #app-sidebar {
   transition: width 0.25s cubic-bezier(0.4, 0, 0.2, 1);
 }
-#main-wrapper, #app-header {
+#desktop-sidebar-container {
+  transition: width 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+}
+#main-content-viewport {
   transition: padding-left 0.25s cubic-bezier(0.4, 0, 0.2, 1);
 }
+
+/* Shrunk State (Default Compact Circular Dock matching reference) */
+.sidebar-shrunk {
+  width: 5rem !important;
+}
 .sidebar-shrunk .nav-label,
-.sidebar-shrunk .brand-title,
-.sidebar-shrunk .profile-details {
+.sidebar-shrunk .sidebar-brand-title,
+.sidebar-shrunk .sidebar-profile-details {
   display: none !important;
 }
 .sidebar-shrunk .nav-item {
   justify-content: center !important;
-  padding-left: 0 !important;
-  padding-right: 0 !important;
+  padding-left: 0.25rem !important;
+  padding-right: 0.25rem !important;
+  width: 100% !important;
 }
-.sidebar-shrunk .section-heading {
-  display: none !important;
-}
-.sidebar-shrunk .brand-header {
+.sidebar-shrunk #sidebar-brand-header {
   justify-content: center !important;
-  padding-left: 0 !important;
-  padding-right: 0 !important;
+  padding-left: 1rem !important;
+  padding-right: 1rem !important;
 }
-.sidebar-shrunk .profile-card {
-  padding: 0 !important;
+.sidebar-shrunk #sidebar-nav-container {
+  align-items: center !important;
+  padding-left: 0.625rem !important;
+  padding-right: 0.625rem !important;
+}
+.sidebar-shrunk #sidebar-footer-container {
+  align-items: center !important;
+  padding-left: 0.625rem !important;
+  padding-right: 0.625rem !important;
+  border-top-width: 0 !important;
+  padding-top: 0 !important;
+}
+.sidebar-shrunk #sidebar-profile-card {
+  padding: 0.25rem !important;
   background: transparent !important;
-  border: none !important;
+  border-color: transparent !important;
   justify-content: center !important;
-}
-.sidebar-shrunk #sidebar-profile-avatar {
-  margin: 0 auto;
 }
 .sidebar-shrunk .sidebar-tooltip {
   display: block;
 }
+
+/* Expanded State (Full labeled SaaS navigation) */
+#app-sidebar.sidebar-expanded {
+  width: 16rem !important;
+}
+#desktop-sidebar-container.sidebar-expanded {
+  width: 16rem !important;
+}
+#main-content-viewport.sidebar-expanded {
+  padding-left: 16rem !important;
+}
+#app-sidebar.sidebar-expanded .nav-label {
+  display: inline-block !important;
+}
+#app-sidebar.sidebar-expanded .sidebar-brand-title {
+  display: flex !important;
+}
+#app-sidebar.sidebar-expanded .sidebar-profile-details {
+  display: block !important;
+}
+#app-sidebar.sidebar-expanded #sidebar-brand-header {
+  justify-content: flex-start !important;
+  padding-left: 1.5rem !important;
+  gap: 0.75rem !important;
+}
+#app-sidebar.sidebar-expanded #sidebar-nav-container {
+  align-items: stretch !important;
+  padding-left: 1rem !important;
+  padding-right: 1rem !important;
+}
+#app-sidebar.sidebar-expanded .nav-item {
+  justify-content: flex-start !important;
+  padding-left: 0.625rem !important;
+  padding-right: 0.625rem !important;
+  width: 100% !important;
+}
+#app-sidebar.sidebar-expanded #sidebar-footer-container {
+  align-items: stretch !important;
+  padding-left: 1rem !important;
+  padding-right: 1rem !important;
+  border-top-width: 1px !important;
+  padding-top: 1rem !important;
+}
+#app-sidebar.sidebar-expanded #sidebar-profile-card {
+  padding: 0.5rem !important;
+  background-color: rgb(248 250 252) !important;
+  border-color: #EAECEF !important;
+  border-width: 1px !important;
+}
+#app-sidebar.sidebar-expanded .sidebar-tooltip {
+  display: none !important;
+}
+#app-sidebar.sidebar-expanded #sidebar-collapse-btn svg {
+  transform: rotate(180deg);
+}
+
 .sidebar-tooltip {
   display: none;
 }

@@ -16,7 +16,6 @@ import {
   Zap,
   PanelLeftClose,
   PanelLeftOpen,
-  ShieldCheck,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { MAIN_NAV_ITEMS } from "@/lib/constants";
@@ -54,7 +53,7 @@ export function Sidebar({
       id="app-sidebar"
       className={cn(
         "flex h-screen flex-col justify-between bg-white border-r border-[#EAECEF] shadow-sm py-4 transition-all duration-300 select-none",
-        isCollapsed ? "w-20" : "w-64",
+        isCollapsed ? "sidebar-shrunk w-20" : "sidebar-expanded w-64",
         className
       )}
     >
@@ -63,7 +62,7 @@ export function Sidebar({
         <div
           id="sidebar-brand-header"
           className={cn(
-            "flex items-center h-14 w-full px-4 mb-2 cursor-pointer",
+            "flex items-center h-14 w-full px-4 mb-2 cursor-pointer transition-all",
             isCollapsed ? "justify-center" : "justify-start px-6 gap-3"
           )}
           onClick={onToggleCollapse}
@@ -72,20 +71,19 @@ export function Sidebar({
           <div className="w-11 h-11 rounded-full bg-[#171717] text-white flex items-center justify-center font-bold shadow-md ring-2 ring-black/5 shrink-0">
             <Zap className="h-5 w-5 text-indigo-400" />
           </div>
-          {!isCollapsed && (
-            <div className="min-w-0 flex flex-col">
-              <span className="text-sm font-bold tracking-tight text-[#171717] leading-none truncate">
-                SubscriptIQ
-              </span>
-              <span className="text-[10px] text-[#737373] font-medium tracking-wide mt-0.5">
-                Revenue Engine
-              </span>
-            </div>
-          )}
+          <div className="sidebar-brand-title min-w-0 flex flex-col">
+            <span className="text-sm font-bold tracking-tight text-[#171717] leading-none truncate">
+              SubscriptIQ
+            </span>
+            <span className="text-[10px] text-[#737373] font-medium tracking-wide mt-0.5">
+              Revenue Engine
+            </span>
+          </div>
         </div>
 
         {/* Navigation Items (Circular Icon Dock) */}
         <nav
+          id="sidebar-nav-container"
           className={cn(
             "w-full px-2.5 space-y-2 mt-2 flex flex-col",
             isCollapsed ? "items-center" : "items-stretch px-4"
@@ -93,9 +91,11 @@ export function Sidebar({
         >
           {MAIN_NAV_ITEMS.map((item) => {
             const Icon = ICON_MAP[item.icon] || LayoutGrid;
+            const isDashboard = item.href === "/dashboard";
             const isActive =
               pathname === item.href ||
-              (item.href !== "/dashboard" && pathname.startsWith(item.href));
+              (isDashboard && pathname === "/") ||
+              (!isDashboard && pathname.startsWith(item.href));
 
             return (
               <Link
@@ -103,14 +103,14 @@ export function Sidebar({
                 href={item.href}
                 onClick={onNavigate}
                 className={cn(
-                  "group relative flex items-center gap-3 p-1 rounded-2xl transition-all",
+                  "nav-item group relative flex items-center gap-3 p-1 rounded-2xl transition-all",
                   isCollapsed ? "justify-center w-full" : "w-full px-2.5 py-1.5"
                 )}
               >
                 {/* Circular Icon Container matching reference image */}
                 <div
                   className={cn(
-                    "w-11 h-11 rounded-full flex items-center justify-center transition-all shrink-0",
+                    "circle-btn w-11 h-11 rounded-full flex items-center justify-center transition-all shrink-0",
                     isActive
                       ? "bg-[#171717] text-white shadow-md ring-2 ring-black/5"
                       : "bg-[#F1F3F5] text-[#555] hover:bg-[#E5E7EB] hover:text-[#111]"
@@ -119,23 +119,20 @@ export function Sidebar({
                   <Icon className="h-5 w-5" />
                 </div>
 
-                {!isCollapsed && (
-                  <span
-                    className={cn(
-                      "text-xs font-semibold truncate transition-colors",
-                      isActive ? "text-[#171717]" : "text-[#737373] group-hover:text-[#171717]"
-                    )}
-                  >
-                    {item.title}
-                  </span>
-                )}
+                {/* Text Label - shown when expanded, hidden by .sidebar-shrunk when collapsed */}
+                <span
+                  className={cn(
+                    "nav-label text-xs font-semibold truncate transition-colors",
+                    isActive ? "text-[#171717]" : "text-[#737373] group-hover:text-[#171717]"
+                  )}
+                >
+                  {item.title}
+                </span>
 
                 {/* Floating Tooltip when shrunk */}
-                {isCollapsed && (
-                  <div className="absolute left-full ml-3 px-2.5 py-1 bg-[#171717] text-white text-[11px] font-medium rounded-lg shadow-xl opacity-0 pointer-events-none group-hover:opacity-100 transition-opacity z-50 whitespace-nowrap">
-                    {item.title}
-                  </div>
-                )}
+                <div className="sidebar-tooltip absolute left-full ml-3 px-2.5 py-1 bg-[#171717] text-white text-[11px] font-medium rounded-lg shadow-xl opacity-0 pointer-events-none group-hover:opacity-100 transition-opacity z-50 whitespace-nowrap">
+                  {item.title}
+                </div>
               </Link>
             );
           })}
@@ -144,6 +141,7 @@ export function Sidebar({
 
       {/* Sidebar Footer: Settings, Profile & Shrink Toggle */}
       <div
+        id="sidebar-footer-container"
         className={cn(
           "w-full px-2.5 space-y-2 flex flex-col",
           isCollapsed ? "items-center" : "items-stretch px-4 border-t border-[#EAECEF] pt-4"
@@ -154,13 +152,13 @@ export function Sidebar({
           href="/settings"
           onClick={onNavigate}
           className={cn(
-            "group relative flex items-center gap-3 p-1 rounded-2xl transition-all",
+            "nav-item group relative flex items-center gap-3 p-1 rounded-2xl transition-all",
             isCollapsed ? "justify-center w-full" : "w-full px-2.5 py-1.5"
           )}
         >
           <div
             className={cn(
-              "w-11 h-11 rounded-full flex items-center justify-center transition-all shrink-0",
+              "circle-btn w-11 h-11 rounded-full flex items-center justify-center transition-all shrink-0",
               pathname === "/settings"
                 ? "bg-[#171717] text-white shadow-md ring-2 ring-black/5"
                 : "bg-[#F1F3F5] text-[#555] hover:bg-[#E5E7EB] hover:text-[#111]"
@@ -168,43 +166,39 @@ export function Sidebar({
           >
             <Settings className="h-5 w-5" />
           </div>
-          {!isCollapsed && (
-            <span className="text-xs font-semibold text-[#737373] group-hover:text-[#171717] truncate">
-              Settings
-            </span>
-          )}
-          {isCollapsed && (
-            <div className="absolute left-full ml-3 px-2.5 py-1 bg-[#171717] text-white text-[11px] font-medium rounded-lg shadow-xl opacity-0 pointer-events-none group-hover:opacity-100 transition-opacity z-50 whitespace-nowrap">
-              Settings
-            </div>
-          )}
+          <span className="nav-label text-xs font-semibold text-[#737373] group-hover:text-[#171717] truncate">
+            Settings
+          </span>
+          <div className="sidebar-tooltip absolute left-full ml-3 px-2.5 py-1 bg-[#171717] text-white text-[11px] font-medium rounded-lg shadow-xl opacity-0 pointer-events-none group-hover:opacity-100 transition-opacity z-50 whitespace-nowrap">
+            Settings
+          </div>
         </Link>
 
         {/* User Profile Avatar */}
         <div
+          id="sidebar-profile-card"
           className={cn(
             "group relative flex items-center gap-3 p-1 rounded-2xl transition-all",
             isCollapsed ? "justify-center w-full" : "p-2 rounded-xl bg-slate-50 border border-[#EAECEF]"
           )}
         >
-          <div className="w-11 h-11 rounded-full bg-slate-100 border border-[#EAECEF] text-[#171717] font-bold text-xs flex items-center justify-center shrink-0">
+          <div
+            id="sidebar-profile-avatar"
+            className="w-11 h-11 rounded-full bg-slate-100 border border-[#EAECEF] text-[#171717] font-bold text-xs flex items-center justify-center shrink-0"
+          >
             AD
           </div>
-          {!isCollapsed && (
-            <div className="min-w-0 flex-1">
-              <div className="text-xs font-bold text-[#171717] truncate">
-                Enterprise Admin
-              </div>
-              <div className="text-[10px] text-[#737373] truncate">
-                admin@subscriptiq.io
-              </div>
-            </div>
-          )}
-          {isCollapsed && (
-            <div className="absolute left-full ml-3 px-2.5 py-1 bg-[#171717] text-white text-[11px] font-medium rounded-lg shadow-xl opacity-0 pointer-events-none group-hover:opacity-100 transition-opacity z-50 whitespace-nowrap">
+          <div className="sidebar-profile-details min-w-0 flex-1">
+            <div className="text-xs font-bold text-[#171717] truncate">
               Enterprise Admin
             </div>
-          )}
+            <div className="text-[10px] text-[#737373] truncate">
+              admin@subscriptiq.io
+            </div>
+          </div>
+          <div className="sidebar-tooltip absolute left-full ml-3 px-2.5 py-1 bg-[#171717] text-white text-[11px] font-medium rounded-lg shadow-xl opacity-0 pointer-events-none group-hover:opacity-100 transition-opacity z-50 whitespace-nowrap">
+            Enterprise Admin
+          </div>
         </div>
 
         {/* Shrink / Expand Toggle Control Button */}
@@ -212,7 +206,7 @@ export function Sidebar({
           <button
             id="sidebar-collapse-btn"
             onClick={onToggleCollapse}
-            className="group relative flex items-center justify-center w-11 h-11 rounded-full bg-slate-50 hover:bg-slate-200/80 text-[#737373] hover:text-[#171717] border border-[#EAECEF] transition-all self-center mt-1"
+            className="group relative flex items-center justify-center w-11 h-11 rounded-full bg-slate-50 hover:bg-slate-200/80 text-[#737373] hover:text-[#171717] border border-[#EAECEF] transition-all self-center mt-1 cursor-pointer"
             title={isCollapsed ? "Expand Sidebar" : "Shrink Sidebar"}
           >
             {isCollapsed ? (
@@ -220,7 +214,7 @@ export function Sidebar({
             ) : (
               <PanelLeftClose className="w-4 h-4" />
             )}
-            <div className="absolute left-full ml-3 px-2.5 py-1 bg-[#171717] text-white text-[11px] font-medium rounded-lg shadow-xl opacity-0 pointer-events-none group-hover:opacity-100 transition-opacity z-50 whitespace-nowrap">
+            <div className="sidebar-tooltip absolute left-full ml-3 px-2.5 py-1 bg-[#171717] text-white text-[11px] font-medium rounded-lg shadow-xl opacity-0 pointer-events-none group-hover:opacity-100 transition-opacity z-50 whitespace-nowrap">
               {isCollapsed ? "Expand Sidebar" : "Shrink Sidebar"}
             </div>
           </button>
