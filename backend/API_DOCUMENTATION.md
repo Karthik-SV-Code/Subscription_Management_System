@@ -284,3 +284,102 @@ Update an existing pricing plan.
 Delete a pricing plan.
 - **Access:** Private (`Bearer <token>` required)
 - **Business Rule (Requirement 7):** Blocked if this plan is actively referenced by active subscriptions. Returns `400 Bad Request`.
+
+---
+
+## 8. Subscriptions & Lifecycle Module
+
+The Subscription module manages customer recurring subscriptions, calendar billing date calculations, month-end pinning, MRR aggregation, lifecycle state machine enforcement, and duplicate-invoice prevention.
+
+### Lifecycle State Machine & Valid Transitions
+
+| From Status | To `PAUSED` | To `ACTIVE` | To `CANCELLED` | Notes |
+| :--- | :---: | :---: | :---: | :--- |
+| **`ACTIVE`** | **VALID** | Invalid (Already active) | **VALID** | Halts or cancels recurring billing |
+| **`PAUSED`** | Invalid (Already paused) | **VALID** | **VALID** | Resumes or cancels subscription |
+| **`CANCELLED`** | **REJECTED (400)** | **REJECTED (400)** | **REJECTED (400)** | **Terminal State:** Cancelled subs cannot be transitioned |
+
+---
+
+### `GET /api/v1/subscriptions`
+List subscriptions with pagination, status filtering, and multi-field search.
+- **Access:** Public / Authenticated
+- **Query Parameters:**
+  - `page` (number, default: `1`)
+  - `pageSize` (number, default: `10`, max: `100`)
+  - `search` (searches customer name, customer email, plan name, plan code)
+  - `status` (`ACTIVE`, `PAUSED`, `CANCELLED`)
+  - `customerId` (filter by specific customer UUID)
+  - `planId` (filter by specific plan UUID)
+- **Response `200 OK`**: Paginated list of subscriptions with embedded customer and plan details.
+
+### `GET /api/v1/subscriptions/:id`
+Retrieve subscription details by UUID.
+- **Access:** Public / Authenticated
+
+### `POST /api/v1/subscriptions`
+Create a new subscription referencing an existing customer and active plan.
+- **Access:** Private (`Bearer <token>` required)
+- **Body:**
+  ```json
+  {
+    "customerId": "8f972b21-4fa3-4cb5-8299-fc91950e3966",
+    "planId": "3b29c9a6-5fa7-4581-807e-114d5e8efca3",
+    "quantity": 3,
+    "startDate": "2026-01-31T00:00:00.000Z",
+    "billingInterval": "MONTHLY"
+  }
+  ```
+- **Validation Rules & Automatic Calculations:**
+  - `customerId`: Required; must reference an existing customer.
+  - `planId`: Required; must reference an active, non-archived plan.
+  - `quantity`: Positive integer `>= 1` (default: `1`).
+  - `startDate`: ISO 8601 date string (default: current timestamp).
+  - `unitAmount`: Automatically set from `plan.amount`.
+  - `totalAmount`: Calculated as `plan.amount * quantity`.
+  - `mrr`: Calculated based on interval (Yearly: `total / 12`, Monthly: `total`).
+  - `nextBillingDate`: Computed with **month-end pinning** (e.g. Jan 31 -> Feb 28 -> Mar 31).
+  - `customer.mrr`: Updated automatically in a PostgreSQL transaction.
+- **Response `201 Created`** or `400 Bad Request` or `404 Not Found`.
+
+### `PATCH /api/v1/subscriptions/:id/status`
+Transition subscription lifecycle status.
+- **Access:** Private (`Bearer <token>` required)
+- **Body:**
+  ```json
+  {
+    "status": "PAUSED",
+    "reason": "Customer requested temporary freeze"
+  }
+  ```
+- **Allowed Transitions:**
+  - `ACTIVE` -> `PAUSED`
+  - `PAUSED` -> `ACTIVE`
+  - `ACTIVE` -> `CANCELLED`
+  - `PAUSED` -> `CANCELLED`
+- **Enforcements:**
+  - Rejects attempts to transition a `CANCELLED` subscription with `400 Bad Request`.
+  - Rejects duplicate transitions (e.g. `ACTIVE` -> `ACTIVE`) with `400 Bad Request`.
+  - Updates customer's active MRR in a transaction (only `ACTIVE` subscriptions contribute).
+- **Response `200 OK`** or `400 Bad Request`.
+
+### `POST /api/v1/subscriptions/:id/renew`
+Process a recurring billing renewal for an active subscription.
+- **Access:** Private (`Bearer <token>` required)
+- **Business Rules:**
+  - **Excludes cancelled subscriptions:** Returns `400 Bad Request`.
+  - **Excludes paused subscriptions:** Returns `400 Bad Request`.
+  - Advances `currentPeriodStart` and `currentPeriodEnd` while strictly preserving the month-end anchor.
+  - Increments `billingSequence` and generates an idempotent `lastBillingKey` to prevent duplicate invoices in recurring billing jobs.
+- **Response `200 OK`**: Returns updated subscription and `renewalSummary`.
+
+### `GET /api/v1/subscriptions/due/billing`
+Retrieve all subscriptions currently due for recurring billing.
+- **Access:** Private (`Bearer <token>` required)
+- **Query Parameters:**
+  - `asOfDate` (optional ISO 8601 date string, default: current time)
+  - `limit` (optional integer, default: 100)
+- **Business Rules:**
+  - Strictly returns only `ACTIVE` subscriptions where `nextBillingDate <= asOfDate`.
+  - **CANCELLED and PAUSED subscriptions are 100% excluded.**
+- **Response `200 OK`**.

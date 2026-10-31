@@ -3,6 +3,7 @@ import authRoutes from "./auth.routes";
 import customerRoutes from "./customer.routes";
 import productRoutes from "./product.routes";
 import planRoutes from "./plan.routes";
+import subscriptionRoutes from "./subscription.routes";
 import { authenticateJwt, authorize } from "../middleware/auth";
 import { sendSuccess } from "../utils/response";
 import { AuthenticatedRequest } from "../types";
@@ -50,6 +51,14 @@ router.get("/", (_req: Request, res: Response) => {
           update: "PUT /api/v1/plans/:id (Protected)",
           delete: "DELETE /api/v1/plans/:id (Protected - Guarded against active subscriptions)",
         },
+        subscriptions: {
+          list: "GET /api/v1/subscriptions?page=&pageSize=&search=&status=&customerId=&planId=",
+          getById: "GET /api/v1/subscriptions/:id",
+          create: "POST /api/v1/subscriptions (Protected - Calculates next billing, totals & MRR)",
+          updateStatus: "PATCH /api/v1/subscriptions/:id/status (Protected - Enforces lifecycle state machine)",
+          renew: "POST /api/v1/subscriptions/:id/renew (Protected - Excludes cancelled subs, advances cycle)",
+          dueForBilling: "GET /api/v1/subscriptions/due/billing (Protected - Recurring billing query)",
+        },
         roles: {
           adminOverview: "GET /api/v1/admin/overview (Requires ADMIN role)",
           staffOverview: "GET /api/v1/staff/overview (Requires ADMIN or STAFF role)",
@@ -65,6 +74,7 @@ router.use("/auth", authRoutes);
 router.use("/customers", customerRoutes);
 router.use("/products", productRoutes);
 router.use("/plans", planRoutes);
+router.use("/subscriptions", subscriptionRoutes);
 
 // Role-based authorization demonstration routes
 router.get(
