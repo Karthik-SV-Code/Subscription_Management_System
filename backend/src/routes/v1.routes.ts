@@ -1,5 +1,8 @@
 import { Router, Request, Response } from "express";
 import authRoutes from "./auth.routes";
+import customerRoutes from "./customer.routes";
+import productRoutes from "./product.routes";
+import planRoutes from "./plan.routes";
 import { authenticateJwt, authorize } from "../middleware/auth";
 import { sendSuccess } from "../utils/response";
 import { AuthenticatedRequest } from "../types";
@@ -8,7 +11,7 @@ const router = Router();
 
 /**
  * @route GET /api/v1
- * @desc API v1 root endpoint describing service and available routes
+ * @desc API v1 root endpoint describing service, catalog and documentation
  * @access Public
  */
 router.get("/", (_req: Request, res: Response) => {
@@ -24,11 +27,32 @@ router.get("/", (_req: Request, res: Response) => {
         auth: {
           register: "POST /api/v1/auth/register",
           login: "POST /api/v1/auth/login",
-          me: "GET /api/v1/auth/me",
+          me: "GET /api/v1/auth/me (Protected)",
+        },
+        customers: {
+          list: "GET /api/v1/customers?page=&pageSize=&search=&status=",
+          getById: "GET /api/v1/customers/:id",
+          create: "POST /api/v1/customers (Protected)",
+          update: "PUT /api/v1/customers/:id (Protected)",
+          delete: "DELETE /api/v1/customers/:id (Protected - Guarded against active subscriptions)",
+        },
+        products: {
+          list: "GET /api/v1/products?page=&pageSize=&search=&status=",
+          getById: "GET /api/v1/products/:id",
+          create: "POST /api/v1/products (Protected)",
+          update: "PUT /api/v1/products/:id (Protected)",
+          delete: "DELETE /api/v1/products/:id (Protected - Guarded against active subscriptions)",
+        },
+        plans: {
+          list: "GET /api/v1/plans?page=&pageSize=&search=&productId=&interval=&isActive=",
+          getById: "GET /api/v1/plans/:id",
+          create: "POST /api/v1/plans (Protected)",
+          update: "PUT /api/v1/plans/:id (Protected)",
+          delete: "DELETE /api/v1/plans/:id (Protected - Guarded against active subscriptions)",
         },
         roles: {
-          adminCheck: "GET /api/v1/admin/overview (Requires ADMIN role)",
-          staffCheck: "GET /api/v1/staff/overview (Requires ADMIN or STAFF role)",
+          adminOverview: "GET /api/v1/admin/overview (Requires ADMIN role)",
+          staffOverview: "GET /api/v1/staff/overview (Requires ADMIN or STAFF role)",
         },
       },
     },
@@ -36,8 +60,11 @@ router.get("/", (_req: Request, res: Response) => {
   );
 });
 
-// Authentication routes
+// Mounted module routes
 router.use("/auth", authRoutes);
+router.use("/customers", customerRoutes);
+router.use("/products", productRoutes);
+router.use("/plans", planRoutes);
 
 // Role-based authorization demonstration routes
 router.get(

@@ -12,6 +12,43 @@ enum Role {
   STAFF
 }
 
+enum CustomerStatus {
+  active
+  inactive
+  lead
+  churned
+}
+
+enum ProductStatus {
+  active
+  archived
+  draft
+}
+
+enum BillingInterval {
+  day
+  week
+  month
+  quarter
+  year
+}
+
+enum PricingModel {
+  flat_fee
+  per_seat
+  tiered
+  usage_based
+}
+
+enum SubscriptionStatus {
+  active
+  trialing
+  past_due
+  canceled
+  paused
+  incomplete
+}
+
 model User {
   id        String   @id @default(uuid())
   email     String   @unique
@@ -24,4 +61,78 @@ model User {
   updatedAt DateTime @updatedAt
 
   @@map("users")
+}
+
+model Customer {
+  id                      String         @id @default(uuid())
+  name                    String
+  email                   String         @unique
+  companyName             String?
+  status                  CustomerStatus @default(active)
+  mrr                     Float          @default(0.0)
+  currency                String         @default("USD")
+  billingAddress          Json?
+  taxId                   String?
+  stripeCustomerId        String?
+  subscriptions           Subscription[]
+  createdAt               DateTime       @default(now())
+  updatedAt               DateTime       @updatedAt
+
+  @@map("customers")
+}
+
+model Product {
+  id          String        @id @default(uuid())
+  name        String
+  code        String        @unique
+  description String?
+  status      ProductStatus @default(active)
+  features    String[]      @default([])
+  plans       Plan[]
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
+
+  @@map("products")
+}
+
+model Plan {
+  id              String          @id @default(uuid())
+  productId       String
+  product         Product         @relation(fields: [productId], references: [id], onDelete: Restrict)
+  name            String
+  code            String          @unique
+  description     String?
+  amount          Float
+  currency        String          @default("USD")
+  interval        BillingInterval @default(month)
+  intervalCount   Int             @default(1)
+  pricingModel    PricingModel    @default(flat_fee)
+  trialPeriodDays Int             @default(0)
+  isActive        Boolean         @default(true)
+  subscriptions   Subscription[]
+  createdAt       DateTime        @default(now())
+  updatedAt       DateTime        @updatedAt
+
+  @@map("plans")
+}
+
+model Subscription {
+  id                 String             @id @default(uuid())
+  customerId         String
+  customer           Customer           @relation(fields: [customerId], references: [id], onDelete: Restrict)
+  planId             String
+  plan               Plan               @relation(fields: [planId], references: [id], onDelete: Restrict)
+  status             SubscriptionStatus @default(active)
+  currentPeriodStart DateTime           @default(now())
+  currentPeriodEnd   DateTime
+  cancelAtPeriodEnd  Boolean            @default(false)
+  canceledAt         DateTime?
+  trialStart         DateTime?
+  trialEnd           DateTime?
+  mrr                Float              @default(0.0)
+  currency           String             @default("USD")
+  createdAt          DateTime           @default(now())
+  updatedAt          DateTime           @updatedAt
+
+  @@map("subscriptions")
 }

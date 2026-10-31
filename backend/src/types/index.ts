@@ -18,3 +18,23 @@ export interface ApiResponse<T = unknown> {
   data?: T;
   errors?: unknown;
 }
+
+export interface PaginationMeta {
+  total: number;
+  page: number;
+  pageSize: number;
+  totalPages: number;
+}
+
+export interface PaginatedResponse<T = unknown> {
+  success: boolean;
+  message?: string;
+  data: T[];
+  pagination: PaginationMeta;
+}
+
+export interface PaginationQuery {
+  page?: number;
+  pageSize?: number;
+  search?: string;
+}

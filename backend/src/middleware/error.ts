@@ -50,6 +50,15 @@ export function errorHandler(
     return sendError(res, "Validation failed", 400, formattedErrors);
   }
 
+  // Prisma Database Connection / Initialization Error
+  if (err instanceof Prisma.PrismaClientInitializationError) {
+    return sendError(
+      res,
+      "Database service unavailable: PostgreSQL connection could not be established. Please check database status.",
+      503
+    );
+  }
+
   // Prisma Unique Constraint Violation
   if (err instanceof Prisma.PrismaClientKnownRequestError) {
     if (err.code === "P2002") {
