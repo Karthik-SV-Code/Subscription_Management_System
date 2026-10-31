@@ -5,6 +5,8 @@ import productRoutes from "./product.routes";
 import planRoutes from "./plan.routes";
 import subscriptionRoutes from "./subscription.routes";
 import invoiceRoutes from "./invoice.routes";
+import paymentRoutes from "./payment.routes";
+import discountRoutes from "./discount.routes";
 import dashboardRoutes from "../modules/dashboard/dashboard.routes";
 import { authenticateJwt, authorize } from "../middleware/auth";
 import { sendSuccess } from "../utils/response";
@@ -69,6 +71,17 @@ router.get("/", (_req: Request, res: Response) => {
           applyDiscount: "POST /api/v1/invoices/:id/discount (Protected - Apply amount or percentage discount)",
           recordPayment: "POST /api/v1/invoices/:id/payments (Protected - Record partial or full payment)",
         },
+        payments: {
+          list: "GET /api/v1/payments?page=&pageSize=&invoiceId=&customerId=&status=&paymentMethod= (Protected)",
+          getById: "GET /api/v1/payments/:id (Protected)",
+          record: "POST /api/v1/payments (Protected - Manual/automated payment, updates invoice balance & status)",
+        },
+        discounts: {
+          list: "GET /api/v1/discounts?page=&pageSize=&search=&isActive=&type= (Protected)",
+          getById: "GET /api/v1/discounts/:id (Protected)",
+          create: "POST /api/v1/discounts (Protected - Percentage or fixed, expiry & usage limits)",
+          validate: "POST /api/v1/discounts/validate (Protected - Validate expiry, usage limits, compute value)",
+        },
         dashboard: {
           stats: "GET /api/v1/dashboard/stats (KPI metrics: totalCustomers, activeSubscriptions, MRR, revenue, outstanding)",
           revenue: "GET /api/v1/dashboard/revenue?months=6 (6-month historical revenue breakdown)",
@@ -91,6 +104,8 @@ router.use("/products", productRoutes);
 router.use("/plans", planRoutes);
 router.use("/subscriptions", subscriptionRoutes);
 router.use("/invoices", invoiceRoutes);
+router.use("/payments", paymentRoutes);
+router.use("/discounts", discountRoutes);
 router.use("/dashboard", dashboardRoutes);
 
 // Role-based authorization demonstration routes

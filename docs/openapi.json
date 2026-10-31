@@ -167,6 +167,103 @@
         }
       }
     },
+    "/payments": {
+      "get": {
+        "summary": "List payments",
+        "security": [{ "bearerAuth": [] }],
+        "parameters": [
+          { "name": "page", "in": "query", "schema": { "type": "integer", "default": 1 } },
+          { "name": "pageSize", "in": "query", "schema": { "type": "integer", "default": 10 } },
+          { "name": "invoiceId", "in": "query", "schema": { "type": "string" } },
+          { "name": "customerId", "in": "query", "schema": { "type": "string" } }
+        ],
+        "responses": {
+          "200": { "description": "Paginated list of payments" }
+        }
+      },
+      "post": {
+        "summary": "Record manual or automated payment",
+        "security": [{ "bearerAuth": [] }],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["invoiceId", "amount"],
+                "properties": {
+                  "invoiceId": { "type": "string", "format": "uuid" },
+                  "amount": { "type": "number" },
+                  "paymentMethod": { "type": "string", "default": "manual" },
+                  "notes": { "type": "string" }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": { "description": "Payment recorded and invoice balance updated" }
+        }
+      }
+    },
+    "/discounts": {
+      "get": {
+        "summary": "List discount codes",
+        "security": [{ "bearerAuth": [] }],
+        "responses": {
+          "200": { "description": "List of discounts" }
+        }
+      },
+      "post": {
+        "summary": "Create discount code",
+        "security": [{ "bearerAuth": [] }],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["code", "type", "value"],
+                "properties": {
+                  "code": { "type": "string" },
+                  "type": { "type": "string", "enum": ["PERCENTAGE", "FIXED"] },
+                  "value": { "type": "number" },
+                  "maxUses": { "type": "integer" },
+                  "expiresAt": { "type": "string", "format": "date-time" }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": { "description": "Discount code created" }
+        }
+      }
+    },
+    "/discounts/validate": {
+      "post": {
+        "summary": "Validate discount code eligibility and compute discount amount",
+        "security": [{ "bearerAuth": [] }],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["code"],
+                "properties": {
+                  "code": { "type": "string" },
+                  "amount": { "type": "number" }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": { "description": "Validation result and calculated discount" }
+        }
+      }
+    },
     "/dashboard/stats": {
       "get": {
         "summary": "Get KPI dashboard analytics",

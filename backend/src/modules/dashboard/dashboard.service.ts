@@ -9,6 +9,7 @@ export interface DashboardStats {
   monthlyRecurringRevenue: number;
   totalRevenueCollected: number;
   outstandingAmount: number;
+  outstandingInvoices: number;
   paidInvoices: number;
   unpaidInvoices: number;
 }
@@ -162,6 +163,7 @@ export class DashboardService {
       monthlyRecurringRevenue,
       totalRevenueCollected,
       outstandingAmount,
+      outstandingInvoices: unpaidInvoices,
       paidInvoices,
       unpaidInvoices,
     };

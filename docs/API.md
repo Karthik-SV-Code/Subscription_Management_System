@@ -455,12 +455,190 @@ Retrieve complete payment history for an invoice.
 
 ---
 
-## 11. Dashboard Analytics Module
+## 11. Payments Module
+
+The dedicated Payments module handles manual and automated payment recording, settlement reconciliation, invoice balance decrementing, and payment audit history inside atomic PostgreSQL transactions.
+
+### `GET /api/v1/payments`
+List recorded payments with pagination and multi-parameter filtering.
+- **Access:** Protected (`Bearer <token>`)
+- **Query Parameters:**
+  - `page`: Page number (default: `1`)
+  - `pageSize`: Page size (default: `10`, max: `100`)
+  - `invoiceId`: Filter by target invoice UUID
+  - `customerId`: Filter by customer UUID
+  - `status`: `succeeded`, `pending`, `failed`, `refunded`
+  - `paymentMethod`: `credit_card`, `bank_transfer`, `ach`, `sepa`, `wire`, `manual`
+- **Response `200 OK`:**
+  ```json
+  {
+    "success": true,
+    "message": "Payments retrieved successfully",
+    "data": [
+      {
+        "id": "774944ec-b82b-45e0-9bc5-22ea677eb990",
+        "invoiceId": "d91e6b36-e82a-4db5-9e3d-8ca773e3e018",
+        "customerId": "85ab8a9f-f532-4eca-b519-77d45400a87c",
+        "amount": "100.00",
+        "currency": "USD",
+        "status": "succeeded",
+        "paymentMethod": "manual",
+        "transactionReference": "TXN-1793437699100-4821",
+        "processedAt": "2026-10-31T09:08:19.742Z",
+        "customer": {
+          "id": "85ab8a9f-f532-4eca-b519-77d45400a87c",
+          "name": "Brightloop Global Corp",
+          "email": "finance@brightloop-client.com"
+        },
+        "invoice": {
+          "id": "d91e6b36-e82a-4db5-9e3d-8ca773e3e018",
+          "invoiceNumber": "INV-202610-0001-5821",
+          "total": "275.00",
+          "status": "PARTIALLY_PAID"
+        }
+      }
+    ],
+    "pagination": {
+      "total": 1,
+      "page": 1,
+      "pageSize": 10,
+      "totalPages": 1
+    }
+  }
+  ```
+
+### `GET /api/v1/payments/:id`
+Retrieve payment details by UUID with customer and invoice breakdown.
+- **Access:** Protected (`Bearer <token>`)
+
+### `POST /api/v1/payments`
+Record a payment against an invoice (supports manual payment entry, partial settlements, and full settlements).
+- **Access:** Protected (`Bearer <token>`)
+- **Body Schema:**
+  ```json
+  {
+    "invoiceId": "d91e6b36-e82a-4db5-9e3d-8ca773e3e018",
+    "amount": 100.00,
+    "paymentMethod": "manual",
+    "transactionReference": "TXN-MANUAL-001",
+    "notes": "Wire transfer received via treasury desk"
+  }
+  ```
+- **Business Logic & Transaction Guarantees:**
+  - Executed inside an atomic PostgreSQL transaction `prisma.$transaction`.
+  - Rejects payments if the invoice is already fully settled (`400 Bad Request`).
+  - Automatically recalculates `amountPaid` and decrements `amountDue`.
+  - If `amountDue == 0.00`: Sets invoice status to `PAID` and sets `paidAt = now()`.
+  - If `amountDue > 0.00`: Sets invoice status to `PARTIALLY_PAID`.
+- **Response `201 Created`:**
+  ```json
+  {
+    "success": true,
+    "message": "Payment recorded successfully",
+    "data": {
+      "payment": { ... },
+      "invoice": {
+        "id": "d91e6b36-e82a-4db5-9e3d-8ca773e3e018",
+        "invoiceNumber": "INV-202610-0001-5821",
+        "total": "275.00",
+        "amountPaid": "100.00",
+        "amountDue": "175.00",
+        "status": "PARTIALLY_PAID"
+      }
+    }
+  }
+  ```
+
+---
+
+## 12. Discounts Module
+
+The Discounts module manages promotional coupons, percentage and fixed-amount discounts, expiration dates, and maximum usage thresholds.
+
+### `GET /api/v1/discounts`
+List discounts with pagination, search, and active status filters.
+- **Access:** Protected (`Bearer <token>`)
+- **Query Parameters:** `page`, `pageSize`, `search`, `isActive`, `type` (`PERCENTAGE`, `FIXED`)
+
+### `GET /api/v1/discounts/:id`
+Retrieve discount record by UUID.
+- **Access:** Protected (`Bearer <token>`)
+
+### `POST /api/v1/discounts`
+Create a new discount coupon.
+- **Access:** Protected (`Bearer <token>`)
+- **Body Schema:**
+  ```json
+  {
+    "code": "FALL2026",
+    "name": "Fall Enterprise Promotion",
+    "description": "20% off all enterprise subscriptions",
+    "type": "PERCENTAGE",
+    "value": 20.0,
+    "currency": "USD",
+    "maxUses": 50,
+    "expiresAt": "2026-12-31T23:59:59.000Z",
+    "isActive": true
+  }
+  ```
+- **Validation Rules:**
+  - `code`: Unique alphanumeric code (2-30 characters, uppercase normalized).
+  - `type`: `PERCENTAGE` or `FIXED`.
+  - `value`: Number `> 0`. If `PERCENTAGE`, cannot exceed `100%`.
+  - `maxUses`: Optional positive integer.
+  - `expiresAt`: Optional ISO 8601 future date string.
+
+### `POST /api/v1/discounts/validate`
+Validate a discount coupon against active status, expiry, and usage limits, and compute applicable discount.
+- **Access:** Protected (`Bearer <token>`)
+- **Body Schema:**
+  ```json
+  {
+    "code": "FALL2026",
+    "amount": 300.00
+  }
+  ```
+- **Response `200 OK` (Valid):**
+  ```json
+  {
+    "success": true,
+    "message": "Discount code is valid",
+    "data": {
+      "valid": true,
+      "discount": {
+        "id": "e21bda1b-684c-4734-b258-0056ce48f98c",
+        "code": "FALL2026",
+        "name": "Fall Enterprise Promotion",
+        "type": "PERCENTAGE",
+        "value": 20.0,
+        "maxUses": 50,
+        "usedCount": 4,
+        "expiresAt": "2026-12-31T23:59:59.000Z",
+        "calculatedDiscountAmount": 60.00
+      }
+    }
+  }
+  ```
+- **Response `200 OK` (Invalid / Expired / Exhausted):**
+  ```json
+  {
+    "success": false,
+    "message": "Discount code 'FALL2026' usage limit has been reached (50/50)",
+    "data": {
+      "valid": false,
+      "reason": "Discount code 'FALL2026' usage limit has been reached (50/50)"
+    }
+  }
+  ```
+
+---
+
+## 13. Dashboard Analytics Module
 
 All dashboard analytics are computed directly from live PostgreSQL records using high-precision Decimal arithmetic.
 
 ### `GET /api/v1/dashboard/stats`
-Retrieve high-level subscription and revenue KPI metrics.
+Retrieve high-level subscription, customer, and revenue KPI metrics.
 - **Access:** Protected (`Bearer <token>`)
 - **Example cURL:**
   ```bash
@@ -479,6 +657,7 @@ Retrieve high-level subscription and revenue KPI metrics.
       "monthlyRecurringRevenue": 1250.00,
       "totalRevenueCollected": 5420.50,
       "outstandingAmount": 380.00,
+      "outstandingInvoices": 2,
       "paidInvoices": 18,
       "unpaidInvoices": 2
     }

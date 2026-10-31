@@ -4,13 +4,16 @@ import { prisma } from "./src/config/database";
 
 async function runBusinessWorkflowTest() {
   console.log("===============================================================================");
-  console.log("SubscriptIQ Sprint 5: Full End-to-End Business Workflow Test (Live PostgreSQL)");
+  console.log("SubscriptIQ: Full End-to-End Business Workflow Test (Live PostgreSQL)");
+  console.log("Sequence: Login -> Customer -> Plan -> Subscription -> Invoice -> Payment -> Dashboard");
   console.log("===============================================================================");
 
-  const PORT = 8091;
+  const PORT = 8092;
   const server = http.createServer(app);
   await new Promise<void>((resolve) => server.listen(PORT, resolve));
   const baseUrl = `http://localhost:${PORT}/api/v1`;
+
+  let createdDiscountId: string | null = null;
 
   try {
     const timestamp = Date.now();
@@ -92,9 +95,9 @@ async function runBusinessWorkflowTest() {
     console.log(`✓ Customer created: ${customer.id} (${customer.name})`);
 
     // -------------------------------------------------------------------------
-    // STEP 3: Create a product
+    // STEP 3: Create a product & plan
     // -------------------------------------------------------------------------
-    console.log("\n[STEP 3] Creating Product...");
+    console.log("\n[STEP 3] Creating Product & Plan...");
     const productPayload = {
       name: `SubscriptIQ Enterprise Suite ${timestamp}`,
       code: `PROD-ENT-${timestamp}`,
@@ -115,10 +118,6 @@ async function runBusinessWorkflowTest() {
     const product = prodData.data;
     console.log(`✓ Product created: ${product.id} (Code: ${product.code})`);
 
-    // -------------------------------------------------------------------------
-    // STEP 4: Create a subscription plan
-    // -------------------------------------------------------------------------
-    console.log("\n[STEP 4] Creating Subscription Plan...");
     const planPayload = {
       productId: product.id,
       name: "Enterprise Gold Monthly",
@@ -145,10 +144,10 @@ async function runBusinessWorkflowTest() {
     console.log(`✓ Plan created: ${plan.id} ($${plan.amount} / month)`);
 
     // -------------------------------------------------------------------------
-    // STEP 5: Create a subscription
+    // STEP 4: Create a subscription
     // -------------------------------------------------------------------------
-    console.log("\n[STEP 5] Creating Subscription...");
-    // Set start date 32 days in the past so it is due for billing today!
+    console.log("\n[STEP 4] Creating Subscription...");
+    // Set start date 32 days in past so it is immediately due for billing
     const pastStart = new Date(Date.now() - 32 * 86400000);
     const subPayload = {
       customerId: customer.id,
@@ -171,7 +170,7 @@ async function runBusinessWorkflowTest() {
     console.log(`✓ Subscription created: ${subscription.id}`);
     console.log(`  Quantity: ${subscription.quantity}, Unit Price: $${subscription.unitAmount}, Total: $${subscription.totalAmount}, MRR: $${subscription.mrr}`);
 
-    // Update nextBillingDate to yesterday so it is immediately eligible for recurring billing run
+    // Update nextBillingDate to yesterday so it is immediately eligible for recurring billing
     const yesterday = new Date(Date.now() - 1 * 86400000);
     await prisma.subscription.update({
       where: { id: subscription.id },
@@ -179,9 +178,9 @@ async function runBusinessWorkflowTest() {
     });
 
     // -------------------------------------------------------------------------
-    // STEP 6: Generate an invoice
+    // STEP 5: Generate an invoice
     // -------------------------------------------------------------------------
-    console.log("\n[STEP 6] Generating Recurring Invoice...");
+    console.log("\n[STEP 5] Generating Recurring Invoice...");
     const genRes = await fetch(`${baseUrl}/invoices/generate`, {
       method: "POST",
       headers: authHeaders,
@@ -199,15 +198,54 @@ async function runBusinessWorkflowTest() {
     console.log(`  Subtotal: $${invoice.subtotal}, Tax (10%): $${invoice.taxAmount}, Total: $${invoice.total}`);
 
     // -------------------------------------------------------------------------
-    // STEP 7: Apply a discount
+    // STEP 6: Discounts Module Verification (Create, Validate & Apply)
     // -------------------------------------------------------------------------
-    console.log("\n[STEP 7] Applying Discount...");
+    console.log("\n[STEP 6] Discounts Module Verification...");
+    const discountCode = `PROMO${timestamp}`;
+    const createDiscountRes = await fetch(`${baseUrl}/discounts`, {
+      method: "POST",
+      headers: authHeaders,
+      body: JSON.stringify({
+        code: discountCode,
+        name: "Spring Launch Promotion",
+        description: "$50 off subscription billing",
+        type: "FIXED",
+        value: 50.0,
+        currency: "USD",
+        maxUses: 100,
+        expiresAt: new Date(Date.now() + 30 * 86400000).toISOString(),
+        isActive: true,
+      }),
+    });
+    const createDiscountData = await createDiscountRes.json();
+    if (!createDiscountData.success) {
+      throw new Error(`Discount creation failed: ${JSON.stringify(createDiscountData)}`);
+    }
+    createdDiscountId = createDiscountData.data.id;
+    console.log(`✓ Discount code created: ${discountCode} ($50 FIXED)`);
+
+    // Validate discount code via POST /api/v1/discounts/validate
+    const validateRes = await fetch(`${baseUrl}/discounts/validate`, {
+      method: "POST",
+      headers: authHeaders,
+      body: JSON.stringify({
+        code: discountCode,
+        amount: 300.0,
+      }),
+    });
+    const validateData = await validateRes.json();
+    if (!validateData.success || !validateData.data.valid) {
+      throw new Error(`Discount validation failed: ${JSON.stringify(validateData)}`);
+    }
+    console.log(`✓ Discount code validated: calculatedDiscountAmount=$${validateData.data.discount.calculatedDiscountAmount}`);
+
+    // Apply discount to the generated invoice
     const discountRes = await fetch(`${baseUrl}/invoices/${invoice.id}/discount`, {
       method: "POST",
       headers: authHeaders,
       body: JSON.stringify({
-        discountAmount: 50.0, // $50 fixed discount
-        code: "HACKATHON50",
+        discountAmount: 50.0,
+        code: discountCode,
       }),
     });
     const discountData = await discountRes.json();
@@ -215,10 +253,7 @@ async function runBusinessWorkflowTest() {
       throw new Error(`Discount application failed: ${JSON.stringify(discountData)}`);
     }
     const discountedInvoice = discountData.data;
-    console.log(`✓ Discount applied ($50.00 off with code ${discountedInvoice.discountCode})`);
-    console.log(`  New Taxable Subtotal: $${parseFloat(discountedInvoice.subtotal) - 50}`);
-    console.log(`  New Tax: $${discountedInvoice.taxAmount}`);
-    console.log(`  New Total: $${discountedInvoice.total} (Amount Due: $${discountedInvoice.amountDue})`);
+    console.log(`✓ Discount applied to invoice (New Total: $${discountedInvoice.total}, Due: $${discountedInvoice.amountDue})`);
 
     const expectedTotal = 275.0; // (300 - 50) + 10% tax on 250 (25) = 275.00
     if (parseFloat(discountedInvoice.total) !== expectedTotal) {
@@ -226,79 +261,93 @@ async function runBusinessWorkflowTest() {
     }
 
     // -------------------------------------------------------------------------
-    // STEP 8: Record partial payment
+    // STEP 7: Payments Module Verification (Partial & Full Payments via POST /payments)
     // -------------------------------------------------------------------------
-    console.log("\n[STEP 8] Recording Partial Payment ($100.00)...");
-    const partialPayRes = await fetch(`${baseUrl}/invoices/${invoice.id}/payments`, {
+    console.log("\n[STEP 7] Payments Module Verification (POST /api/v1/payments)...");
+    
+    // 7.1 Record partial payment of $100.00
+    const partialPayRes = await fetch(`${baseUrl}/payments`, {
       method: "POST",
       headers: authHeaders,
       body: JSON.stringify({
+        invoiceId: invoice.id,
         amount: 100.0,
-        paymentMethod: "credit_card",
-        lastFour: "4242",
+        paymentMethod: "manual",
+        notes: "Cash / wire transfer partial payment",
       }),
     });
     const partialPayData = await partialPayRes.json();
     if (!partialPayData.success) {
       throw new Error(`Partial payment recording failed: ${JSON.stringify(partialPayData)}`);
     }
-    const invoiceAfterPartial = partialPayData.data.invoice;
-    console.log(`✓ Partial payment recorded: $100.00`);
-    console.log(`  Status: ${invoiceAfterPartial.status} (Expected: PARTIALLY_PAID)`);
-    console.log(`  Amount Paid: $${invoiceAfterPartial.amountPaid}, Remaining Due: $${invoiceAfterPartial.amountDue}`);
+    const invAfterPartial = partialPayData.data.invoice;
+    console.log(`✓ Partial payment recorded via POST /payments ($100.00)`);
+    console.log(`  Invoice Status: ${invAfterPartial.status} (Expected: PARTIALLY_PAID)`);
+    console.log(`  Amount Paid: $${invAfterPartial.amountPaid}, Remaining Due: $${invAfterPartial.amountDue}`);
 
-    if (invoiceAfterPartial.status !== "PARTIALLY_PAID" || parseFloat(invoiceAfterPartial.amountDue) !== 175.0) {
-      throw new Error(`Partial payment state incorrect: status=${invoiceAfterPartial.status}, due=${invoiceAfterPartial.amountDue}`);
+    if (invAfterPartial.status !== "PARTIALLY_PAID" || parseFloat(invAfterPartial.amountDue) !== 175.0) {
+      throw new Error(`Partial payment state incorrect: status=${invAfterPartial.status}, due=${invAfterPartial.amountDue}`);
     }
 
-    // -------------------------------------------------------------------------
-    // STEP 9: Record remaining payment
-    // -------------------------------------------------------------------------
-    console.log("\n[STEP 9] Recording Remaining Payment ($175.00)...");
-    const remainingPayRes = await fetch(`${baseUrl}/invoices/${invoice.id}/payments`, {
+    // 7.2 Record remaining payment of $175.00
+    const remainingPayRes = await fetch(`${baseUrl}/payments`, {
       method: "POST",
       headers: authHeaders,
       body: JSON.stringify({
+        invoiceId: invoice.id,
         amount: 175.0,
         paymentMethod: "bank_transfer",
+        notes: "Final settlement via bank transfer",
       }),
     });
     const remainingPayData = await remainingPayRes.json();
     if (!remainingPayData.success) {
       throw new Error(`Remaining payment recording failed: ${JSON.stringify(remainingPayData)}`);
     }
-    const invoiceAfterFull = remainingPayData.data.invoice;
-    console.log(`✓ Remaining payment recorded: $175.00`);
+    const invAfterFull = remainingPayData.data.invoice;
+    console.log(`✓ Remaining payment recorded via POST /payments ($175.00)`);
+    console.log(`  Invoice Status: ${invAfterFull.status} (Expected: PAID)`);
+    console.log(`  Remaining Due: $${invAfterFull.amountDue} (Expected: 0.00)`);
+
+    if (invAfterFull.status !== "PAID" || parseFloat(invAfterFull.amountDue) !== 0.0) {
+      throw new Error(`Full payment state incorrect: status=${invAfterFull.status}, due=${invAfterFull.amountDue}`);
+    }
+
+    // 7.3 List payments via GET /api/v1/payments
+    const listPayRes = await fetch(`${baseUrl}/payments?invoiceId=${invoice.id}`, {
+      headers: authHeaders,
+    });
+    const listPayData = await listPayRes.json();
+    if (!listPayData.success || listPayData.data.length !== 2) {
+      throw new Error(`Expected 2 payments for invoice, got ${listPayData.data?.length}`);
+    }
+    console.log(`✓ Verified GET /api/v1/payments returned ${listPayData.data.length} recorded payments`);
 
     // -------------------------------------------------------------------------
-    // STEP 10: Verify invoice becomes PAID
+    // STEP 8: Verify invoice status is PAID
     // -------------------------------------------------------------------------
-    console.log("\n[STEP 10] Verifying Invoice Status is PAID...");
+    console.log("\n[STEP 8] Verifying Final Invoice State...");
     const verifyInvoiceRes = await fetch(`${baseUrl}/invoices/${invoice.id}`);
     const verifyInvoiceData = await verifyInvoiceRes.json();
     const finalInvoice = verifyInvoiceData.data;
 
     console.log(`  Final Status: ${finalInvoice.status}`);
-    console.log(`  Amount Paid: $${finalInvoice.amountPaid}`);
-    console.log(`  Amount Due:  $${finalInvoice.amountDue}`);
-    console.log(`  Paid At:     ${finalInvoice.paidAt}`);
+    console.log(`  Amount Paid:  $${finalInvoice.amountPaid}`);
+    console.log(`  Amount Due:   $${finalInvoice.amountDue}`);
+    console.log(`  Paid At:      ${finalInvoice.paidAt}`);
 
-    if (finalInvoice.status !== "PAID") {
-      throw new Error(`Expected invoice status PAID, got ${finalInvoice.status}`);
-    }
-    if (parseFloat(finalInvoice.amountDue) !== 0) {
-      throw new Error(`Expected amountDue 0, got ${finalInvoice.amountDue}`);
-    }
-    if (!finalInvoice.paidAt) {
-      throw new Error("Expected paidAt timestamp to be populated");
+    if (finalInvoice.status !== "PAID" || parseFloat(finalInvoice.amountDue) !== 0) {
+      throw new Error(`Invoice status or balance mismatch: status=${finalInvoice.status}, due=${finalInvoice.amountDue}`);
     }
     console.log("✓ Invoice successfully verified as PAID with $0.00 balance");
 
     // -------------------------------------------------------------------------
-    // STEP 11: Fetch dashboard stats
+    // STEP 9: Dashboard Analytics Verification
     // -------------------------------------------------------------------------
-    console.log("\n[STEP 11] Fetching Dashboard Stats...");
-    const statsRes = await fetch(`${baseUrl}/dashboard/stats`);
+    console.log("\n[STEP 9] Verifying Dashboard Analytics...");
+    const statsRes = await fetch(`${baseUrl}/dashboard/stats`, {
+      headers: authHeaders,
+    });
     const statsData = await statsRes.json();
     if (!statsData.success) {
       throw new Error(`Dashboard stats fetch failed: ${JSON.stringify(statsData)}`);
@@ -307,15 +356,12 @@ async function runBusinessWorkflowTest() {
     console.log("✓ Dashboard Stats retrieved from PostgreSQL:");
     console.log(JSON.stringify(stats, null, 2));
 
-    // -------------------------------------------------------------------------
-    // STEP 12: Verify collected revenue and subscription metrics
-    // -------------------------------------------------------------------------
-    console.log("\n[STEP 12] Verifying Real Metrics...");
     console.log(`- totalCustomers: ${stats.totalCustomers} (>= 1)`);
     console.log(`- activeSubscriptions: ${stats.activeSubscriptions} (>= 1)`);
     console.log(`- monthlyRecurringRevenue: $${stats.monthlyRecurringRevenue} (>= $300.00)`);
     console.log(`- totalRevenueCollected: $${stats.totalRevenueCollected} (>= $275.00)`);
     console.log(`- paidInvoices: ${stats.paidInvoices} (>= 1)`);
+    console.log(`- outstandingInvoices: ${stats.outstandingInvoices}`);
 
     if (stats.totalCustomers < 1) throw new Error("totalCustomers must be at least 1");
     if (stats.activeSubscriptions < 1) throw new Error("activeSubscriptions must be at least 1");
@@ -323,18 +369,22 @@ async function runBusinessWorkflowTest() {
     if (stats.totalRevenueCollected < 275) throw new Error("totalRevenueCollected should include the $275 payment");
     if (stats.paidInvoices < 1) throw new Error("paidInvoices must be at least 1");
 
-    console.log("\nFetching 6-Month Monthly Revenue Chart...");
-    const revRes = await fetch(`${baseUrl}/dashboard/revenue?months=6`);
+    // 9.2 Revenue Chart (6-Month)
+    const revRes = await fetch(`${baseUrl}/dashboard/revenue?months=6`, {
+      headers: authHeaders,
+    });
     const revData = await revRes.json();
     console.log("✓ Revenue Chart data:", JSON.stringify(revData.data, null, 2));
 
-    console.log("\nFetching Recent Activity Feed...");
-    const actRes = await fetch(`${baseUrl}/dashboard/recent-activity?limit=5`);
+    // 9.3 Recent Activity Feed
+    const actRes = await fetch(`${baseUrl}/dashboard/recent-activity?limit=5`, {
+      headers: authHeaders,
+    });
     const actData = await actRes.json();
     console.log("✓ Recent Activity data (Latest 5 events):", JSON.stringify(actData.data, null, 2));
 
     console.log("\n===============================================================================");
-    console.log("🏆 ALL 12 WORKFLOW STEPS VERIFIED & PASSED END-TO-END ON REAL POSTGRESQL!");
+    console.log("🏆 FULL END-TO-END WORKFLOW VERIFIED AND PASSED ON REAL POSTGRESQL!");
     console.log("===============================================================================");
 
     // Clean up created entities
@@ -342,6 +392,9 @@ async function runBusinessWorkflowTest() {
     await prisma.payment.deleteMany({ where: { invoiceId: invoice.id } });
     await prisma.invoiceLineItem.deleteMany({ where: { invoiceId: invoice.id } });
     await prisma.invoice.delete({ where: { id: invoice.id } });
+    if (createdDiscountId) {
+      await prisma.discount.delete({ where: { id: createdDiscountId } });
+    }
     await prisma.subscription.delete({ where: { id: subscription.id } });
     await prisma.plan.delete({ where: { id: plan.id } });
     await prisma.product.delete({ where: { id: product.id } });

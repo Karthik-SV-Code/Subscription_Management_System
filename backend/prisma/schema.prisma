@@ -81,6 +81,14 @@ enum PaymentMethod {
   ach
   sepa
   wire
+  manual
+}
+
+enum DiscountType {
+  PERCENTAGE
+  FIXED
+  percentage
+  fixed
 }
 
 model User {
@@ -264,4 +272,24 @@ model Payment {
   @@index([customerId])
   @@index([processedAt])
   @@map("payments")
+}
+
+model Discount {
+  id          String       @id @default(uuid())
+  code        String       @unique
+  name        String?
+  description String?
+  type        DiscountType @default(PERCENTAGE)
+  value       Decimal      @db.Decimal(12, 2)
+  currency    String       @default("USD")
+  maxUses     Int?
+  usedCount   Int          @default(0)
+  expiresAt   DateTime?
+  isActive    Boolean      @default(true)
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+
+  @@index([code])
+  @@index([isActive])
+  @@map("discounts")
 }
