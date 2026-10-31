@@ -69,23 +69,26 @@ const config: Config = {
           DEFAULT: "hsl(var(--warning))",
           foreground: "hsl(var(--warning-foreground))",
         },
-        brand: {
-          50: "#EEF2FF",
-          100: "#E0E7FF",
-          200: "#C7D2FE",
-          300: "#A5B4FC",
-          400: "#818CF8",
-          500: "#6366F1",
-          600: "#4F46E5", // Brand Primary
-          700: "#4338CA",
-          800: "#3730A3",
-          900: "#312E81",
-        },
+        // Premium Light SaaS Tokens
+        appBg: "#F5F6F8",
+        cardBg: "#FFFFFF",
+        textMain: "#171717",
+        textMuted: "#737373",
+        borderSubtle: "#EAECEF",
+        brandDark: "#171717",
+        brandAccent: "#4F46E5",
       },
       borderRadius: {
         lg: "var(--radius)",
         md: "calc(var(--radius) - 2px)",
         sm: "calc(var(--radius) - 4px)",
+        card: "20px",
+        elem: "12px",
+      },
+      boxShadow: {
+        soft: "0 2px 10px rgba(0, 0, 0, 0.03)",
+        hover: "0 6px 20px rgba(0, 0, 0, 0.06)",
+        nav: "0 4px 12px rgba(0, 0, 0, 0.08)",
       },
       keyframes: {
         "accordion-down": {
@@ -107,4 +110,3 @@ const config: Config = {
 };
 
 export default config;
-

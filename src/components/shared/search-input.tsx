@@ -2,7 +2,6 @@
 
 import * as React from "react";
 import { Search, X } from "lucide-react";
-import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
 
 export interface SearchInputProps
@@ -46,27 +45,26 @@ export function SearchInput({
   };
 
   return (
-    <div className={cn("relative flex items-center w-full max-w-sm", className)}>
-      <Search className="absolute left-2.5 h-4 w-4 text-slate-400 pointer-events-none" />
-      <Input
+    <div className={cn("relative flex items-center w-full", className)}>
+      <Search className="absolute left-3.5 h-4 w-4 text-[#737373] pointer-events-none" />
+      <input
         type="text"
         placeholder={placeholder}
         value={internalValue}
         onChange={handleChange}
-        className="pl-9 pr-8 bg-white border-slate-200 text-sm focus-visible:ring-indigo-500"
+        className="w-full bg-[#F5F6F8] border border-[#EAECEF] rounded-xl pl-10 pr-8 py-2 text-xs text-[#171717] placeholder:text-[#737373] focus:bg-white focus:outline-none focus:ring-2 focus:ring-black/5 focus:border-[#171717] transition-all"
         {...props}
       />
       {internalValue && (
         <button
           type="button"
           onClick={handleClear}
-          className="absolute right-2.5 text-slate-400 hover:text-slate-600 focus:outline-none"
+          className="absolute right-3 text-[#737373] hover:text-[#171717] focus:outline-none"
           aria-label="Clear search"
         >
-          <X className="h-4 w-4" />
+          <X className="h-3.5 w-3.5" />
         </button>
       )}
     </div>
   );
 }
-

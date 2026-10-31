@@ -1,5 +1,4 @@
 import * as React from "react";
-import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
 
 export interface StatusBadgeProps {
@@ -9,7 +8,7 @@ export interface StatusBadgeProps {
   className?: string;
 }
 
-const STATUS_VARIANTS: Record<
+const STATUS_CONFIGS: Record<
   string,
   {
     bg: string;
@@ -47,47 +46,33 @@ const STATUS_VARIANTS: Record<
     border: "border-indigo-200",
     defaultLabel: "Trialing",
   },
-  trial: {
-    bg: "bg-indigo-50",
-    text: "text-indigo-700",
-    dot: "bg-indigo-500",
-    border: "border-indigo-200",
-    defaultLabel: "Trial",
-  },
   past_due: {
-    bg: "bg-rose-50",
-    text: "text-rose-700",
-    dot: "bg-rose-500",
-    border: "border-rose-200",
-    defaultLabel: "Past Due",
-  },
-  overdue: {
-    bg: "bg-rose-50",
-    text: "text-rose-700",
-    dot: "bg-rose-500",
-    border: "border-rose-200",
-    defaultLabel: "Overdue",
-  },
-  open: {
-    bg: "bg-sky-50",
-    text: "text-sky-700",
-    dot: "bg-sky-500",
-    border: "border-sky-200",
-    defaultLabel: "Open",
-  },
-  pending: {
-    bg: "bg-sky-50",
-    text: "text-sky-700",
-    dot: "bg-sky-500",
-    border: "border-sky-200",
-    defaultLabel: "Pending",
-  },
-  partially_paid: {
     bg: "bg-amber-50",
     text: "text-amber-700",
     dot: "bg-amber-500",
     border: "border-amber-200",
-    defaultLabel: "Partially Paid",
+    defaultLabel: "Past Due",
+  },
+  open: {
+    bg: "bg-blue-50",
+    text: "text-blue-700",
+    dot: "bg-blue-500",
+    border: "border-blue-200",
+    defaultLabel: "Open",
+  },
+  pending: {
+    bg: "bg-amber-50",
+    text: "text-amber-700",
+    dot: "bg-amber-500",
+    border: "border-amber-200",
+    defaultLabel: "Pending",
+  },
+  processing: {
+    bg: "bg-amber-50",
+    text: "text-amber-700",
+    dot: "bg-amber-500",
+    border: "border-amber-200",
+    defaultLabel: "Processing",
   },
   canceled: {
     bg: "bg-rose-50",
@@ -95,13 +80,6 @@ const STATUS_VARIANTS: Record<
     dot: "bg-rose-500",
     border: "border-rose-200",
     defaultLabel: "Canceled",
-  },
-  cancelled: {
-    bg: "bg-rose-50",
-    text: "text-rose-700",
-    dot: "bg-rose-500",
-    border: "border-rose-200",
-    defaultLabel: "Cancelled",
   },
   failed: {
     bg: "bg-rose-50",
@@ -111,11 +89,18 @@ const STATUS_VARIANTS: Record<
     defaultLabel: "Failed",
   },
   paused: {
-    bg: "bg-amber-50/80",
-    text: "text-amber-800",
-    dot: "bg-amber-500",
-    border: "border-amber-200",
+    bg: "bg-slate-100",
+    text: "text-slate-700",
+    dot: "bg-slate-400",
+    border: "border-slate-200",
     defaultLabel: "Paused",
+  },
+  inactive: {
+    bg: "bg-slate-100",
+    text: "text-slate-700",
+    dot: "bg-slate-400",
+    border: "border-slate-200",
+    defaultLabel: "Inactive",
   },
   draft: {
     bg: "bg-slate-100",
@@ -123,20 +108,6 @@ const STATUS_VARIANTS: Record<
     dot: "bg-slate-400",
     border: "border-slate-200",
     defaultLabel: "Draft",
-  },
-  void: {
-    bg: "bg-slate-100",
-    text: "text-slate-500",
-    dot: "bg-slate-400",
-    border: "border-slate-200",
-    defaultLabel: "Void",
-  },
-  uncollectible: {
-    bg: "bg-rose-50",
-    text: "text-rose-700",
-    dot: "bg-rose-500",
-    border: "border-rose-200",
-    defaultLabel: "Uncollectible",
   },
 };
 
@@ -147,7 +118,7 @@ export function StatusBadge({
   className,
 }: StatusBadgeProps) {
   const normalizedKey = status.toLowerCase().replace(/\s+/g, "_");
-  const config = STATUS_VARIANTS[normalizedKey] || {
+  const config = STATUS_CONFIGS[normalizedKey] || {
     bg: "bg-slate-50",
     text: "text-slate-700",
     dot: "bg-slate-400",
@@ -156,10 +127,9 @@ export function StatusBadge({
   };
 
   return (
-    <Badge
-      variant="outline"
+    <span
       className={cn(
-        "gap-1.5 px-2.5 py-0.5 font-medium border text-xs capitalize",
+        "inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] font-semibold border",
         config.bg,
         config.text,
         config.border,
@@ -173,7 +143,6 @@ export function StatusBadge({
         />
       )}
       <span>{label || config.defaultLabel}</span>
-    </Badge>
+    </span>
   );
 }
-

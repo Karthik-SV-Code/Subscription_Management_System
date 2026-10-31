@@ -1,8 +1,6 @@
 import * as React from "react";
-import { Settings, Key, Shield, Bell, Webhook } from "lucide-react";
+import { Settings, Key, Shield, Bell, Webhook, Database } from "lucide-react";
 import { PageHeader } from "@/components/shared/page-header";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
 
 export const metadata = {
   title: "Settings & Configuration",
@@ -12,71 +10,87 @@ export default function SettingsPage() {
   const settingsSections = [
     {
       title: "Organization & Billing Profile",
-      description: "Company legal name, billing address, tax identification, and default currency.",
-      icon: <Settings className="h-5 w-5 text-indigo-600" />,
-      status: "Ready",
+      description: "Company legal entity, tax registration, and primary billing currency.",
+      icon: <Settings className="h-5 w-5 text-[#171717]" />,
+      value: "SubscriptIQ Technologies Ltd.",
+      status: "Active",
     },
     {
-      title: "API Keys & Developer Access",
-      description: "REST API tokens, webhook endpoints, secret keys, and SDK authentication.",
+      title: "REST API Endpoint & Tokens",
+      description: "Secure gateway tokens for external REST microservices integration.",
       icon: <Key className="h-5 w-5 text-indigo-600" />,
+      value: "http://localhost:8000/api/v1",
       status: "Configured",
     },
     {
-      title: "Webhook Integrations",
-      description: "Real-time subscription and invoice events delivery to downstream services.",
-      icon: <Webhook className="h-5 w-5 text-indigo-600" />,
-      status: "Ready",
+      title: "Supabase Backend Synchronization",
+      description: "Relational database synchronization and session token validation.",
+      icon: <Database className="h-5 w-5 text-purple-600" />,
+      value: "Safe Fallback / Dev Ready",
+      status: "Operational",
+    },
+    {
+      title: "Webhook Subscriptions",
+      description: "Real-time subscription, customer, and invoice events delivery.",
+      icon: <Webhook className="h-5 w-5 text-emerald-600" />,
+      value: "14 event listeners active",
+      status: "Connected",
     },
     {
       title: "Team Permissions & RBAC",
       description: "Role-based access control, administrator seats, and auditor logs.",
-      icon: <Shield className="h-5 w-5 text-indigo-600" />,
-      status: "Ready",
+      icon: <Shield className="h-5 w-5 text-blue-600" />,
+      value: "Enterprise Single Sign-On (SSO)",
+      status: "Enforced",
     },
     {
-      title: "Notifications & Alerts",
-      description: "Automated dunning failure alerts, high-value churn notifications, and webhooks.",
-      icon: <Bell className="h-5 w-5 text-indigo-600" />,
-      status: "Ready",
+      title: "Smart Dunning Notifications",
+      description: "Automated payment failure recovery retry cadence and emails.",
+      icon: <Bell className="h-5 w-5 text-amber-600" />,
+      value: "3-day / 5-day / 7-day retry cadence",
+      status: "Enabled",
     },
   ];
 
   return (
     <div className="space-y-6">
       <PageHeader
-        title="Settings & Platform Configuration"
-        description="Configure organization billing preferences, developer API tokens, security, and integrations."
+        title="Platform Settings & Architecture"
+        description="Configure organization billing preferences, developer API tokens, security, and webhook delivery."
       />
 
       <div className="grid gap-4 md:grid-cols-2">
         {settingsSections.map((section) => (
-          <Card
+          <div
             key={section.title}
-            className="border-slate-200/80 bg-white transition-all hover:border-indigo-200 hover:shadow-sm"
+            className="bg-white p-6 rounded-[20px] border border-[#EAECEF] shadow-[0_2px_10px_rgba(0,0,0,0.03)] hover:shadow-[0_6px_20px_rgba(0,0,0,0.06)] transition-all flex flex-col justify-between"
           >
-            <CardHeader className="flex flex-row items-start justify-between space-y-0 pb-2">
-              <div className="flex items-center gap-3">
-                <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-indigo-50">
-                  {section.icon}
+            <div>
+              <div className="flex items-center justify-between pb-3">
+                <div className="flex items-center gap-3">
+                  <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-slate-50 border border-[#EAECEF]">
+                    {section.icon}
+                  </div>
+                  <div>
+                    <h3 className="text-sm font-bold text-[#171717]">{section.title}</h3>
+                  </div>
                 </div>
-                <div>
-                  <CardTitle className="text-base">{section.title}</CardTitle>
-                </div>
+                <span className="px-2.5 py-1 text-[11px] font-semibold rounded-full bg-slate-100 text-[#171717] border border-[#EAECEF]">
+                  {section.status}
+                </span>
               </div>
-              <Badge variant="outline" className="text-xs bg-slate-50 border-slate-200 text-slate-600">
-                {section.status}
-              </Badge>
-            </CardHeader>
-            <CardContent>
-              <CardDescription className="text-sm text-slate-500 pt-1">
+              <p className="text-xs text-[#737373] mt-2 leading-relaxed">
                 {section.description}
-              </CardDescription>
-            </CardContent>
-          </Card>
+              </p>
+            </div>
+
+            <div className="mt-5 pt-4 border-t border-[#EAECEF] flex items-center justify-between text-xs">
+              <span className="text-[#737373] font-medium">Status</span>
+              <span className="font-mono font-semibold text-[#171717]">{section.value}</span>
+            </div>
+          </div>
         ))}
       </div>
     </div>
   );
 }
-

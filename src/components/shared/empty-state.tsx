@@ -25,19 +25,22 @@ export function EmptyState({
   return (
     <div
       className={cn(
-        "flex flex-col items-center justify-center rounded-lg border border-dashed border-slate-300 bg-white p-12 text-center",
+        "flex flex-col items-center justify-center rounded-[20px] border border-dashed border-[#EAECEF] bg-white p-12 text-center shadow-[0_2px_10px_rgba(0,0,0,0.03)]",
         className
       )}
     >
-      <div className="flex h-12 w-12 items-center justify-center rounded-full bg-slate-100 text-slate-500">
+      <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-slate-50 text-[#171717] border border-[#EAECEF]">
         {icon || <FolderOpen className="h-6 w-6" />}
       </div>
-      <h3 className="mt-4 text-base font-semibold text-slate-900">{title}</h3>
-      <p className="mt-1 text-sm text-slate-500 max-w-sm">{description}</p>
+      <h3 className="mt-4 text-base font-bold text-[#171717]">{title}</h3>
+      <p className="mt-1 text-xs text-[#737373] max-w-sm leading-relaxed">{description}</p>
       {(actionLabel || actionElement) && (
         <div className="mt-6">
           {actionElement || (
-            <Button onClick={onAction} className="bg-indigo-600 hover:bg-indigo-700">
+            <Button
+              onClick={onAction}
+              className="bg-[#171717] hover:bg-black text-white text-xs font-semibold rounded-xl px-5 py-2.5 shadow-sm"
+            >
               {actionLabel}
             </Button>
           )}
@@ -46,4 +49,3 @@ export function EmptyState({
     </div>
   );
 }
-

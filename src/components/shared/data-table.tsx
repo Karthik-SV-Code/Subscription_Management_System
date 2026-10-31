@@ -43,20 +43,20 @@ export function DataTable<T extends { id?: string | number }>({
   return (
     <div
       className={cn(
-        "w-full overflow-hidden rounded-lg border border-slate-200 bg-white shadow-sm",
+        "w-full overflow-hidden rounded-[20px] border border-[#EAECEF] bg-white shadow-[0_2px_10px_rgba(0,0,0,0.03)]",
         className
       )}
     >
       <div className="overflow-x-auto">
-        <table className="w-full text-left text-sm">
-          <thead className="border-b border-slate-200 bg-slate-50/75 text-xs font-semibold uppercase tracking-wider text-slate-500">
+        <table className="w-full text-left text-xs">
+          <thead className="border-b border-[#EAECEF] bg-slate-50/70 text-[11px] font-bold uppercase tracking-wider text-[#737373]">
             <tr>
               {columns.map((col) => (
                 <th
                   key={col.key}
                   scope="col"
                   className={cn(
-                    "px-4 py-3.5",
+                    "px-6 py-4",
                     col.align === "right" && "text-right",
                     col.align === "center" && "text-center",
                     col.className
@@ -67,7 +67,7 @@ export function DataTable<T extends { id?: string | number }>({
               ))}
             </tr>
           </thead>
-          <tbody className="divide-y divide-slate-100 text-slate-700">
+          <tbody className="divide-y divide-[#EAECEF] text-[#171717]">
             {data.map((item, index) => {
               const rowKey = item.id ? String(item.id) : String(index);
               return (
@@ -75,7 +75,7 @@ export function DataTable<T extends { id?: string | number }>({
                   key={rowKey}
                   onClick={() => onRowClick?.(item)}
                   className={cn(
-                    "transition-colors hover:bg-slate-50/80",
+                    "transition-colors hover:bg-slate-50/70",
                     onRowClick && "cursor-pointer"
                   )}
                 >
@@ -83,7 +83,7 @@ export function DataTable<T extends { id?: string | number }>({
                     <td
                       key={col.key}
                       className={cn(
-                        "px-4 py-3.5 align-middle",
+                        "px-6 py-4 align-middle",
                         col.align === "right" && "text-right",
                         col.align === "center" && "text-center",
                         col.className
@@ -105,4 +105,3 @@ export function DataTable<T extends { id?: string | number }>({
     </div>
   );
 }
-

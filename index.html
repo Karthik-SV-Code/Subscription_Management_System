@@ -1,0 +1,1182 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SubscriptIQ — Subscription & Recurring Revenue Management</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            appBg: '#F5F6F8',
+            cardBg: '#FFFFFF',
+            textMain: '#171717',
+            textMuted: '#737373',
+            borderSubtle: '#EAECEF',
+            brandDark: '#171717',
+            brandAccent: '#4F46E5',
+          },
+          borderRadius: {
+            'card': '20px',
+            'elem': '12px',
+          },
+          boxShadow: {
+            'soft': '0 2px 10px rgba(0, 0, 0, 0.03)',
+            'hover': '0 6px 20px rgba(0, 0, 0, 0.06)',
+            'nav': '0 4px 12px rgba(0, 0, 0, 0.08)',
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      background-color: #F5F6F8;
+      color: #171717;
+      -webkit-font-smoothing: antialiased;
+    }
+    .tab-view { display: none; }
+    .tab-view.active { display: block; animation: fadeIn 0.18s ease-in-out; }
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(4px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    .custom-scrollbar::-webkit-scrollbar { width: 4px; height: 4px; }
+    .custom-scrollbar::-webkit-scrollbar-thumb { background: #E2E8F0; border-radius: 4px; }
+  </style>
+</head>
+<body class="min-h-screen flex bg-appBg text-textMain selection:bg-brandAccent selection:text-white">
+
+  <!-- ================= LEFT SIDEBAR NAVIGATION ================= -->
+  <aside id="app-sidebar" class="fixed inset-y-0 left-0 z-40 w-64 bg-white border-r border-borderSubtle flex flex-col justify-between transition-transform duration-200 transform -translate-x-full md:translate-x-0 shadow-soft">
+    <div>
+      <!-- Brand Logo Header -->
+      <div class="h-20 flex items-center px-6 border-b border-borderSubtle gap-3">
+        <div class="w-10 h-10 rounded-2xl bg-brandDark text-white flex items-center justify-center font-bold shadow-md">
+          <i data-lucide="zap" class="w-5 h-5 text-indigo-400"></i>
+        </div>
+        <div>
+          <h1 class="text-base font-bold tracking-tight text-textMain leading-none">SubscriptIQ</h1>
+          <span class="text-[11px] text-textMuted font-medium tracking-wide">Revenue Engine</span>
+        </div>
+      </div>
+
+      <!-- Navigation Links -->
+      <nav class="p-4 space-y-1.5" id="nav-container">
+        <div class="px-3 pb-2 text-[10px] font-bold uppercase tracking-wider text-textMuted">Overview</div>
+
+        <button onclick="navigateTo('dashboard', 'Dashboard', 'Revenue telemetry and executive summary')" id="btn-nav-dashboard" class="nav-item w-full flex items-center gap-3.5 px-3.5 py-2.5 rounded-elem text-sm font-medium transition-all bg-brandDark text-white shadow-nav">
+          <i data-lucide="layout-dashboard" class="w-4 h-4"></i>
+          <span>Dashboard</span>
+        </button>
+
+        <button onclick="navigateTo('customers', 'Customers', 'Account profiles and subscriber lifecycle')" id="btn-nav-customers" class="nav-item w-full flex items-center gap-3.5 px-3.5 py-2.5 rounded-elem text-sm font-medium text-textMuted hover:text-textMain hover:bg-slate-100/70 transition-all">
+          <i data-lucide="users" class="w-4 h-4"></i>
+          <span>Customers</span>
+        </button>
+
+        <button onclick="navigateTo('products', 'Products', 'Product catalog and entitlements')" id="btn-nav-products" class="nav-item w-full flex items-center gap-3.5 px-3.5 py-2.5 rounded-elem text-sm font-medium text-textMuted hover:text-textMain hover:bg-slate-100/70 transition-all">
+          <i data-lucide="package" class="w-4 h-4"></i>
+          <span>Products</span>
+        </button>
+
+        <button onclick="navigateTo('plans', 'Plans & Pricing', 'Billing cadences and pricing tiers')" id="btn-nav-plans" class="nav-item w-full flex items-center gap-3.5 px-3.5 py-2.5 rounded-elem text-sm font-medium text-textMuted hover:text-textMain hover:bg-slate-100/70 transition-all">
+          <i data-lucide="layers" class="w-4 h-4"></i>
+          <span>Plans</span>
+        </button>
+
+        <button onclick="navigateTo('subscriptions', 'Subscriptions', 'Active contracts, upgrades, and renewals')" id="btn-nav-subscriptions" class="nav-item w-full flex items-center justify-between px-3.5 py-2.5 rounded-elem text-sm font-medium text-textMuted hover:text-textMain hover:bg-slate-100/70 transition-all">
+          <div class="flex items-center gap-3.5">
+            <i data-lucide="repeat" class="w-4 h-4"></i>
+            <span>Subscriptions</span>
+          </div>
+          <span class="w-2 h-2 rounded-full bg-emerald-500"></span>
+        </button>
+
+        <div class="pt-4 px-3 pb-2 text-[10px] font-bold uppercase tracking-wider text-textMuted">Finance & Operations</div>
+
+        <button onclick="navigateTo('invoices', 'Billing & Invoices', 'Invoice runs and receivables')" id="btn-nav-invoices" class="nav-item w-full flex items-center gap-3.5 px-3.5 py-2.5 rounded-elem text-sm font-medium text-textMuted hover:text-textMain hover:bg-slate-100/70 transition-all">
+          <i data-lucide="receipt" class="w-4 h-4"></i>
+          <span>Invoices</span>
+        </button>
+
+        <button onclick="navigateTo('payments', 'Payments & Gateway', 'Transaction clearing and refunds')" id="btn-nav-payments" class="nav-item w-full flex items-center gap-3.5 px-3.5 py-2.5 rounded-elem text-sm font-medium text-textMuted hover:text-textMain hover:bg-slate-100/70 transition-all">
+          <i data-lucide="credit-card" class="w-4 h-4"></i>
+          <span>Payments</span>
+        </button>
+
+        <button onclick="navigateTo('discounts', 'Discounts & Coupons', 'Promotions and partner incentives')" id="btn-nav-discounts" class="nav-item w-full flex items-center gap-3.5 px-3.5 py-2.5 rounded-elem text-sm font-medium text-textMuted hover:text-textMain hover:bg-slate-100/70 transition-all">
+          <i data-lucide="tag" class="w-4 h-4"></i>
+          <span>Discounts</span>
+        </button>
+      </nav>
+    </div>
+
+    <!-- Sidebar Footer / Settings & Profile -->
+    <div class="p-4 border-t border-borderSubtle space-y-2">
+      <button onclick="navigateTo('settings', 'Platform Settings', 'API keys, webhooks, and team access')" id="btn-nav-settings" class="nav-item w-full flex items-center gap-3.5 px-3.5 py-2.5 rounded-elem text-sm font-medium text-textMuted hover:text-textMain hover:bg-slate-100/70 transition-all">
+        <i data-lucide="settings" class="w-4 h-4"></i>
+        <span>Settings</span>
+      </button>
+
+      <div class="flex items-center gap-3 p-2 rounded-elem bg-slate-50 border border-borderSubtle">
+        <div class="w-9 h-9 rounded-full bg-brandDark text-white flex items-center justify-center font-bold text-xs shrink-0">
+          AD
+        </div>
+        <div class="min-w-0 flex-1">
+          <div class="text-xs font-semibold text-textMain truncate">Enterprise Admin</div>
+          <div class="text-[10px] text-textMuted truncate">admin@subscriptiq.io</div>
+        </div>
+        <i data-lucide="shield-check" class="w-4 h-4 text-emerald-500 shrink-0"></i>
+      </div>
+    </div>
+  </aside>
+
+  <!-- Mobile Overlay -->
+  <div id="mobile-backdrop" onclick="toggleSidebar()" class="fixed inset-0 z-30 bg-black/40 backdrop-blur-sm hidden md:hidden"></div>
+
+  <!-- ================= MAIN CONTENT WRAPPER ================= -->
+  <div class="flex-1 md:pl-64 flex flex-col min-w-0">
+
+    <!-- Top Navigation / Header -->
+    <header class="sticky top-0 z-20 h-20 bg-white/90 backdrop-blur border-b border-borderSubtle px-4 sm:px-8 flex items-center justify-between">
+      <div class="flex items-center gap-4">
+        <button onclick="toggleSidebar()" class="p-2 rounded-lg text-textMuted hover:text-textMain hover:bg-slate-100 md:hidden">
+          <i data-lucide="menu" class="w-5 h-5"></i>
+        </button>
+        <div>
+          <h2 id="top-title" class="text-xl font-bold tracking-tight text-textMain">Dashboard</h2>
+          <p id="top-subtitle" class="text-xs text-textMuted hidden sm:block">Revenue telemetry and executive summary</p>
+        </div>
+      </div>
+
+      <div class="flex items-center gap-3 sm:gap-4">
+        <!-- Search bar -->
+        <div class="relative w-48 sm:w-72">
+          <i data-lucide="search" class="w-4 h-4 absolute left-3.5 top-3 text-textMuted"></i>
+          <input type="text" id="global-search" oninput="handleGlobalSearch(this.value)" placeholder="Search records..." class="w-full bg-appBg border border-borderSubtle rounded-elem pl-10 pr-4 py-2 text-xs focus:bg-white focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition-all">
+        </div>
+
+        <!-- Date badge -->
+        <div class="hidden lg:flex items-center gap-1.5 px-3 py-1.5 rounded-elem bg-appBg border border-borderSubtle text-xs font-medium text-textMuted">
+          <i data-lucide="calendar" class="w-3.5 h-3.5"></i>
+          <span>Oct 31, 2026</span>
+        </div>
+
+        <!-- Notification Bell -->
+        <button onclick="toggleNotificationToast()" class="relative p-2.5 rounded-elem hover:bg-slate-100 text-textMuted hover:text-textMain transition-colors">
+          <i data-lucide="bell" class="w-4 h-4"></i>
+          <span class="absolute top-2 right-2 w-2 h-2 rounded-full bg-indigo-600 ring-2 ring-white"></span>
+        </button>
+
+        <!-- Direct Live App Link Pill -->
+        <a href="http://localhost:3000/dashboard" target="_blank" class="hidden sm:inline-flex items-center gap-1.5 px-3 py-1.5 rounded-elem bg-indigo-50 hover:bg-indigo-100 text-indigo-700 text-xs font-semibold border border-indigo-200 transition-all">
+          <i data-lucide="external-link" class="w-3.5 h-3.5"></i>
+          <span>Open Next.js App</span>
+        </a>
+      </div>
+    </header>
+
+    <!-- Notification Toast (dismissable) -->
+    <div id="notif-toast" class="hidden mx-4 sm:mx-8 mt-4 p-3.5 rounded-elem bg-white border border-borderSubtle shadow-soft flex items-center justify-between text-xs animate-fadeIn">
+      <div class="flex items-center gap-3">
+        <span class="w-2 h-2 rounded-full bg-emerald-500"></span>
+        <span class="text-textMain font-medium">All billing webhooks are operational. Next automatic billing cycle in 3 days.</span>
+      </div>
+      <button onclick="toggleNotificationToast()" class="text-textMuted hover:text-textMain"><i data-lucide="x" class="w-4 h-4"></i></button>
+    </div>
+
+    <!-- Main Content Area -->
+    <main class="flex-1 p-4 sm:p-8 max-w-7xl w-full mx-auto space-y-6">
+
+      <!-- ================= 1. VIEW: DASHBOARD ================= -->
+      <div id="view-dashboard" class="tab-view active space-y-6">
+        
+        <!-- Summary Stat Cards Grid -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+          <!-- Card 1 -->
+          <div class="bg-cardBg p-6 rounded-card border border-borderSubtle shadow-soft hover:shadow-hover transition-all">
+            <div class="flex items-center justify-between">
+              <span class="text-xs font-semibold uppercase tracking-wider text-textMuted">Monthly Recurring Revenue</span>
+              <div class="w-9 h-9 rounded-elem bg-indigo-50 text-indigo-600 flex items-center justify-center">
+                <i data-lucide="dollar-sign" class="w-4 h-4"></i>
+              </div>
+            </div>
+            <div class="mt-4">
+              <div class="text-3xl font-extrabold text-textMain tracking-tight">$42,600</div>
+              <div class="mt-2 flex items-center gap-2 text-xs">
+                <span class="inline-flex items-center gap-1 font-semibold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-full border border-emerald-100">
+                  <i data-lucide="trending-up" class="w-3 h-3"></i> +12.4%
+                </span>
+                <span class="text-textMuted">vs last month</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Card 2 -->
+          <div class="bg-cardBg p-6 rounded-card border border-borderSubtle shadow-soft hover:shadow-hover transition-all">
+            <div class="flex items-center justify-between">
+              <span class="text-xs font-semibold uppercase tracking-wider text-textMuted">Active Subscriptions</span>
+              <div class="w-9 h-9 rounded-elem bg-emerald-50 text-emerald-600 flex items-center justify-center">
+                <i data-lucide="repeat" class="w-4 h-4"></i>
+              </div>
+            </div>
+            <div class="mt-4">
+              <div class="text-3xl font-extrabold text-textMain tracking-tight">640</div>
+              <div class="mt-2 flex items-center gap-2 text-xs">
+                <span class="inline-flex items-center gap-1 font-semibold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-full border border-emerald-100">
+                  <i data-lucide="trending-up" class="w-3 h-3"></i> +8.2%
+                </span>
+                <span class="text-textMuted">72 added this mo.</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Card 3 -->
+          <div class="bg-cardBg p-6 rounded-card border border-borderSubtle shadow-soft hover:shadow-hover transition-all">
+            <div class="flex items-center justify-between">
+              <span class="text-xs font-semibold uppercase tracking-wider text-textMuted">Net Revenue Retention</span>
+              <div class="w-9 h-9 rounded-elem bg-blue-50 text-blue-600 flex items-center justify-center">
+                <i data-lucide="pie-chart" class="w-4 h-4"></i>
+              </div>
+            </div>
+            <div class="mt-4">
+              <div class="text-3xl font-extrabold text-textMain tracking-tight">108.5%</div>
+              <div class="mt-2 flex items-center gap-2 text-xs">
+                <span class="inline-flex items-center gap-1 font-semibold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-full border border-emerald-100">
+                  <i data-lucide="trending-up" class="w-3 h-3"></i> +1.3%
+                </span>
+                <span class="text-textMuted">expansion healthy</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Card 4 -->
+          <div class="bg-cardBg p-6 rounded-card border border-borderSubtle shadow-soft hover:shadow-hover transition-all">
+            <div class="flex items-center justify-between">
+              <span class="text-xs font-semibold uppercase tracking-wider text-textMuted">Customer Accounts</span>
+              <div class="w-9 h-9 rounded-elem bg-purple-50 text-purple-600 flex items-center justify-center">
+                <i data-lucide="users" class="w-4 h-4"></i>
+              </div>
+            </div>
+            <div class="mt-4">
+              <div class="text-3xl font-extrabold text-textMain tracking-tight">582</div>
+              <div class="mt-2 flex items-center gap-2 text-xs">
+                <span class="inline-flex items-center gap-1 font-semibold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-full border border-emerald-100">
+                  <i data-lucide="trending-up" class="w-3 h-3"></i> +5.0%
+                </span>
+                <span class="text-textMuted">98.2% retention</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Visual Analytics Grid -->
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          <!-- Area Chart: MRR Growth -->
+          <div class="bg-cardBg p-6 rounded-card border border-borderSubtle shadow-soft">
+            <div class="flex items-center justify-between pb-4 border-b border-borderSubtle">
+              <div>
+                <h3 class="text-sm font-bold text-textMain">Monthly Recurring Revenue Trajectory</h3>
+                <p class="text-xs text-textMuted mt-0.5">Cumulative subscription acceleration & forecast</p>
+              </div>
+              <span class="px-2.5 py-1 text-[11px] font-semibold rounded-full bg-slate-100 text-textMuted">2026 YTD</span>
+            </div>
+            <div class="mt-4 h-64">
+              <canvas id="canvas-mrr"></canvas>
+            </div>
+          </div>
+
+          <!-- Bar Chart: Subscriptions & Churn -->
+          <div class="bg-cardBg p-6 rounded-card border border-borderSubtle shadow-soft">
+            <div class="flex items-center justify-between pb-4 border-b border-borderSubtle">
+              <div>
+                <h3 class="text-sm font-bold text-textMain">Subscription Inflow vs Churn</h3>
+                <p class="text-xs text-textMuted mt-0.5">Net active contracts and monthly churned seats</p>
+              </div>
+              <span class="px-2.5 py-1 text-[11px] font-semibold rounded-full bg-slate-100 text-textMuted">Monthly</span>
+            </div>
+            <div class="mt-4 h-64">
+              <canvas id="canvas-subs"></canvas>
+            </div>
+          </div>
+        </div>
+
+        <!-- Recent Customer Transactions Table -->
+        <div class="bg-cardBg rounded-card border border-borderSubtle shadow-soft overflow-hidden">
+          <div class="p-6 border-b border-borderSubtle flex items-center justify-between">
+            <div>
+              <h3 class="text-sm font-bold text-textMain">Recent Customer Activity</h3>
+              <p class="text-xs text-textMuted mt-0.5">Live account updates and contract changes</p>
+            </div>
+            <button onclick="navigateTo('customers', 'Customers', 'Account profiles and subscriber lifecycle')" class="text-xs font-semibold text-indigo-600 hover:text-indigo-800 transition-colors flex items-center gap-1">
+              <span>View all 582 accounts</span>
+              <i data-lucide="arrow-right" class="w-3.5 h-3.5"></i>
+            </button>
+          </div>
+
+          <div class="overflow-x-auto">
+            <table class="w-full text-left text-sm">
+              <thead class="bg-slate-50/70 text-[11px] font-bold text-textMuted uppercase tracking-wider border-b border-borderSubtle">
+                <tr>
+                  <th class="px-6 py-3.5">Customer & Account</th>
+                  <th class="px-6 py-3.5">Status</th>
+                  <th class="px-6 py-3.5">Active Plan</th>
+                  <th class="px-6 py-3.5">Current MRR</th>
+                  <th class="px-6 py-3.5 text-right">Quick Action</th>
+                </tr>
+              </thead>
+              <tbody class="divide-y divide-borderSubtle text-textMain text-xs">
+                <tr class="hover:bg-slate-50/60 transition-colors">
+                  <td class="px-6 py-4">
+                    <div class="font-semibold text-textMain">Acme Technologies Inc.</div>
+                    <div class="text-[11px] text-textMuted">billing@acme-tech.com</div>
+                  </td>
+                  <td class="px-6 py-4">
+                    <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200">
+                      <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span> Active
+                    </span>
+                  </td>
+                  <td class="px-6 py-4 font-medium text-textMain">Growth Scale (Monthly)</td>
+                  <td class="px-6 py-4 font-bold text-textMain">$2,450.00</td>
+                  <td class="px-6 py-4 text-right">
+                    <button onclick="openModal('viewCustomerModal', 'Acme Technologies Inc.')" class="px-3 py-1.5 rounded-lg bg-slate-100 hover:bg-slate-200 text-textMain font-medium transition-colors">Inspect</button>
+                  </td>
+                </tr>
+                <tr class="hover:bg-slate-50/60 transition-colors">
+                  <td class="px-6 py-4">
+                    <div class="font-semibold text-textMain">Nexus Cloud Dynamics</div>
+                    <div class="text-[11px] text-textMuted">finance@nexuscloud.io</div>
+                  </td>
+                  <td class="px-6 py-4">
+                    <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] font-semibold bg-indigo-50 text-indigo-700 border border-indigo-200">
+                      <span class="w-1.5 h-1.5 rounded-full bg-indigo-500"></span> Trialing
+                    </span>
+                  </td>
+                  <td class="px-6 py-4 font-medium text-textMain">Enterprise Dedicated (Annual)</td>
+                  <td class="px-6 py-4 font-bold text-textMain">$4,800.00</td>
+                  <td class="px-6 py-4 text-right">
+                    <button onclick="openModal('viewCustomerModal', 'Nexus Cloud Dynamics')" class="px-3 py-1.5 rounded-lg bg-slate-100 hover:bg-slate-200 text-textMain font-medium transition-colors">Inspect</button>
+                  </td>
+                </tr>
+                <tr class="hover:bg-slate-50/60 transition-colors">
+                  <td class="px-6 py-4">
+                    <div class="font-semibold text-textMain">Starlight Mediaworks</div>
+                    <div class="text-[11px] text-textMuted">accounts@starlight.co</div>
+                  </td>
+                  <td class="px-6 py-4">
+                    <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] font-semibold bg-slate-100 text-slate-700 border border-slate-200">
+                      <span class="w-1.5 h-1.5 rounded-full bg-slate-400"></span> Inactive
+                    </span>
+                  </td>
+                  <td class="px-6 py-4 font-medium text-textMuted">None</td>
+                  <td class="px-6 py-4 font-bold text-textMuted">$0.00</td>
+                  <td class="px-6 py-4 text-right">
+                    <button onclick="openModal('viewCustomerModal', 'Starlight Mediaworks')" class="px-3 py-1.5 rounded-lg bg-slate-100 hover:bg-slate-200 text-textMain font-medium transition-colors">Inspect</button>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- ================= 2. VIEW: CUSTOMERS ================= -->
+      <div id="view-customers" class="tab-view space-y-6">
+        <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+          <div>
+            <h2 class="text-xl font-bold text-textMain">Customer Lifecycle & Accounts</h2>
+            <p class="text-xs text-textMuted mt-0.5">Manage enterprise accounts, contacts, and active subscriptions</p>
+          </div>
+          <button onclick="openModal('addCustomerModal')" class="px-4 py-2.5 rounded-elem bg-brandDark text-white text-xs font-semibold hover:bg-black transition-all flex items-center gap-2 shadow-soft">
+            <i data-lucide="user-plus" class="w-4 h-4"></i>
+            <span>Add New Customer</span>
+          </button>
+        </div>
+
+        <div class="bg-cardBg rounded-card border border-borderSubtle shadow-soft overflow-hidden">
+          <div class="p-4 border-b border-borderSubtle flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+            <div class="relative w-full sm:w-72">
+              <i data-lucide="search" class="w-4 h-4 absolute left-3 top-2.5 text-textMuted"></i>
+              <input type="text" placeholder="Filter customers..." class="w-full bg-appBg border border-borderSubtle rounded-elem pl-9 pr-3 py-1.5 text-xs focus:outline-none focus:ring-1 focus:ring-brandDark">
+            </div>
+            <div class="flex items-center gap-2 text-xs">
+              <span class="text-textMuted">Filter:</span>
+              <button class="px-2.5 py-1 rounded-lg bg-brandDark text-white font-medium">All (3)</button>
+              <button class="px-2.5 py-1 rounded-lg bg-slate-100 text-textMuted hover:text-textMain font-medium">Active (1)</button>
+              <button class="px-2.5 py-1 rounded-lg bg-slate-100 text-textMuted hover:text-textMain font-medium">Trialing (1)</button>
+            </div>
+          </div>
+
+          <table class="w-full text-left text-xs">
+            <thead class="bg-slate-50/70 text-[11px] font-bold text-textMuted uppercase tracking-wider border-b border-borderSubtle">
+              <tr>
+                <th class="px-6 py-3.5">Customer Name</th>
+                <th class="px-6 py-3.5">Status</th>
+                <th class="px-6 py-3.5">Billing Address</th>
+                <th class="px-6 py-3.5">Active Contracts</th>
+                <th class="px-6 py-3.5">Monthly Spend</th>
+                <th class="px-6 py-3.5 text-right">Actions</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-borderSubtle text-textMain">
+              <tr class="hover:bg-slate-50/60 transition-colors">
+                <td class="px-6 py-4">
+                  <div class="font-bold text-textMain text-sm">Acme Technologies Inc.</div>
+                  <div class="text-textMuted">billing@acme-tech.com</div>
+                </td>
+                <td class="px-6 py-4">
+                  <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200">
+                    <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span> Active
+                  </span>
+                </td>
+                <td class="px-6 py-4 text-textMuted">San Francisco, CA, US</td>
+                <td class="px-6 py-4 font-semibold">3 Active Plans</td>
+                <td class="px-6 py-4 font-bold text-sm">$2,450.00</td>
+                <td class="px-6 py-4 text-right">
+                  <button onclick="openModal('viewCustomerModal', 'Acme Technologies Inc.')" class="text-indigo-600 hover:text-indigo-900 font-semibold">Manage &rarr;</button>
+                </td>
+              </tr>
+              <tr class="hover:bg-slate-50/60 transition-colors">
+                <td class="px-6 py-4">
+                  <div class="font-bold text-textMain text-sm">Nexus Cloud Dynamics</div>
+                  <div class="text-textMuted">finance@nexuscloud.io</div>
+                </td>
+                <td class="px-6 py-4">
+                  <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full font-semibold bg-indigo-50 text-indigo-700 border border-indigo-200">
+                    <span class="w-1.5 h-1.5 rounded-full bg-indigo-500"></span> Trialing
+                  </span>
+                </td>
+                <td class="px-6 py-4 text-textMuted">New York, NY, US</td>
+                <td class="px-6 py-4 font-semibold">2 Active Plans</td>
+                <td class="px-6 py-4 font-bold text-sm">$4,800.00</td>
+                <td class="px-6 py-4 text-right">
+                  <button onclick="openModal('viewCustomerModal', 'Nexus Cloud Dynamics')" class="text-indigo-600 hover:text-indigo-900 font-semibold">Manage &rarr;</button>
+                </td>
+              </tr>
+              <tr class="hover:bg-slate-50/60 transition-colors">
+                <td class="px-6 py-4">
+                  <div class="font-bold text-textMain text-sm">Starlight Mediaworks</div>
+                  <div class="text-textMuted">accounts@starlight.co</div>
+                </td>
+                <td class="px-6 py-4">
+                  <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full font-semibold bg-slate-100 text-slate-700 border border-slate-200">
+                    <span class="w-1.5 h-1.5 rounded-full bg-slate-400"></span> Inactive
+                  </span>
+                </td>
+                <td class="px-6 py-4 text-textMuted">Austin, TX, US</td>
+                <td class="px-6 py-4 font-semibold">0 Plans</td>
+                <td class="px-6 py-4 font-bold text-sm text-textMuted">$0.00</td>
+                <td class="px-6 py-4 text-right">
+                  <button onclick="openModal('viewCustomerModal', 'Starlight Mediaworks')" class="text-indigo-600 hover:text-indigo-900 font-semibold">Manage &rarr;</button>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- ================= 3. VIEW: PRODUCTS ================= -->
+      <div id="view-products" class="tab-view space-y-6">
+        <div class="flex items-center justify-between">
+          <div>
+            <h2 class="text-xl font-bold text-textMain">Product Catalog</h2>
+            <p class="text-xs text-textMuted mt-0.5">Software products and service entitlements available for subscription billing</p>
+          </div>
+          <button onclick="alert('Product Builder dialog initialized!')" class="px-4 py-2.5 rounded-elem bg-brandDark text-white text-xs font-semibold hover:bg-black transition-all flex items-center gap-2 shadow-soft">
+            <i data-lucide="plus" class="w-4 h-4"></i>
+            <span>Create Product</span>
+          </button>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <!-- Product Card 1 -->
+          <div class="bg-cardBg p-6 rounded-card border border-borderSubtle shadow-soft hover:shadow-hover transition-all">
+            <div class="flex items-start justify-between">
+              <div>
+                <span class="text-[10px] uppercase font-bold tracking-wider text-indigo-600 bg-indigo-50 px-2.5 py-0.5 rounded-full border border-indigo-200">Core Engine</span>
+                <h3 class="text-lg font-bold text-textMain mt-2">SubscriptIQ Core SaaS Suite</h3>
+                <span class="text-xs font-mono text-textMuted">Code: SUB-CORE</span>
+              </div>
+              <span class="px-2.5 py-1 rounded-full text-xs font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200">Active</span>
+            </div>
+            <p class="text-xs text-textMuted mt-3">Complete enterprise subscription management, tax logic, and automated invoicing pipeline.</p>
+            <div class="mt-4 pt-4 border-t border-borderSubtle space-y-2 text-xs">
+              <div class="flex items-center gap-2 text-textMain font-medium"><i data-lucide="check-circle-2" class="w-4 h-4 text-emerald-600"></i> Automated Invoicing & Global Tax Compliance</div>
+              <div class="flex items-center gap-2 text-textMain font-medium"><i data-lucide="check-circle-2" class="w-4 h-4 text-emerald-600"></i> Stripe, Paddle & ACH Gateway Reconciliation</div>
+              <div class="flex items-center gap-2 text-textMain font-medium"><i data-lucide="check-circle-2" class="w-4 h-4 text-emerald-600"></i> Customer Self-Service Account Portal</div>
+            </div>
+            <div class="mt-5 pt-4 border-t border-borderSubtle flex items-center justify-between text-xs">
+              <span class="text-textMuted font-medium">3 Plans Configured</span>
+              <span class="font-bold text-indigo-600">420 Active Accounts</span>
+            </div>
+          </div>
+
+          <!-- Product Card 2 -->
+          <div class="bg-cardBg p-6 rounded-card border border-borderSubtle shadow-soft hover:shadow-hover transition-all">
+            <div class="flex items-start justify-between">
+              <div>
+                <span class="text-[10px] uppercase font-bold tracking-wider text-purple-600 bg-purple-50 px-2.5 py-0.5 rounded-full border border-purple-200">Intelligence Add-on</span>
+                <h3 class="text-lg font-bold text-textMain mt-2">Revenue Intelligence Engine</h3>
+                <span class="text-xs font-mono text-textMuted">Code: REV-AI</span>
+              </div>
+              <span class="px-2.5 py-1 rounded-full text-xs font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200">Active</span>
+            </div>
+            <p class="text-xs text-textMuted mt-3">Predictive churn mitigation algorithms and dynamic expansion opportunity forecasting.</p>
+            <div class="mt-4 pt-4 border-t border-borderSubtle space-y-2 text-xs">
+              <div class="flex items-center gap-2 text-textMain font-medium"><i data-lucide="check-circle-2" class="w-4 h-4 text-emerald-600"></i> AI Churn Risk Score & Warning Triggers</div>
+              <div class="flex items-center gap-2 text-textMain font-medium"><i data-lucide="check-circle-2" class="w-4 h-4 text-emerald-600"></i> Multi-cohort Retention Analysis</div>
+              <div class="flex items-center gap-2 text-textMain font-medium"><i data-lucide="check-circle-2" class="w-4 h-4 text-emerald-600"></i> Automated Dunning Recovery Flows</div>
+            </div>
+            <div class="mt-5 pt-4 border-t border-borderSubtle flex items-center justify-between text-xs">
+              <span class="text-textMuted font-medium">2 Plans Configured</span>
+              <span class="font-bold text-purple-600">180 Active Accounts</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ================= 4. VIEW: PLANS ================= -->
+      <div id="view-plans" class="tab-view space-y-6">
+        <div class="flex items-center justify-between">
+          <div>
+            <h2 class="text-xl font-bold text-textMain">Pricing Plans & Cadence Matrix</h2>
+            <p class="text-xs text-textMuted mt-0.5">Recurring billing intervals, trial rules, and seat quotas</p>
+          </div>
+          <button onclick="alert('New Plan Creator initialized!')" class="px-4 py-2.5 rounded-elem bg-brandDark text-white text-xs font-semibold hover:bg-black transition-all flex items-center gap-2 shadow-soft">
+            <i data-lucide="plus" class="w-4 h-4"></i>
+            <span>New Pricing Plan</span>
+          </button>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <!-- Plan 1 -->
+          <div class="bg-cardBg p-6 rounded-card border border-borderSubtle shadow-soft flex flex-col justify-between">
+            <div>
+              <span class="text-[11px] font-bold uppercase tracking-wider text-textMuted">Startup Tier</span>
+              <h3 class="text-lg font-bold text-textMain mt-1">Starter Tier</h3>
+              <div class="mt-4 flex items-baseline gap-1">
+                <span class="text-3xl font-extrabold text-textMain">$99</span>
+                <span class="text-xs text-textMuted">/ month</span>
+              </div>
+              <p class="text-xs text-textMuted mt-2">Designed for early-stage companies and lean engineering teams.</p>
+              <div class="mt-6 space-y-2.5 border-t border-borderSubtle pt-4 text-xs text-textMain">
+                <div class="flex items-center gap-2"><i data-lucide="check" class="w-4 h-4 text-emerald-600"></i> Up to 100 active subscriptions</div>
+                <div class="flex items-center gap-2"><i data-lucide="check" class="w-4 h-4 text-emerald-600"></i> 14-day free trial period</div>
+                <div class="flex items-center gap-2"><i data-lucide="check" class="w-4 h-4 text-emerald-600"></i> Webhook notifications</div>
+              </div>
+            </div>
+            <button class="w-full mt-6 py-2.5 rounded-elem border border-borderSubtle hover:bg-slate-50 text-xs font-semibold transition-colors">Edit Plan Rules</button>
+          </div>
+
+          <!-- Plan 2 (Highlighted) -->
+          <div class="bg-cardBg p-6 rounded-card border-2 border-brandDark shadow-hover flex flex-col justify-between relative">
+            <div class="absolute -top-3 right-6 px-3 py-1 bg-brandDark text-white text-[10px] font-bold rounded-full uppercase tracking-wider">
+              Most Popular
+            </div>
+            <div>
+              <span class="text-[11px] font-bold uppercase tracking-wider text-indigo-600">Scale Tier</span>
+              <h3 class="text-lg font-bold text-textMain mt-1">Growth Scale</h3>
+              <div class="mt-4 flex items-baseline gap-1">
+                <span class="text-3xl font-extrabold text-textMain">$299</span>
+                <span class="text-xs text-textMuted">/ month</span>
+              </div>
+              <p class="text-xs text-textMuted mt-2">Full billing automation, dynamic seat additions, and advanced telemetry.</p>
+              <div class="mt-6 space-y-2.5 border-t border-borderSubtle pt-4 text-xs text-textMain">
+                <div class="flex items-center gap-2"><i data-lucide="check" class="w-4 h-4 text-emerald-600"></i> Unlimited active subscriptions</div>
+                <div class="flex items-center gap-2"><i data-lucide="check" class="w-4 h-4 text-emerald-600"></i> Per-seat scalable licensing</div>
+                <div class="flex items-center gap-2"><i data-lucide="check" class="w-4 h-4 text-emerald-600"></i> Priority email & Slack SLA</div>
+                <div class="flex items-center gap-2"><i data-lucide="check" class="w-4 h-4 text-emerald-600"></i> Automated dunning retries</div>
+              </div>
+            </div>
+            <button class="w-full mt-6 py-2.5 rounded-elem bg-brandDark hover:bg-black text-white text-xs font-semibold transition-colors">Edit Plan Rules</button>
+          </div>
+
+          <!-- Plan 3 -->
+          <div class="bg-cardBg p-6 rounded-card border border-borderSubtle shadow-soft flex flex-col justify-between">
+            <div>
+              <span class="text-[11px] font-bold uppercase tracking-wider text-textMuted">Custom Enterprise</span>
+              <h3 class="text-lg font-bold text-textMain mt-1">Enterprise Dedicated</h3>
+              <div class="mt-4 flex items-baseline gap-1">
+                <span class="text-3xl font-extrabold text-textMain">$9,900</span>
+                <span class="text-xs text-textMuted">/ year</span>
+              </div>
+              <p class="text-xs text-textMuted mt-2">Custom contract terms, customized billing logic, and account manager.</p>
+              <div class="mt-6 space-y-2.5 border-t border-borderSubtle pt-4 text-xs text-textMain">
+                <div class="flex items-center gap-2"><i data-lucide="check" class="w-4 h-4 text-emerald-600"></i> 99.99% Uptime Guarantee SLA</div>
+                <div class="flex items-center gap-2"><i data-lucide="check" class="w-4 h-4 text-emerald-600"></i> Dedicated Database Cluster</div>
+                <div class="flex items-center gap-2"><i data-lucide="check" class="w-4 h-4 text-emerald-600"></i> Custom ERP & Salesforce Sync</div>
+              </div>
+            </div>
+            <button class="w-full mt-6 py-2.5 rounded-elem border border-borderSubtle hover:bg-slate-50 text-xs font-semibold transition-colors">Edit Plan Rules</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- ================= 5. VIEW: SUBSCRIPTIONS ================= -->
+      <div id="view-subscriptions" class="tab-view space-y-6">
+        <div class="flex items-center justify-between">
+          <div>
+            <h2 class="text-xl font-bold text-textMain">Active Subscriptions</h2>
+            <p class="text-xs text-textMuted mt-0.5">Recurring contract states, current periods, and renewal status</p>
+          </div>
+          <button onclick="alert('Contract Creator initialized!')" class="px-4 py-2.5 rounded-elem bg-brandDark text-white text-xs font-semibold hover:bg-black transition-all flex items-center gap-2 shadow-soft">
+            <i data-lucide="plus" class="w-4 h-4"></i>
+            <span>Create Subscription</span>
+          </button>
+        </div>
+
+        <div class="bg-cardBg rounded-card border border-borderSubtle shadow-soft overflow-hidden">
+          <table class="w-full text-left text-xs">
+            <thead class="bg-slate-50/70 text-[11px] font-bold text-textMuted uppercase tracking-wider border-b border-borderSubtle">
+              <tr>
+                <th class="px-6 py-3.5">Subscription ID</th>
+                <th class="px-6 py-3.5">Subscriber Account</th>
+                <th class="px-6 py-3.5">Status</th>
+                <th class="px-6 py-3.5">Plan Selected</th>
+                <th class="px-6 py-3.5">Renewal Date</th>
+                <th class="px-6 py-3.5">MRR Contribution</th>
+                <th class="px-6 py-3.5 text-right">Actions</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-borderSubtle text-textMain">
+              <tr class="hover:bg-slate-50/60 transition-colors">
+                <td class="px-6 py-4 font-mono text-textMuted">sub_01HX9M001</td>
+                <td class="px-6 py-4 font-bold text-textMain">Acme Technologies Inc.</td>
+                <td class="px-6 py-4">
+                  <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200">
+                    <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span> Active
+                  </span>
+                </td>
+                <td class="px-6 py-4 font-medium">Growth Scale (Monthly)</td>
+                <td class="px-6 py-4 text-textMuted">Jul 01, 2026</td>
+                <td class="px-6 py-4 font-bold text-sm">$299.00</td>
+                <td class="px-6 py-4 text-right">
+                  <button onclick="alert('Subscription upgraded to next tier!')" class="text-xs text-indigo-600 font-semibold hover:underline">Upgrade</button>
+                </td>
+              </tr>
+              <tr class="hover:bg-slate-50/60 transition-colors">
+                <td class="px-6 py-4 font-mono text-textMuted">sub_01HX9M002</td>
+                <td class="px-6 py-4 font-bold text-textMain">Nexus Cloud Dynamics</td>
+                <td class="px-6 py-4">
+                  <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full font-semibold bg-indigo-50 text-indigo-700 border border-indigo-200">
+                    <span class="w-1.5 h-1.5 rounded-full bg-indigo-500"></span> Trialing
+                  </span>
+                </td>
+                <td class="px-6 py-4 font-medium">Enterprise Dedicated (Annual)</td>
+                <td class="px-6 py-4 text-textMuted">Nov 15, 2026</td>
+                <td class="px-6 py-4 font-bold text-sm">$4,800.00</td>
+                <td class="px-6 py-4 text-right">
+                  <button onclick="alert('Trial converted to active recurring!')" class="text-xs text-indigo-600 font-semibold hover:underline">Convert</button>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- ================= 6. VIEW: INVOICES ================= -->
+      <div id="view-invoices" class="tab-view space-y-6">
+        <div class="flex items-center justify-between">
+          <div>
+            <h2 class="text-xl font-bold text-textMain">Invoices & Receivables</h2>
+            <p class="text-xs text-textMuted mt-0.5">Automated billing cycles, tax calculations, and receipts</p>
+          </div>
+          <button onclick="alert('Invoice created successfully!')" class="px-4 py-2.5 rounded-elem bg-brandDark text-white text-xs font-semibold hover:bg-black transition-all flex items-center gap-2 shadow-soft">
+            <i data-lucide="file-text" class="w-4 h-4"></i>
+            <span>Generate Manual Invoice</span>
+          </button>
+        </div>
+
+        <div class="bg-cardBg rounded-card border border-borderSubtle shadow-soft overflow-hidden">
+          <table class="w-full text-left text-xs">
+            <thead class="bg-slate-50/70 text-[11px] font-bold text-textMuted uppercase tracking-wider border-b border-borderSubtle">
+              <tr>
+                <th class="px-6 py-3.5">Invoice #</th>
+                <th class="px-6 py-3.5">Recipient</th>
+                <th class="px-6 py-3.5">Status</th>
+                <th class="px-6 py-3.5">Due Date</th>
+                <th class="px-6 py-3.5">Amount Due</th>
+                <th class="px-6 py-3.5 text-right">PDF Receipt</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-borderSubtle text-textMain">
+              <tr class="hover:bg-slate-50/60 transition-colors">
+                <td class="px-6 py-4 font-mono font-bold text-textMain">INV-2026-00108</td>
+                <td class="px-6 py-4 font-semibold">Acme Technologies Inc.</td>
+                <td class="px-6 py-4">
+                  <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200">
+                    <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span> Paid
+                  </span>
+                </td>
+                <td class="px-6 py-4 text-textMuted">Oct 15, 2026</td>
+                <td class="px-6 py-4 font-bold text-sm">$299.00</td>
+                <td class="px-6 py-4 text-right">
+                  <button onclick="alert('Downloading PDF for INV-2026-00108...')" class="inline-flex items-center gap-1 text-indigo-600 font-semibold hover:underline">
+                    <i data-lucide="download" class="w-3.5 h-3.5"></i> PDF
+                  </button>
+                </td>
+              </tr>
+              <tr class="hover:bg-slate-50/60 transition-colors">
+                <td class="px-6 py-4 font-mono font-bold text-textMain">INV-2026-00109</td>
+                <td class="px-6 py-4 font-semibold">Nexus Cloud Dynamics</td>
+                <td class="px-6 py-4">
+                  <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full font-semibold bg-blue-50 text-blue-700 border border-blue-200">
+                    <span class="w-1.5 h-1.5 rounded-full bg-blue-500"></span> Open
+                  </span>
+                </td>
+                <td class="px-6 py-4 text-textMuted">Nov 01, 2026</td>
+                <td class="px-6 py-4 font-bold text-sm">$4,800.00</td>
+                <td class="px-6 py-4 text-right">
+                  <button onclick="alert('Downloading PDF for INV-2026-00109...')" class="inline-flex items-center gap-1 text-indigo-600 font-semibold hover:underline">
+                    <i data-lucide="download" class="w-3.5 h-3.5"></i> PDF
+                  </button>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- ================= 7. VIEW: PAYMENTS ================= -->
+      <div id="view-payments" class="tab-view space-y-6">
+        <div class="flex items-center justify-between">
+          <div>
+            <h2 class="text-xl font-bold text-textMain">Payment Transactions</h2>
+            <p class="text-xs text-textMuted mt-0.5">Real-time payment gateway telemetry and transaction verification</p>
+          </div>
+          <button onclick="alert('Payment gateways synchronized!')" class="px-4 py-2.5 rounded-elem border border-borderSubtle bg-white hover:bg-slate-50 text-xs font-semibold text-textMain transition-all flex items-center gap-2 shadow-soft">
+            <i data-lucide="refresh-cw" class="w-4 h-4"></i>
+            <span>Sync Gateways</span>
+          </button>
+        </div>
+
+        <div class="bg-cardBg rounded-card border border-borderSubtle shadow-soft overflow-hidden">
+          <table class="w-full text-left text-xs">
+            <thead class="bg-slate-50/70 text-[11px] font-bold text-textMuted uppercase tracking-wider border-b border-borderSubtle">
+              <tr>
+                <th class="px-6 py-3.5">Transaction Ref</th>
+                <th class="px-6 py-3.5">Customer</th>
+                <th class="px-6 py-3.5">Method</th>
+                <th class="px-6 py-3.5">Status</th>
+                <th class="px-6 py-3.5">Amount</th>
+                <th class="px-6 py-3.5">Timestamp</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-borderSubtle text-textMain">
+              <tr class="hover:bg-slate-50/60 transition-colors">
+                <td class="px-6 py-4 font-mono text-textMuted">ch_3P4k8L2eZvKYlo</td>
+                <td class="px-6 py-4 font-bold text-textMain">Acme Technologies Inc.</td>
+                <td class="px-6 py-4 flex items-center gap-2 text-textMain font-medium">
+                  <i data-lucide="credit-card" class="w-4 h-4 text-slate-500"></i> Visa •••• 4242
+                </td>
+                <td class="px-6 py-4">
+                  <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200">
+                    <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span> Succeeded
+                  </span>
+                </td>
+                <td class="px-6 py-4 font-bold text-sm">$299.00</td>
+                <td class="px-6 py-4 text-textMuted">Oct 31, 2026, 09:14 AM</td>
+              </tr>
+              <tr class="hover:bg-slate-50/60 transition-colors">
+                <td class="px-6 py-4 font-mono text-textMuted">ach_098K4L1123P99</td>
+                <td class="px-6 py-4 font-bold text-textMain">Nexus Cloud Dynamics</td>
+                <td class="px-6 py-4 flex items-center gap-2 text-textMain font-medium">
+                  <i data-lucide="building-2" class="w-4 h-4 text-slate-500"></i> ACH •••• 6789
+                </td>
+                <td class="px-6 py-4">
+                  <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full font-semibold bg-amber-50 text-amber-700 border border-amber-200">
+                    <span class="w-1.5 h-1.5 rounded-full bg-amber-500"></span> Processing
+                  </span>
+                </td>
+                <td class="px-6 py-4 font-bold text-sm">$4,800.00</td>
+                <td class="px-6 py-4 text-textMuted">Oct 31, 2026, 08:30 AM</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- ================= 8. VIEW: DISCOUNTS ================= -->
+      <div id="view-discounts" class="tab-view space-y-6">
+        <div class="flex items-center justify-between">
+          <div>
+            <h2 class="text-xl font-bold text-textMain">Discounts & Coupon Campaigns</h2>
+            <p class="text-xs text-textMuted mt-0.5">Manage early-adopter codes, partner rebates, and duration limitations</p>
+          </div>
+          <button onclick="alert('Coupon creator opened!')" class="px-4 py-2.5 rounded-elem bg-brandDark text-white text-xs font-semibold hover:bg-black transition-all flex items-center gap-2 shadow-soft">
+            <i data-lucide="plus" class="w-4 h-4"></i>
+            <span>Create Coupon Code</span>
+          </button>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div class="bg-cardBg p-6 rounded-card border border-borderSubtle shadow-soft">
+            <div class="flex items-start justify-between">
+              <div>
+                <span class="px-3 py-1 font-mono text-xs font-bold rounded-lg bg-indigo-50 text-indigo-700 border border-indigo-200">LAUNCH20</span>
+                <h3 class="text-base font-bold text-textMain mt-2">Early Adopter Promotion</h3>
+                <p class="text-xs text-textMuted mt-1">20% discount applied for 3 recurring months</p>
+              </div>
+              <span class="px-2 py-0.5 rounded-full text-xs font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200">Active</span>
+            </div>
+            <div class="mt-4 pt-4 border-t border-borderSubtle">
+              <div class="flex justify-between text-xs text-textMuted mb-1.5">
+                <span>Redemptions</span>
+                <span class="font-bold text-textMain">42 / 100</span>
+              </div>
+              <div class="w-full h-2 rounded-full bg-slate-100 overflow-hidden">
+                <div class="h-full bg-indigo-600 rounded-full" style="width: 42%;"></div>
+              </div>
+            </div>
+          </div>
+
+          <div class="bg-cardBg p-6 rounded-card border border-borderSubtle shadow-soft">
+            <div class="flex items-start justify-between">
+              <div>
+                <span class="px-3 py-1 font-mono text-xs font-bold rounded-lg bg-purple-50 text-purple-700 border border-purple-200">STARTUP50</span>
+                <h3 class="text-base font-bold text-textMain mt-2">Incubator Partner Grant</h3>
+                <p class="text-xs text-textMuted mt-1">50% discount applied for 6 recurring months</p>
+              </div>
+              <span class="px-2 py-0.5 rounded-full text-xs font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200">Active</span>
+            </div>
+            <div class="mt-4 pt-4 border-t border-borderSubtle">
+              <div class="flex justify-between text-xs text-textMuted mb-1.5">
+                <span>Redemptions</span>
+                <span class="font-bold text-textMain">18 / 25</span>
+              </div>
+              <div class="w-full h-2 rounded-full bg-slate-100 overflow-hidden">
+                <div class="h-full bg-purple-600 rounded-full" style="width: 72%;"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ================= 9. VIEW: SETTINGS ================= -->
+      <div id="view-settings" class="tab-view space-y-6">
+        <div>
+          <h2 class="text-xl font-bold text-textMain">Platform Settings & Architecture</h2>
+          <p class="text-xs text-textMuted mt-0.5">Developer credentials, webhook delivery, and security configuration</p>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div class="bg-cardBg p-6 rounded-card border border-borderSubtle shadow-soft">
+            <div class="flex items-center gap-3">
+              <div class="w-10 h-10 rounded-elem bg-indigo-50 text-indigo-600 flex items-center justify-center">
+                <i data-lucide="key" class="w-5 h-5"></i>
+              </div>
+              <div>
+                <h3 class="text-sm font-bold text-textMain">REST API Endpoint</h3>
+                <p class="text-xs text-textMuted">Microservices connectivity</p>
+              </div>
+            </div>
+            <div class="mt-4 pt-4 border-t border-borderSubtle flex items-center justify-between text-xs">
+              <span class="font-mono text-textMuted">http://localhost:8000/api/v1</span>
+              <span class="font-semibold text-emerald-600">Configured</span>
+            </div>
+          </div>
+
+          <div class="bg-cardBg p-6 rounded-card border border-borderSubtle shadow-soft">
+            <div class="flex items-center gap-3">
+              <div class="w-10 h-10 rounded-elem bg-purple-50 text-purple-600 flex items-center justify-center">
+                <i data-lucide="database" class="w-5 h-5"></i>
+              </div>
+              <div>
+                <h3 class="text-sm font-bold text-textMain">Supabase Backend</h3>
+                <p class="text-xs text-textMuted">Database & Session sync</p>
+              </div>
+            </div>
+            <div class="mt-4 pt-4 border-t border-borderSubtle flex items-center justify-between text-xs">
+              <span class="font-mono text-textMuted">Safe Fallback / Dev Ready</span>
+              <span class="font-semibold text-indigo-600">Active</span>
+            </div>
+          </div>
+
+          <div class="bg-cardBg p-6 rounded-card border border-borderSubtle shadow-soft">
+            <div class="flex items-center gap-3">
+              <div class="w-10 h-10 rounded-elem bg-emerald-50 text-emerald-600 flex items-center justify-center">
+                <i data-lucide="shield-check" class="w-5 h-5"></i>
+              </div>
+              <div>
+                <h3 class="text-sm font-bold text-textMain">PCI & SOC2 Compliance</h3>
+                <p class="text-xs text-textMuted">Tokenized cardholder encryption</p>
+              </div>
+            </div>
+            <div class="mt-4 pt-4 border-t border-borderSubtle flex items-center justify-between text-xs">
+              <span class="text-textMuted">Level 1 Compliant</span>
+              <span class="font-semibold text-emerald-600">Verified</span>
+            </div>
+          </div>
+
+          <div class="bg-cardBg p-6 rounded-card border border-borderSubtle shadow-soft">
+            <div class="flex items-center gap-3">
+              <div class="w-10 h-10 rounded-elem bg-amber-50 text-amber-600 flex items-center justify-center">
+                <i data-lucide="bell" class="w-5 h-5"></i>
+              </div>
+              <div>
+                <h3 class="text-sm font-bold text-textMain">Automated Dunning Alerts</h3>
+                <p class="text-xs text-textMuted">Smart recovery retry rules</p>
+              </div>
+            </div>
+            <div class="mt-4 pt-4 border-t border-borderSubtle flex items-center justify-between text-xs">
+              <span class="text-textMuted">Cadence: 3d / 5d / 7d</span>
+              <span class="font-semibold text-emerald-600">Enabled</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </main>
+  </div>
+
+  <!-- Customer Detail Modal -->
+  <div id="viewCustomerModal" class="fixed inset-0 z-50 bg-black/50 backdrop-blur-sm hidden flex items-center justify-center p-4">
+    <div class="bg-white rounded-card max-w-lg w-full p-6 border border-borderSubtle shadow-hover animate-fadeIn">
+      <div class="flex items-center justify-between pb-4 border-b border-borderSubtle">
+        <h3 id="modalCustomerName" class="text-base font-bold text-textMain">Customer Details</h3>
+        <button onclick="closeModal('viewCustomerModal')" class="text-textMuted hover:text-textMain"><i data-lucide="x" class="w-5 h-5"></i></button>
+      </div>
+      <div class="py-4 space-y-3 text-xs">
+        <div class="flex justify-between py-1 border-b border-slate-100">
+          <span class="text-textMuted font-medium">Account Status</span>
+          <span class="font-semibold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-full border border-emerald-200">Active</span>
+        </div>
+        <div class="flex justify-between py-1 border-b border-slate-100">
+          <span class="text-textMuted font-medium">Currency</span>
+          <span class="font-semibold text-textMain">USD ($)</span>
+        </div>
+        <div class="flex justify-between py-1 border-b border-slate-100">
+          <span class="text-textMuted font-medium">Payment Method</span>
+          <span class="font-semibold text-textMain">Card ending 4242</span>
+        </div>
+        <div class="flex justify-between py-1">
+          <span class="text-textMuted font-medium">Auto Renewal</span>
+          <span class="font-semibold text-indigo-600">Enabled</span>
+        </div>
+      </div>
+      <div class="pt-4 border-t border-borderSubtle flex justify-end gap-2">
+        <button onclick="closeModal('viewCustomerModal')" class="px-4 py-2 rounded-elem border border-borderSubtle text-xs font-semibold hover:bg-slate-50">Close</button>
+        <button onclick="alert('Account settings updated!'); closeModal('viewCustomerModal');" class="px-4 py-2 rounded-elem bg-brandDark text-white text-xs font-semibold hover:bg-black">Save Changes</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Add Customer Modal -->
+  <div id="addCustomerModal" class="fixed inset-0 z-50 bg-black/50 backdrop-blur-sm hidden flex items-center justify-center p-4">
+    <div class="bg-white rounded-card max-w-md w-full p-6 border border-borderSubtle shadow-hover animate-fadeIn">
+      <div class="flex items-center justify-between pb-4 border-b border-borderSubtle">
+        <h3 class="text-base font-bold text-textMain">Add New Customer</h3>
+        <button onclick="closeModal('addCustomerModal')" class="text-textMuted hover:text-textMain"><i data-lucide="x" class="w-5 h-5"></i></button>
+      </div>
+      <div class="py-4 space-y-3 text-xs">
+        <div>
+          <label class="block text-textMuted font-medium mb-1">Company / Customer Name</label>
+          <input type="text" id="newCustName" placeholder="e.g. Stripe Inc." class="w-full bg-appBg border border-borderSubtle rounded-elem px-3 py-2 text-xs focus:outline-none focus:ring-1 focus:ring-brandDark">
+        </div>
+        <div>
+          <label class="block text-textMuted font-medium mb-1">Billing Email</label>
+          <input type="email" id="newCustEmail" placeholder="billing@company.com" class="w-full bg-appBg border border-borderSubtle rounded-elem px-3 py-2 text-xs focus:outline-none focus:ring-1 focus:ring-brandDark">
+        </div>
+        <div>
+          <label class="block text-textMuted font-medium mb-1">Initial Plan</label>
+          <select class="w-full bg-appBg border border-borderSubtle rounded-elem px-3 py-2 text-xs focus:outline-none focus:ring-1 focus:ring-brandDark">
+            <option>Growth Scale ($299/mo)</option>
+            <option>Starter Tier ($99/mo)</option>
+            <option>Enterprise Dedicated ($9,900/yr)</option>
+          </select>
+        </div>
+      </div>
+      <div class="pt-4 border-t border-borderSubtle flex justify-end gap-2">
+        <button onclick="closeModal('addCustomerModal')" class="px-4 py-2 rounded-elem border border-borderSubtle text-xs font-semibold hover:bg-slate-50">Cancel</button>
+        <button onclick="alert('Customer successfully registered!'); closeModal('addCustomerModal');" class="px-4 py-2 rounded-elem bg-brandDark text-white text-xs font-semibold hover:bg-black">Add Account</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Navigation routing
+    function navigateTo(tabId, title, subtitle) {
+      document.querySelectorAll('.tab-view').forEach(view => view.classList.remove('active'));
+      const targetView = document.getElementById('view-' + tabId);
+      if (targetView) targetView.classList.add('active');
+
+      document.querySelectorAll('#nav-container .nav-item, aside .nav-item').forEach(btn => {
+        btn.classList.remove('bg-brandDark', 'text-white', 'shadow-nav');
+        btn.classList.add('text-textMuted');
+      });
+
+      const activeBtn = document.getElementById('btn-nav-' + tabId);
+      if (activeBtn) {
+        activeBtn.classList.remove('text-textMuted');
+        activeBtn.classList.add('bg-brandDark', 'text-white', 'shadow-nav');
+      }
+
+      if (title) document.getElementById('top-title').textContent = title;
+      if (subtitle) document.getElementById('top-subtitle').textContent = subtitle;
+
+      // Close mobile drawer if open
+      const sidebar = document.getElementById('app-sidebar');
+      const backdrop = document.getElementById('mobile-backdrop');
+      sidebar.classList.add('-translate-x-full');
+      backdrop.classList.add('hidden');
+
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    // Mobile sidebar toggle
+    function toggleSidebar() {
+      const sidebar = document.getElementById('app-sidebar');
+      const backdrop = document.getElementById('mobile-backdrop');
+      const isClosed = sidebar.classList.contains('-translate-x-full');
+      if (isClosed) {
+        sidebar.classList.remove('-translate-x-full');
+        backdrop.classList.remove('hidden');
+      } else {
+        sidebar.classList.add('-translate-x-full');
+        backdrop.classList.add('hidden');
+      }
+    }
+
+    // Notification toast
+    function toggleNotificationToast() {
+      const toast = document.getElementById('notif-toast');
+      toast.classList.toggle('hidden');
+    }
+
+    // Modal controls
+    function openModal(modalId, customerName) {
+      const modal = document.getElementById(modalId);
+      if (modal) {
+        if (customerName && document.getElementById('modalCustomerName')) {
+          document.getElementById('modalCustomerName').textContent = customerName;
+        }
+        modal.classList.remove('hidden');
+      }
+    }
+
+    function closeModal(modalId) {
+      const modal = document.getElementById(modalId);
+      if (modal) modal.classList.add('hidden');
+    }
+
+    // Global search filter
+    function handleGlobalSearch(query) {
+      const q = query.toLowerCase().trim();
+      if (!q) return;
+      if (q.includes('cust') || q.includes('acme') || q.includes('nexus')) {
+        navigateTo('customers', 'Customers', 'Filtered accounts matching: ' + query);
+      } else if (q.includes('plan') || q.includes('grow') || q.includes('start')) {
+        navigateTo('plans', 'Plans & Pricing', 'Filtered plans matching: ' + query);
+      } else if (q.includes('inv') || q.includes('bill')) {
+        navigateTo('invoices', 'Billing & Invoices', 'Filtered invoices matching: ' + query);
+      } else if (q.includes('pay') || q.includes('card')) {
+        navigateTo('payments', 'Payments', 'Filtered payments matching: ' + query);
+      }
+    }
+
+    // Initialize charts and icons
+    document.addEventListener("DOMContentLoaded", () => {
+      lucide.createIcons();
+
+      // MRR Area Chart
+      const mrrCtx = document.getElementById('canvas-mrr').getContext('2d');
+      const gradMrr = mrrCtx.createLinearGradient(0, 0, 0, 240);
+      gradMrr.addColorStop(0, 'rgba(79, 70, 229, 0.25)');
+      gradMrr.addColorStop(1, 'rgba(79, 70, 229, 0.0)');
+
+      new Chart(mrrCtx, {
+        type: 'line',
+        data: {
+          labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct'],
+          datasets: [{
+            data: [18500, 21200, 24800, 28400, 31000, 33100, 35400, 37900, 40100, 42600],
+            borderColor: '#171717',
+            backgroundColor: gradMrr,
+            fill: true,
+            tension: 0.35,
+            borderWidth: 2.2,
+            pointBackgroundColor: '#171717',
+            pointRadius: 3,
+            pointHoverRadius: 6,
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: { legend: { display: false } },
+          scales: {
+            x: {
+              grid: { display: false },
+              ticks: { color: '#737373', font: { size: 11, family: 'Inter' } }
+            },
+            y: {
+              grid: { color: '#EAECEF' },
+              ticks: {
+                color: '#737373',
+                font: { size: 11, family: 'Inter' },
+                callback: val => '$' + (val / 1000).toFixed(0) + 'k'
+              }
+            }
+          }
+        }
+      });
+
+      // Subscriptions & Churn Bar Chart
+      const subsCtx = document.getElementById('canvas-subs').getContext('2d');
+      new Chart(subsCtx, {
+        type: 'bar',
+        data: {
+          labels: ['May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct'],
+          datasets: [
+            {
+              label: 'Active Subscriptions',
+              data: [490, 520, 565, 595, 615, 640],
+              backgroundColor: '#171717',
+              borderRadius: 6,
+              barThickness: 16
+            },
+            {
+              label: 'Churned',
+              data: [15, 14, 16, 12, 10, 8],
+              backgroundColor: '#F43F5E',
+              borderRadius: 6,
+              barThickness: 16
+            }
+          ]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: {
+              position: 'top',
+              align: 'end',
+              labels: { boxWidth: 10, font: { size: 11, family: 'Inter' } }
+            }
+          },
+          scales: {
+            x: {
+              grid: { display: false },
+              ticks: { color: '#737373', font: { size: 11, family: 'Inter' } }
+            },
+            y: {
+              grid: { color: '#EAECEF' },
+              ticks: { color: '#737373', font: { size: 11, family: 'Inter' } }
+            }
+          }
+        }
+      });
+    });
+  </script>
+</body>
+</html>

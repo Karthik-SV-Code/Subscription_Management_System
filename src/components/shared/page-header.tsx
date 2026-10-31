@@ -19,20 +19,20 @@ export function PageHeader({
   return (
     <div
       className={cn(
-        "flex flex-col gap-4 pb-6 md:flex-row md:items-center md:justify-between",
+        "flex flex-col gap-4 pb-2 sm:flex-row sm:items-center sm:justify-between",
         className
       )}
       {...props}
     >
       <div className="space-y-1">
-        <div className="flex items-center gap-2">
-          <h1 className="text-2xl font-bold tracking-tight text-slate-900">
+        <div className="flex items-center gap-2.5">
+          <h2 className="text-xl font-bold tracking-tight text-[#171717]">
             {title}
-          </h1>
+          </h2>
           {badge}
         </div>
         {description && (
-          <p className="text-sm text-slate-500 max-w-2xl">{description}</p>
+          <p className="text-xs text-[#737373] max-w-2xl">{description}</p>
         )}
       </div>
       {actions && (
@@ -41,4 +41,3 @@ export function PageHeader({
     </div>
   );
 }
-
