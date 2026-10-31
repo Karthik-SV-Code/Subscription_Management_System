@@ -51,6 +51,7 @@ export function Sidebar({
 
   return (
     <aside
+      id="app-sidebar"
       className={cn(
         "flex h-screen flex-col justify-between bg-white border-r border-[#EAECEF] shadow-sm py-4 transition-all duration-300 select-none",
         isCollapsed ? "w-20" : "w-64",
@@ -60,6 +61,7 @@ export function Sidebar({
       <div className="flex flex-col items-center w-full">
         {/* Brand Logo Header */}
         <div
+          id="sidebar-brand-header"
           className={cn(
             "flex items-center h-14 w-full px-4 mb-2 cursor-pointer",
             isCollapsed ? "justify-center" : "justify-start px-6 gap-3"
@@ -208,6 +210,7 @@ export function Sidebar({
         {/* Shrink / Expand Toggle Control Button */}
         {onToggleCollapse && (
           <button
+            id="sidebar-collapse-btn"
             onClick={onToggleCollapse}
             className="group relative flex items-center justify-center w-11 h-11 rounded-full bg-slate-50 hover:bg-slate-200/80 text-[#737373] hover:text-[#171717] border border-[#EAECEF] transition-all self-center mt-1"
             title={isCollapsed ? "Expand Sidebar" : "Shrink Sidebar"}

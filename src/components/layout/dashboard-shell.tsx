@@ -22,6 +22,7 @@ export function DashboardShell({ children }: DashboardShellProps) {
     <div className="flex min-h-screen bg-[#F5F6F8]">
       {/* Desktop Persistent Sidebar with Shrinking Property */}
       <div
+        id="desktop-sidebar-container"
         className={cn(
           "hidden md:fixed md:inset-y-0 md:flex md:flex-col z-40 transition-all duration-300",
           isCollapsed ? "md:w-20" : "md:w-64"
@@ -36,6 +37,7 @@ export function DashboardShell({ children }: DashboardShellProps) {
       {/* Mobile Drawer Overlay */}
       {mobileSidebarOpen && (
         <div
+          id="mobile-drawer-overlay"
           className="fixed inset-0 z-50 bg-black/40 backdrop-blur-sm md:hidden transition-opacity"
           onClick={() => setMobileSidebarOpen(false)}
         />
@@ -43,6 +45,7 @@ export function DashboardShell({ children }: DashboardShellProps) {
 
       {/* Mobile Drawer Sidebar */}
       <div
+        id="mobile-drawer-sidebar"
         className={cn(
           "fixed inset-y-0 left-0 z-50 w-64 transform transition-transform duration-300 ease-in-out md:hidden shadow-2xl",
           mobileSidebarOpen ? "translate-x-0" : "-translate-x-full"
@@ -56,6 +59,7 @@ export function DashboardShell({ children }: DashboardShellProps) {
 
       {/* Main Content Viewport with Dynamic Left Padding */}
       <div
+        id="main-content-viewport"
         className={cn(
           "flex flex-1 flex-col min-w-0 transition-all duration-300",
           isCollapsed ? "md:pl-20" : "md:pl-64"
