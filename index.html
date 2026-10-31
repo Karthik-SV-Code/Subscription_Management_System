@@ -30,7 +30,7 @@
           boxShadow: {
             'soft': '0 2px 10px rgba(0, 0, 0, 0.03)',
             'hover': '0 6px 20px rgba(0, 0, 0, 0.06)',
-            'nav': '0 4px 12px rgba(0, 0, 0, 0.08)',
+            'circle': '0 2px 8px rgba(0, 0, 0, 0.06)',
           }
         }
       }
@@ -51,92 +51,187 @@
     }
     .custom-scrollbar::-webkit-scrollbar { width: 4px; height: 4px; }
     .custom-scrollbar::-webkit-scrollbar-thumb { background: #E2E8F0; border-radius: 4px; }
+    
+    /* Shrink / Expand transitions */
+    #app-sidebar {
+      transition: width 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    #main-wrapper, #app-header {
+      transition: padding-left 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    .sidebar-shrunk .nav-label,
+    .sidebar-shrunk .brand-title,
+    .sidebar-shrunk .profile-details {
+      display: none !important;
+    }
+    .sidebar-shrunk .nav-item {
+      justify-content: center !important;
+      padding-left: 0 !important;
+      padding-right: 0 !important;
+    }
+    .sidebar-shrunk .section-heading {
+      display: none !important;
+    }
+    .sidebar-shrunk .brand-header {
+      justify-content: center !important;
+      padding-left: 0 !important;
+      padding-right: 0 !important;
+    }
+    .sidebar-shrunk .profile-card {
+      padding: 0 !important;
+      background: transparent !important;
+      border: none !important;
+      justify-content: center !important;
+    }
   </style>
 </head>
-<body class="min-h-screen flex bg-appBg text-textMain selection:bg-brandAccent selection:text-white">
+<body class="min-h-screen flex bg-appBg text-textMain selection:bg-brandDark selection:text-white">
 
-  <!-- ================= LEFT SIDEBAR NAVIGATION ================= -->
-  <aside id="app-sidebar" class="fixed inset-y-0 left-0 z-40 w-64 bg-white border-r border-borderSubtle flex flex-col justify-between transition-transform duration-200 transform -translate-x-full md:translate-x-0 shadow-soft">
-    <div>
-      <!-- Brand Logo Header -->
-      <div class="h-20 flex items-center px-6 border-b border-borderSubtle gap-3">
-        <div class="w-10 h-10 rounded-2xl bg-brandDark text-white flex items-center justify-center font-bold shadow-md">
+  <!-- ================= LEFT SIDEBAR NAVIGATION WITH SHRINKING PROPERTIES ================= -->
+  <!-- Starts in the sleek compact shrunk icon-rail mode (w-20) matching the reference image! -->
+  <aside id="app-sidebar" class="sidebar-shrunk fixed inset-y-0 left-0 z-40 w-20 bg-white border-r border-borderSubtle flex flex-col justify-between shadow-soft py-4">
+    <div class="flex flex-col items-center w-full">
+      
+      <!-- Brand Logo Header / Shrink Toggle Indicator -->
+      <div class="brand-header h-14 flex items-center justify-center w-full px-4 mb-2">
+        <div class="w-11 h-11 rounded-full bg-brandDark text-white flex items-center justify-center font-bold shadow-md ring-2 ring-black/5 shrink-0 cursor-pointer" onclick="toggleSidebarShrink()" title="Click to toggle expand/shrink">
           <i data-lucide="zap" class="w-5 h-5 text-indigo-400"></i>
         </div>
-        <div>
-          <h1 class="text-base font-bold tracking-tight text-textMain leading-none">SubscriptIQ</h1>
-          <span class="text-[11px] text-textMuted font-medium tracking-wide">Revenue Engine</span>
+        <div class="brand-title ml-3 min-w-0">
+          <h1 class="text-sm font-bold tracking-tight text-textMain leading-none truncate">SubscriptIQ</h1>
+          <span class="text-[10px] text-textMuted font-medium tracking-wide">Revenue Engine</span>
         </div>
       </div>
 
-      <!-- Navigation Links -->
-      <nav class="p-4 space-y-1.5" id="nav-container">
-        <div class="px-3 pb-2 text-[10px] font-bold uppercase tracking-wider text-textMuted">Overview</div>
+      <!-- Navigation Icon Rail (Circular Buttons) -->
+      <nav class="w-full px-2.5 space-y-2 mt-2 flex flex-col items-center" id="nav-container">
 
-        <button onclick="navigateTo('dashboard', 'Dashboard', 'Revenue telemetry and executive summary')" id="btn-nav-dashboard" class="nav-item w-full flex items-center gap-3.5 px-3.5 py-2.5 rounded-elem text-sm font-medium transition-all bg-brandDark text-white shadow-nav">
-          <i data-lucide="layout-dashboard" class="w-4 h-4"></i>
-          <span>Dashboard</span>
-        </button>
-
-        <button onclick="navigateTo('customers', 'Customers', 'Account profiles and subscriber lifecycle')" id="btn-nav-customers" class="nav-item w-full flex items-center gap-3.5 px-3.5 py-2.5 rounded-elem text-sm font-medium text-textMuted hover:text-textMain hover:bg-slate-100/70 transition-all">
-          <i data-lucide="users" class="w-4 h-4"></i>
-          <span>Customers</span>
-        </button>
-
-        <button onclick="navigateTo('products', 'Products', 'Product catalog and entitlements')" id="btn-nav-products" class="nav-item w-full flex items-center gap-3.5 px-3.5 py-2.5 rounded-elem text-sm font-medium text-textMuted hover:text-textMain hover:bg-slate-100/70 transition-all">
-          <i data-lucide="package" class="w-4 h-4"></i>
-          <span>Products</span>
-        </button>
-
-        <button onclick="navigateTo('plans', 'Plans & Pricing', 'Billing cadences and pricing tiers')" id="btn-nav-plans" class="nav-item w-full flex items-center gap-3.5 px-3.5 py-2.5 rounded-elem text-sm font-medium text-textMuted hover:text-textMain hover:bg-slate-100/70 transition-all">
-          <i data-lucide="layers" class="w-4 h-4"></i>
-          <span>Plans</span>
-        </button>
-
-        <button onclick="navigateTo('subscriptions', 'Subscriptions', 'Active contracts, upgrades, and renewals')" id="btn-nav-subscriptions" class="nav-item w-full flex items-center justify-between px-3.5 py-2.5 rounded-elem text-sm font-medium text-textMuted hover:text-textMain hover:bg-slate-100/70 transition-all">
-          <div class="flex items-center gap-3.5">
-            <i data-lucide="repeat" class="w-4 h-4"></i>
-            <span>Subscriptions</span>
+        <!-- 1. Dashboard (Grid 4 circles / layout) -->
+        <button onclick="navigateTo('dashboard', 'Dashboard', 'Revenue telemetry and executive summary')" id="btn-nav-dashboard" class="nav-item group relative flex items-center gap-3 w-full p-1 rounded-2xl transition-all">
+          <div class="circle-btn w-11 h-11 rounded-full flex items-center justify-center transition-all bg-brandDark text-white shadow-circle shrink-0">
+            <i data-lucide="layout-grid" class="w-5 h-5"></i>
           </div>
-          <span class="w-2 h-2 rounded-full bg-emerald-500"></span>
+          <span class="nav-label text-xs font-semibold text-textMain truncate">Dashboard</span>
+          <div class="nav-tooltip absolute left-full ml-3 px-2.5 py-1 bg-brandDark text-white text-[11px] font-medium rounded-lg shadow-xl opacity-0 pointer-events-none group-hover:opacity-100 transition-opacity z-50 whitespace-nowrap">
+            Dashboard
+          </div>
         </button>
 
-        <div class="pt-4 px-3 pb-2 text-[10px] font-bold uppercase tracking-wider text-textMuted">Finance & Operations</div>
-
-        <button onclick="navigateTo('invoices', 'Billing & Invoices', 'Invoice runs and receivables')" id="btn-nav-invoices" class="nav-item w-full flex items-center gap-3.5 px-3.5 py-2.5 rounded-elem text-sm font-medium text-textMuted hover:text-textMain hover:bg-slate-100/70 transition-all">
-          <i data-lucide="receipt" class="w-4 h-4"></i>
-          <span>Invoices</span>
+        <!-- 2. Customers (User Icon) -->
+        <button onclick="navigateTo('customers', 'Customers', 'Account profiles and subscriber lifecycle')" id="btn-nav-customers" class="nav-item group relative flex items-center gap-3 w-full p-1 rounded-2xl transition-all">
+          <div class="circle-btn w-11 h-11 rounded-full flex items-center justify-center transition-all bg-[#F1F3F5] text-[#555] hover:bg-[#E5E7EB] hover:text-[#111] shrink-0">
+            <i data-lucide="users" class="w-5 h-5"></i>
+          </div>
+          <span class="nav-label text-xs font-semibold text-textMuted truncate">Customers</span>
+          <div class="nav-tooltip absolute left-full ml-3 px-2.5 py-1 bg-brandDark text-white text-[11px] font-medium rounded-lg shadow-xl opacity-0 pointer-events-none group-hover:opacity-100 transition-opacity z-50 whitespace-nowrap">
+            Customers
+          </div>
         </button>
 
-        <button onclick="navigateTo('payments', 'Payments & Gateway', 'Transaction clearing and refunds')" id="btn-nav-payments" class="nav-item w-full flex items-center gap-3.5 px-3.5 py-2.5 rounded-elem text-sm font-medium text-textMuted hover:text-textMain hover:bg-slate-100/70 transition-all">
-          <i data-lucide="credit-card" class="w-4 h-4"></i>
-          <span>Payments</span>
+        <!-- 3. Products (Package Icon) -->
+        <button onclick="navigateTo('products', 'Products', 'Product catalog and entitlements')" id="btn-nav-products" class="nav-item group relative flex items-center gap-3 w-full p-1 rounded-2xl transition-all">
+          <div class="circle-btn w-11 h-11 rounded-full flex items-center justify-center transition-all bg-[#F1F3F5] text-[#555] hover:bg-[#E5E7EB] hover:text-[#111] shrink-0">
+            <i data-lucide="package" class="w-5 h-5"></i>
+          </div>
+          <span class="nav-label text-xs font-semibold text-textMuted truncate">Products</span>
+          <div class="nav-tooltip absolute left-full ml-3 px-2.5 py-1 bg-brandDark text-white text-[11px] font-medium rounded-lg shadow-xl opacity-0 pointer-events-none group-hover:opacity-100 transition-opacity z-50 whitespace-nowrap">
+            Products
+          </div>
         </button>
 
-        <button onclick="navigateTo('discounts', 'Discounts & Coupons', 'Promotions and partner incentives')" id="btn-nav-discounts" class="nav-item w-full flex items-center gap-3.5 px-3.5 py-2.5 rounded-elem text-sm font-medium text-textMuted hover:text-textMain hover:bg-slate-100/70 transition-all">
-          <i data-lucide="tag" class="w-4 h-4"></i>
-          <span>Discounts</span>
+        <!-- 4. Plans (Layers Icon) -->
+        <button onclick="navigateTo('plans', 'Plans & Pricing', 'Billing cadences and pricing tiers')" id="btn-nav-plans" class="nav-item group relative flex items-center gap-3 w-full p-1 rounded-2xl transition-all">
+          <div class="circle-btn w-11 h-11 rounded-full flex items-center justify-center transition-all bg-[#F1F3F5] text-[#555] hover:bg-[#E5E7EB] hover:text-[#111] shrink-0">
+            <i data-lucide="layers" class="w-5 h-5"></i>
+          </div>
+          <span class="nav-label text-xs font-semibold text-textMuted truncate">Plans</span>
+          <div class="nav-tooltip absolute left-full ml-3 px-2.5 py-1 bg-brandDark text-white text-[11px] font-medium rounded-lg shadow-xl opacity-0 pointer-events-none group-hover:opacity-100 transition-opacity z-50 whitespace-nowrap">
+            Pricing Plans
+          </div>
         </button>
+
+        <!-- 5. Subscriptions (Repeat / Contracts Icon) -->
+        <button onclick="navigateTo('subscriptions', 'Subscriptions', 'Active contracts, upgrades, and renewals')" id="btn-nav-subscriptions" class="nav-item group relative flex items-center gap-3 w-full p-1 rounded-2xl transition-all">
+          <div class="circle-btn w-11 h-11 rounded-full flex items-center justify-center transition-all bg-[#F1F3F5] text-[#555] hover:bg-[#E5E7EB] hover:text-[#111] shrink-0">
+            <i data-lucide="repeat" class="w-5 h-5"></i>
+          </div>
+          <span class="nav-label text-xs font-semibold text-textMuted truncate">Subscriptions</span>
+          <div class="nav-tooltip absolute left-full ml-3 px-2.5 py-1 bg-brandDark text-white text-[11px] font-medium rounded-lg shadow-xl opacity-0 pointer-events-none group-hover:opacity-100 transition-opacity z-50 whitespace-nowrap">
+            Subscriptions
+          </div>
+        </button>
+
+        <!-- 6. Invoices (Clipboard / Receipt Icon) -->
+        <button onclick="navigateTo('invoices', 'Billing & Invoices', 'Invoice runs and receivables')" id="btn-nav-invoices" class="nav-item group relative flex items-center gap-3 w-full p-1 rounded-2xl transition-all">
+          <div class="circle-btn w-11 h-11 rounded-full flex items-center justify-center transition-all bg-[#F1F3F5] text-[#555] hover:bg-[#E5E7EB] hover:text-[#111] shrink-0">
+            <i data-lucide="clipboard-list" class="w-5 h-5"></i>
+          </div>
+          <span class="nav-label text-xs font-semibold text-textMuted truncate">Invoices</span>
+          <div class="nav-tooltip absolute left-full ml-3 px-2.5 py-1 bg-brandDark text-white text-[11px] font-medium rounded-lg shadow-xl opacity-0 pointer-events-none group-hover:opacity-100 transition-opacity z-50 whitespace-nowrap">
+            Invoices
+          </div>
+        </button>
+
+        <!-- 7. Payments (Credit card with exchange arrows - EXACT MATCH TO IMAGE!) -->
+        <button onclick="navigateTo('payments', 'Payments & Gateway', 'Transaction clearing and refunds')" id="btn-nav-payments" class="nav-item group relative flex items-center gap-3 w-full p-1 rounded-2xl transition-all">
+          <div class="circle-btn w-11 h-11 rounded-full flex items-center justify-center transition-all bg-[#F1F3F5] text-[#555] hover:bg-[#E5E7EB] hover:text-[#111] shrink-0">
+            <i data-lucide="credit-card" class="w-5 h-5"></i>
+          </div>
+          <span class="nav-label text-xs font-semibold text-textMuted truncate">Payments</span>
+          <div class="nav-tooltip absolute left-full ml-3 px-2.5 py-1 bg-brandDark text-white text-[11px] font-medium rounded-lg shadow-xl opacity-0 pointer-events-none group-hover:opacity-100 transition-opacity z-50 whitespace-nowrap">
+            Payments
+          </div>
+        </button>
+
+        <!-- 8. Discounts (Dollar sign in circle / Tag) -->
+        <button onclick="navigateTo('discounts', 'Discounts & Coupons', 'Promotions and partner incentives')" id="btn-nav-discounts" class="nav-item group relative flex items-center gap-3 w-full p-1 rounded-2xl transition-all">
+          <div class="circle-btn w-11 h-11 rounded-full flex items-center justify-center transition-all bg-[#F1F3F5] text-[#555] hover:bg-[#E5E7EB] hover:text-[#111] shrink-0">
+            <i data-lucide="badge-dollar-sign" class="w-5 h-5"></i>
+          </div>
+          <span class="nav-label text-xs font-semibold text-textMuted truncate">Discounts</span>
+          <div class="nav-tooltip absolute left-full ml-3 px-2.5 py-1 bg-brandDark text-white text-[11px] font-medium rounded-lg shadow-xl opacity-0 pointer-events-none group-hover:opacity-100 transition-opacity z-50 whitespace-nowrap">
+            Discounts & Coupons
+          </div>
+        </button>
+
       </nav>
     </div>
 
-    <!-- Sidebar Footer / Settings & Profile -->
-    <div class="p-4 border-t border-borderSubtle space-y-2">
-      <button onclick="navigateTo('settings', 'Platform Settings', 'API keys, webhooks, and team access')" id="btn-nav-settings" class="nav-item w-full flex items-center gap-3.5 px-3.5 py-2.5 rounded-elem text-sm font-medium text-textMuted hover:text-textMain hover:bg-slate-100/70 transition-all">
-        <i data-lucide="settings" class="w-4 h-4"></i>
-        <span>Settings</span>
+    <!-- Sidebar Bottom: Settings, Profile & Shrink/Expand Toggle -->
+    <div class="w-full px-2.5 space-y-2 flex flex-col items-center">
+      
+      <!-- Settings (Hexagon / Gear Icon) -->
+      <button onclick="navigateTo('settings', 'Platform Settings', 'API keys, webhooks, and team access')" id="btn-nav-settings" class="nav-item group relative flex items-center gap-3 w-full p-1 rounded-2xl transition-all">
+        <div class="circle-btn w-11 h-11 rounded-full flex items-center justify-center transition-all bg-[#F1F3F5] text-[#555] hover:bg-[#E5E7EB] hover:text-[#111] shrink-0">
+          <i data-lucide="settings" class="w-5 h-5"></i>
+        </div>
+        <span class="nav-label text-xs font-semibold text-textMuted truncate">Settings</span>
+        <div class="nav-tooltip absolute left-full ml-3 px-2.5 py-1 bg-brandDark text-white text-[11px] font-medium rounded-lg shadow-xl opacity-0 pointer-events-none group-hover:opacity-100 transition-opacity z-50 whitespace-nowrap">
+          Settings
+        </div>
       </button>
 
-      <div class="flex items-center gap-3 p-2 rounded-elem bg-slate-50 border border-borderSubtle">
-        <div class="w-9 h-9 rounded-full bg-brandDark text-white flex items-center justify-center font-bold text-xs shrink-0">
+      <!-- User Profile Avatar Circle -->
+      <div class="profile-card group relative flex items-center gap-3 w-full p-1 rounded-2xl transition-all">
+        <div class="w-11 h-11 rounded-full bg-slate-100 border border-borderSubtle text-brandDark font-bold text-xs flex items-center justify-center shrink-0">
           AD
         </div>
-        <div class="min-w-0 flex-1">
-          <div class="text-xs font-semibold text-textMain truncate">Enterprise Admin</div>
+        <div class="profile-details min-w-0 flex-1">
+          <div class="text-xs font-bold text-textMain truncate">Enterprise Admin</div>
           <div class="text-[10px] text-textMuted truncate">admin@subscriptiq.io</div>
         </div>
-        <i data-lucide="shield-check" class="w-4 h-4 text-emerald-500 shrink-0"></i>
+        <div class="nav-tooltip absolute left-full ml-3 px-2.5 py-1 bg-brandDark text-white text-[11px] font-medium rounded-lg shadow-xl opacity-0 pointer-events-none group-hover:opacity-100 transition-opacity z-50 whitespace-nowrap">
+          Enterprise Admin
+        </div>
       </div>
+
+      <!-- Shrink / Expand Toggle Button -->
+      <button onclick="toggleSidebarShrink()" class="group relative flex items-center justify-center w-11 h-11 rounded-full bg-slate-50 hover:bg-slate-200/80 text-[#737373] hover:text-textMain border border-borderSubtle transition-all mt-1" title="Toggle Sidebar Width">
+        <i id="shrink-icon" data-lucide="panel-left-open" class="w-4 h-4"></i>
+        <div class="nav-tooltip absolute left-full ml-3 px-2.5 py-1 bg-brandDark text-white text-[11px] font-medium rounded-lg shadow-xl opacity-0 pointer-events-none group-hover:opacity-100 transition-opacity z-50 whitespace-nowrap">
+          Expand / Shrink Sidebar
+        </div>
+      </button>
     </div>
   </aside>
 
@@ -144,10 +239,11 @@
   <div id="mobile-backdrop" onclick="toggleSidebar()" class="fixed inset-0 z-30 bg-black/40 backdrop-blur-sm hidden md:hidden"></div>
 
   <!-- ================= MAIN CONTENT WRAPPER ================= -->
-  <div class="flex-1 md:pl-64 flex flex-col min-w-0">
+  <!-- Adjusted left padding: md:pl-20 when shrunk, md:pl-64 when expanded! -->
+  <div id="main-wrapper" class="flex-1 md:pl-20 flex flex-col min-w-0">
 
     <!-- Top Navigation / Header -->
-    <header class="sticky top-0 z-20 h-20 bg-white/90 backdrop-blur border-b border-borderSubtle px-4 sm:px-8 flex items-center justify-between">
+    <header id="app-header" class="sticky top-0 z-20 h-20 bg-white/90 backdrop-blur border-b border-borderSubtle px-4 sm:px-8 flex items-center justify-between">
       <div class="flex items-center gap-4">
         <button onclick="toggleSidebar()" class="p-2 rounded-lg text-textMuted hover:text-textMain hover:bg-slate-100 md:hidden">
           <i data-lucide="menu" class="w-5 h-5"></i>
@@ -499,7 +595,6 @@
         </div>
 
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <!-- Product Card 1 -->
           <div class="bg-cardBg p-6 rounded-card border border-borderSubtle shadow-soft hover:shadow-hover transition-all">
             <div class="flex items-start justify-between">
               <div>
@@ -521,7 +616,6 @@
             </div>
           </div>
 
-          <!-- Product Card 2 -->
           <div class="bg-cardBg p-6 rounded-card border border-borderSubtle shadow-soft hover:shadow-hover transition-all">
             <div class="flex items-start justify-between">
               <div>
@@ -559,7 +653,6 @@
         </div>
 
         <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-          <!-- Plan 1 -->
           <div class="bg-cardBg p-6 rounded-card border border-borderSubtle shadow-soft flex flex-col justify-between">
             <div>
               <span class="text-[11px] font-bold uppercase tracking-wider text-textMuted">Startup Tier</span>
@@ -578,7 +671,6 @@
             <button class="w-full mt-6 py-2.5 rounded-elem border border-borderSubtle hover:bg-slate-50 text-xs font-semibold transition-colors">Edit Plan Rules</button>
           </div>
 
-          <!-- Plan 2 (Highlighted) -->
           <div class="bg-cardBg p-6 rounded-card border-2 border-brandDark shadow-hover flex flex-col justify-between relative">
             <div class="absolute -top-3 right-6 px-3 py-1 bg-brandDark text-white text-[10px] font-bold rounded-full uppercase tracking-wider">
               Most Popular
@@ -601,7 +693,6 @@
             <button class="w-full mt-6 py-2.5 rounded-elem bg-brandDark hover:bg-black text-white text-xs font-semibold transition-colors">Edit Plan Rules</button>
           </div>
 
-          <!-- Plan 3 -->
           <div class="bg-cardBg p-6 rounded-card border border-borderSubtle shadow-soft flex flex-col justify-between">
             <div>
               <span class="text-[11px] font-bold uppercase tracking-wider text-textMuted">Custom Enterprise</span>
@@ -705,8 +796,8 @@
                 <th class="px-6 py-3.5">Recipient</th>
                 <th class="px-6 py-3.5">Status</th>
                 <th class="px-6 py-3.5">Due Date</th>
-                <th class="px-6 py-3.5">Amount Due</th>
-                <th class="px-6 py-3.5 text-right">PDF Receipt</th>
+                <th class="px-6 py-3.5">Total Amount</th>
+                <th class="px-6 py-3.5 text-right">Receipt</th>
               </tr>
             </thead>
             <tbody class="divide-y divide-borderSubtle text-textMain">
@@ -1004,21 +1095,56 @@
   </div>
 
   <script>
+    // Shrinking sidebar toggle logic
+    let isSidebarShrunk = true;
+
+    function toggleSidebarShrink() {
+      const sidebar = document.getElementById('app-sidebar');
+      const mainWrapper = document.getElementById('main-wrapper');
+      const shrinkIcon = document.getElementById('shrink-icon');
+
+      isSidebarShrunk = !isSidebarShrunk;
+
+      if (isSidebarShrunk) {
+        // Shrink to compact circular dock
+        sidebar.classList.add('sidebar-shrunk');
+        sidebar.classList.remove('w-64');
+        sidebar.classList.add('w-20');
+        mainWrapper.classList.remove('md:pl-64');
+        mainWrapper.classList.add('md:pl-20');
+        shrinkIcon.setAttribute('data-lucide', 'panel-left-open');
+      } else {
+        // Expand to full labelled sidebar
+        sidebar.classList.remove('sidebar-shrunk');
+        sidebar.classList.remove('w-20');
+        sidebar.classList.add('w-64');
+        mainWrapper.classList.remove('md:pl-20');
+        mainWrapper.classList.add('md:pl-64');
+        shrinkIcon.setAttribute('data-lucide', 'panel-left-close');
+      }
+      lucide.createIcons();
+    }
+
     // Navigation routing
     function navigateTo(tabId, title, subtitle) {
       document.querySelectorAll('.tab-view').forEach(view => view.classList.remove('active'));
       const targetView = document.getElementById('view-' + tabId);
       if (targetView) targetView.classList.add('active');
 
-      document.querySelectorAll('#nav-container .nav-item, aside .nav-item').forEach(btn => {
-        btn.classList.remove('bg-brandDark', 'text-white', 'shadow-nav');
-        btn.classList.add('text-textMuted');
+      // Reset all buttons to inactive circular style
+      document.querySelectorAll('#nav-container .circle-btn, aside .circle-btn').forEach(circle => {
+        circle.classList.remove('bg-brandDark', 'text-white', 'shadow-circle');
+        circle.classList.add('bg-[#F1F3F5]', 'text-[#555]');
       });
 
+      // Set active button to solid black circle with white icon!
       const activeBtn = document.getElementById('btn-nav-' + tabId);
       if (activeBtn) {
-        activeBtn.classList.remove('text-textMuted');
-        activeBtn.classList.add('bg-brandDark', 'text-white', 'shadow-nav');
+        const activeCircle = activeBtn.querySelector('.circle-btn');
+        if (activeCircle) {
+          activeCircle.classList.remove('bg-[#F1F3F5]', 'text-[#555]');
+          activeCircle.classList.add('bg-brandDark', 'text-white', 'shadow-circle');
+        }
       }
 
       if (title) document.getElementById('top-title').textContent = title;
@@ -1027,8 +1153,10 @@
       // Close mobile drawer if open
       const sidebar = document.getElementById('app-sidebar');
       const backdrop = document.getElementById('mobile-backdrop');
-      sidebar.classList.add('-translate-x-full');
-      backdrop.classList.add('hidden');
+      if (window.innerWidth < 768) {
+        sidebar.classList.add('-translate-x-full');
+        backdrop.classList.add('hidden');
+      }
 
       window.scrollTo({ top: 0, behavior: 'smooth' });
     }
